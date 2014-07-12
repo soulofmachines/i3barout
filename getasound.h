@@ -5,7 +5,6 @@
 using namespace std;
 
 int getasound (barconfig &myconfig) {
-myconfig.json_output = json_object_new_object();
 string out, icon;
 int volume_mute, volume;
 long volume_cur, volume_min, volume_max;

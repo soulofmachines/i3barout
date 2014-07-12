@@ -5,7 +5,6 @@
 using namespace std;
 
 int gettime (barconfig &myconfig) {
-myconfig.json_output = json_object_new_object();
 time_t rawtime;
 struct tm *timeinfo;
 char buffer[128];

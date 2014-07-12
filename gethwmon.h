@@ -6,7 +6,6 @@
 using namespace std;
 
 int gethwmon (barconfig &myconfig) {
-myconfig.json_output = json_object_new_object();
 string out;
 int temp;
 ifstream infile;

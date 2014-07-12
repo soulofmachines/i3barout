@@ -6,7 +6,6 @@
 using namespace std;
 
 int getnvidia (barconfig &myconfig) {
-myconfig.json_output = json_object_new_object();
 ifstream infile;
 infile.open("/proc/modules");
 stringstream ss;

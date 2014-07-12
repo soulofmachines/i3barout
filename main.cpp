@@ -41,6 +41,8 @@ else {
 output += ",\n";
 output += json_object_to_json_string (json_output);
 }
+json_object_object_foreach (json_output, key, val)
+json_object_object_del (json_output, key);
 }
 return 0;
 }
@@ -55,18 +57,21 @@ ini_nsec += 1;
 barconfig myconfig[ini_nsec];
 for (int counter = 0; counter < ini_nsec; ++counter) {
 if (strcmp (iniparser_getsecname (ini, counter), "wlan") == 0) {
+myconfig[counter].json_output = json_object_new_object();
 myconfig[counter].mode = m_wlan;
 myconfig[counter].device = iniparser_getstring (ini, "wlan:device", (char *)("wlan0"));
 myconfig[counter].color = iniparser_getstring (ini, "wlan:color", (char *)("#ffffff"));
 myconfig[counter].icon = iniparser_getstring (ini, "wlan:icon", NULL);
 }
 if (strcmp (iniparser_getsecname (ini, counter), "time") == 0) {
+myconfig[counter].json_output = json_object_new_object();
 myconfig[counter].mode = m_time;
 myconfig[counter].format = iniparser_getstring (ini, "time:format", (char *)("%H:%M"));
 myconfig[counter].color = iniparser_getstring (ini, "time:color", (char *)("#ffffff"));
 myconfig[counter].icon = iniparser_getstring (ini, "time:icon", NULL);
 }
 if (strcmp (iniparser_getsecname (ini, counter), "hwmon") == 0) {
+myconfig[counter].json_output = json_object_new_object();
 myconfig[counter].mode = m_hwmon;
 myconfig[counter].device = iniparser_getstring (ini, "hwmon:device", NULL);
 myconfig[counter].offset = iniparser_getint (ini, "hwmon:offset", 1000);
@@ -76,6 +81,7 @@ myconfig[counter].urgent = iniparser_getint (ini, "hwmon:urgent", 80);
 myconfig[counter].icon = iniparser_getstring (ini, "hwmon:icon", NULL);
 }
 if (strcmp (iniparser_getsecname (ini, counter), "nvidia") == 0) {
+myconfig[counter].json_output = json_object_new_object();
 myconfig[counter].mode = m_nvidia;
 myconfig[counter].program = iniparser_getstring (ini, "nvidia:program", (char *)("nvidia-smi -q -d TEMPERATURE"));
 myconfig[counter].format = iniparser_getstring (ini, "nvidia:format", (char *)("Gpu"));
@@ -86,6 +92,7 @@ myconfig[counter].urgent = iniparser_getint (ini, "nvidia:urgent", 80);
 myconfig[counter].icon = iniparser_getstring (ini, "nvidia:icon", NULL);
 }
 if (strcmp (iniparser_getsecname (ini, counter), "asound") == 0) {
+myconfig[counter].json_output = json_object_new_object();
 myconfig[counter].mode = m_asound;
 myconfig[counter].card = iniparser_getstring (ini, "asound:card", (char *)("default"));
 myconfig[counter].device = iniparser_getstring (ini, "asound:device", (char *)("Master"));
@@ -125,7 +132,7 @@ break;
 }
 }
 cout << "[\n" << output << "\n]," << endl;
-setpause (5);
+//setpause (5);
 }
 iniparser_freedict(ini);
 return 0;
