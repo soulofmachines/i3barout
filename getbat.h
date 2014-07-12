@@ -79,20 +79,6 @@ strftime (buffer,128,"%H:%M",tpoint);
 out = buffer;
 out += " " + to_string (perc) + "%";
 json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-//json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-//if (temp >= myconfig.urgent) {
-//json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent));
-//if (myconfig.icon != NULL) {
-//json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
-//json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent));
-//}
-//} else {
-//json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
-//if (myconfig.icon != NULL) {
-//json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
-//json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
-//}
-//}
 return 0;
 }
 
