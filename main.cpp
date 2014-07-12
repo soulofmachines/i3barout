@@ -10,7 +10,8 @@ m_time,
 m_asound,
 m_hwmon,
 m_nvidia,
-m_wlan
+m_wlan,
+m_bat
 };
 
 class barconfig {
@@ -30,6 +31,7 @@ json_object *json_output;
 #include <getwlan.h>
 #include <getnvidia.h>
 #include <gethwmon.h>
+#include <getbat.h>
 
 string output;
 
@@ -103,6 +105,11 @@ myconfig[counter].icon_mask = iniparser_getstring (ini, "asound:icon_mask", NULL
 myconfig[counter].icon_count = iniparser_getint (ini, "asound:icon_count", 1);
 myconfig[counter].icon_ext = iniparser_getstring (ini, "asound:icon_ext", (char *)(".xbm"));
 }
+if (strcmp (iniparser_getsecname (ini, counter), "bat") == 0) {
+myconfig[counter].json_output = json_object_new_object();
+myconfig[counter].mode = m_bat;
+myconfig[counter].device = iniparser_getstring (ini, "bat:device", NULL);
+}
 }
 cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
 while (true) {
@@ -127,6 +134,10 @@ json_setout (myconfig[counter].json_output);
 break;
 case m_asound:
 getasound (myconfig[counter]);
+json_setout (myconfig[counter].json_output);
+break;
+case m_bat:
+getbat (myconfig[counter]);
 json_setout (myconfig[counter].json_output);
 break;
 }
