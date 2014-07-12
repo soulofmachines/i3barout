@@ -132,7 +132,7 @@ break;
 }
 }
 cout << "[\n" << output << "\n]," << endl;
-//setpause (5);
+setpause (5);
 }
 iniparser_freedict(ini);
 return 0;
