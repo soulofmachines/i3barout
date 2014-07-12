@@ -50,8 +50,7 @@ path = myconfig.device;
 path += "/power_now";
 filetolong (path.c_str(), p_now);
 seconds = e_now * 3600 / p_now;
-} else
-if (strcmp (file.c_str(), "Charging\n") == 0) {
+} else {
 path = myconfig.device;
 path += "/energy_full";
 filetolong (path.c_str(), e_full);
@@ -65,8 +64,7 @@ if (p_now != 0)
 seconds = (e_full - e_now) * 3600 / p_now;
 else
 seconds = 0;
-} else
-return 0;
+}
 if (sec_fail == 1)
 return 0;
 path = myconfig.device;
