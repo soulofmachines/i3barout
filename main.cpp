@@ -15,7 +15,7 @@ m_wlan
 
 class barconfig {
 public:
-string color, color_warn, color_urgent;
+char *color, *color_warn, *color_urgent;
 string icon_name;
 string name, exec;
 const char *device, *format, *card, *program;
@@ -57,26 +57,36 @@ for (int counter = 0; counter < ini_nsec; ++counter) {
 if (strcmp (iniparser_getsecname (ini, counter), "wlan") == 0) {
 myconfig[counter].mode = m_wlan;
 myconfig[counter].device = iniparser_getstring (ini, "wlan:device", (char *)("wlan0"));
+myconfig[counter].color = iniparser_getstring (ini, "wlan:color", (char *)("#ffffff"));
 }
 if (strcmp (iniparser_getsecname (ini, counter), "time") == 0) {
 myconfig[counter].mode = m_time;
 myconfig[counter].format = iniparser_getstring (ini, "time:format", (char *)("%H:%M"));
+myconfig[counter].color = iniparser_getstring (ini, "time:color", (char *)("#ffffff"));
 }
 if (strcmp (iniparser_getsecname (ini, counter), "hwmon") == 0) {
 myconfig[counter].mode = m_hwmon;
 myconfig[counter].device = iniparser_getstring (ini, "hwmon:device", NULL);
 myconfig[counter].offset = iniparser_getint (ini, "hwmon:offset", 1000);
+myconfig[counter].color = iniparser_getstring (ini, "hwmon:color", (char *)("#ffffff"));
+myconfig[counter].color_urgent = iniparser_getstring (ini, "hwmon:color_urgent", (char *)("#ff0000"));
+myconfig[counter].urgent = iniparser_getint (ini, "hwmon:urgent", 80);
 }
 if (strcmp (iniparser_getsecname (ini, counter), "nvidia") == 0) {
 myconfig[counter].mode = m_nvidia;
 myconfig[counter].program = iniparser_getstring (ini, "nvidia:program", (char *)("nvidia-smi -q -d TEMPERATURE"));
 myconfig[counter].format = iniparser_getstring (ini, "nvidia:format", (char *)("Gpu"));
 myconfig[counter].offset = iniparser_getint (ini, "nvidia:offset", 30);
+myconfig[counter].color = iniparser_getstring (ini, "nvidia:color", (char *)("#ffffff"));
+myconfig[counter].color_urgent = iniparser_getstring (ini, "nvidia:color_urgent", (char *)("#ff0000"));
+myconfig[counter].urgent = iniparser_getint (ini, "nvidia:urgent", 80);
 }
 if (strcmp (iniparser_getsecname (ini, counter), "asound") == 0) {
 myconfig[counter].mode = m_asound;
 myconfig[counter].card = iniparser_getstring (ini, "asound:card", (char *)("default"));
 myconfig[counter].device = iniparser_getstring (ini, "asound:device", (char *)("Master"));
+myconfig[counter].color = iniparser_getstring (ini, "asound:color", (char *)("#ffffff"));
+myconfig[counter].color_warn = iniparser_getstring (ini, "asound:color_warn", (char *)("#00ffff"));
 }
 }
 cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
