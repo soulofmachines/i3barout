@@ -16,10 +16,10 @@ m_wlan
 class barconfig {
 public:
 char *color, *color_warn, *color_urgent;
-char *icon;
+char *icon, *icon_mask, *icon_ext;
 string name, exec;
 const char *device, *format, *card, *program;
-int offset, urgent;
+int offset, urgent, icon_count;
 modes mode;
 json_object *json_output;
 };
@@ -92,6 +92,9 @@ myconfig[counter].device = iniparser_getstring (ini, "asound:device", (char *)("
 myconfig[counter].color = iniparser_getstring (ini, "asound:color", (char *)("#ffffff"));
 myconfig[counter].color_warn = iniparser_getstring (ini, "asound:color_warn", (char *)("#00ffff"));
 myconfig[counter].icon = iniparser_getstring (ini, "asound:icon", NULL);
+myconfig[counter].icon_mask = iniparser_getstring (ini, "asound:icon_mask", NULL);
+myconfig[counter].icon_count = iniparser_getint (ini, "asound:icon_count", 1);
+myconfig[counter].icon_ext = iniparser_getstring (ini, "asound:icon_ext", (char *)(".xbm"));
 }
 }
 cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;

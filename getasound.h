@@ -6,7 +6,7 @@ using namespace std;
 
 int getasound (barconfig &myconfig) {
 myconfig.json_output = json_object_new_object();
-string out;
+string out, icon;
 int volume_mute, volume;
 long volume_cur, volume_min, volume_max;
 snd_mixer_t *handle;
@@ -31,12 +31,25 @@ json_object_object_add(myconfig.json_output, "color", json_object_new_string (my
 if (myconfig.icon != NULL) {
 json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
 json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+} else 
+if (myconfig.icon_mask != NULL) {
+for (int counter = myconfig.icon_count; counter >= 0; --counter)
+if (volume <= 100 * counter / myconfig.icon_count) {
+icon = myconfig.icon_mask + to_string (counter) + myconfig.icon_ext;
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+}
 }
 } else {
 json_object_object_add(myconfig.json_output, "full_text", json_object_new_string ("0%"));
 json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_warn));
 if (myconfig.icon != NULL) {
 json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_warn));
+} else
+if (myconfig.icon_mask != NULL) {
+icon = myconfig.icon_mask + to_string (0) + myconfig.icon_ext;
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
 json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_warn));
 }
 }
