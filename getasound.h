@@ -28,9 +28,17 @@ volume = int (volume_cur * 100 / (volume_max - volume_min));
 out = to_string (volume) + "%";
 json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
+if (myconfig.icon != NULL) {
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+}
 } else {
 json_object_object_add(myconfig.json_output, "full_text", json_object_new_string ("0%"));
 json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_warn));
+if (myconfig.icon != NULL) {
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_warn));
+}
 }
 snd_mixer_close(handle);
 return 0;

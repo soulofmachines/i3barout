@@ -37,6 +37,10 @@ return 5;
 out = to_string (int (char (stat.qual.qual)) * 100 / (int(char(range.max_qual.qual)))) + "% " + out;
 json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
+if (myconfig.icon != NULL) {
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+}
 close(soketfd);
 return 0;
 }
