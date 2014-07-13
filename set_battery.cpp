@@ -2,7 +2,7 @@
 #include <sstream>
 #include <string.h>
 #include <time.h>
-#include "barconfig.h"
+#include "barconfig.hpp"
 
 #ifndef GETHWMON_H_
 

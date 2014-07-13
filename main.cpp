@@ -1,8 +1,8 @@
 #include <iniparser.h>
 #include <json-c/json.h>
 #include <iostream>
-#include "barconfig.h"
-#include "set_var.h"
+#include "barconfig.hpp"
+#include "set_var.hpp"
 
 using namespace std;
 

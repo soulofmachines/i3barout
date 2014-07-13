@@ -1,5 +1,5 @@
 #include <time.h>
-#include "barconfig.h"
+#include "barconfig.hpp"
 
 using namespace std;
 

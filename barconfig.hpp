@@ -1,8 +1,8 @@
 #include <string>
 #include <json-c/json.h>
 
-#ifndef BARCONFIG_H
-#define BARCONFIG_H
+#ifndef BARCONFIG_HPP
+#define BARCONFIG_HPP
 
 using namespace std;
 

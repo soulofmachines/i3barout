@@ -1,6 +1,6 @@
 #include <fstream>
 #include <sstream>
-#include "barconfig.h"
+#include "barconfig.hpp"
 
 using namespace std;
 

@@ -1,5 +1,5 @@
 #include <alsa/asoundlib.h>
-#include "barconfig.h"
+#include "barconfig.hpp"
 
 using namespace std;
 

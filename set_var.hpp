@@ -1,5 +1,5 @@
-#ifndef SET_VAR_H
-#define SET_VAR_H
+#ifndef SET_VAR_HPP
+#define SET_VAR_HPP
 
 int set_asound (barconfig &myconfig);
 int set_battery (barconfig &myconfig);
