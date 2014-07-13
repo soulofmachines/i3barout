@@ -31,10 +31,14 @@ if (myconfig.icon != NULL) {
 json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
 json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
 } else 
-if (myconfig.icon_mask != NULL) {
-for (int counter = myconfig.icon_count; counter >= 0; --counter)
-if (volume <= 100 * counter / myconfig.icon_count) {
+if (myconfig.icon_mask != NULL)
+for (int counter = myconfig.icon_count; counter >= 0; --counter) {
+if (volume <= 100 * counter / myconfig.icon_count)
 icon = myconfig.icon_mask + to_string (counter) + myconfig.icon_ext;
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+if (volume > 100) {
+icon = myconfig.icon_mask + to_string (myconfig.icon_count) + myconfig.icon_ext;
 json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
 json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
 }

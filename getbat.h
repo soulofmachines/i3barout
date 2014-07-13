@@ -103,6 +103,12 @@ json_object_object_add(myconfig.json_output, "color", json_object_new_string (my
 json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
 }
 }
+if (perc > 100) {
+icon = myconfig.icon_mask + to_string (myconfig.icon_count) + myconfig.icon_ext;
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
+json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+}
 }
 } else {
 icon = myconfig.icon_mask + to_string (0) + myconfig.icon_ext;
