@@ -110,6 +110,7 @@ myconfig[counter].json_output = json_object_new_object();
 myconfig[counter].mode = m_bat;
 myconfig[counter].device = iniparser_getstring (ini, "bat:device", NULL);
 myconfig[counter].color = iniparser_getstring (ini, "bat:color", (char *)("#ffffff"));
+myconfig[counter].urgent = iniparser_getint (ini, "bat:urgent", 20);
 myconfig[counter].color_urgent = iniparser_getstring (ini, "bat:color_urgent", (char *)("#ff0000"));
 myconfig[counter].icon = iniparser_getstring (ini, "bat:icon", NULL);
 myconfig[counter].icon_mask = iniparser_getstring (ini, "bat:icon_mask", NULL);
