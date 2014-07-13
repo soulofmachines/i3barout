@@ -26,8 +26,16 @@ name = (char *)req.u.essid.pointer;
 memset(&stat, 0, sizeof(stat));
 req.u.data.pointer = &stat;
 req.u.data.length = sizeof(stat);
-if(ioctl(soketfd, SIOCGIWSTATS, &req) == -1)
+if(ioctl(soketfd, SIOCGIWSTATS, &req) == -1) {
+out = "Null";
+json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
+json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
+if (myconfig.icon != NULL) {
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+}
 return 0;
+}
 memset(&range, 0, sizeof(range));
 req.u.data.pointer = &range;
 req.u.data.length = sizeof(range);
