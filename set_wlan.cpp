@@ -1,12 +1,13 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <linux/wireless.h>
-
-#ifndef GETWLAN_H_
+#include <string.h>
+#include <unistd.h>
+#include "barconfig.h"
 
 using namespace std;
 
-int getwlan (barconfig &myconfig) {
+int set_wlan (barconfig &myconfig) {
 string out, name, width;
 int perc;
 struct iwreq req;
@@ -55,5 +56,3 @@ json_object_object_add(myconfig.json_output, "icon_color", json_object_new_strin
 close(soketfd);
 return 0;
 }
-
-#endif

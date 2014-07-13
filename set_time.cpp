@@ -1,10 +1,9 @@
 #include <time.h>
-
-#ifndef GETTIME_H_
+#include "barconfig.h"
 
 using namespace std;
 
-int gettime (barconfig &myconfig) {
+int set_time (barconfig &myconfig) {
 time_t rawtime;
 struct tm *timeinfo;
 char buffer[128];
@@ -19,5 +18,3 @@ json_object_object_add(myconfig.json_output, "icon_color", json_object_new_strin
 }
 return 0;
 }
-
-#endif

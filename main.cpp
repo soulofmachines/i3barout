@@ -1,37 +1,10 @@
 #include <iniparser.h>
 #include <json-c/json.h>
 #include <iostream>
+#include "barconfig.h"
+#include "set_var.h"
 
 using namespace std;
-
-enum modes {
-m_null = 0,
-m_asound,
-m_bat,
-m_hwmon,
-m_nvidia,
-m_time,
-m_wlan
-};
-
-class barconfig {
-public:
-char *color, *color_warn, *color_urgent;
-char *icon, *icon_mask, *icon_ext;
-string name, exec;
-const char *device, *format, *card, *program, *align;
-int offset, urgent, icon_count;
-modes mode;
-json_object *json_output;
-};
-
-#include <setpause.h>
-#include <gettime.h>
-#include <getasound.h>
-#include <getwlan.h>
-#include <getnvidia.h>
-#include <gethwmon.h>
-#include <getbat.h>
 
 string output;
 
@@ -127,33 +100,33 @@ output = "";
 for (int counter = 0; counter < ini_nsec; ++counter) {
 switch (myconfig[counter].mode) {
 case m_wlan:
-getwlan (myconfig[counter]);
+set_wlan (myconfig[counter]);
 json_setout (myconfig[counter].json_output);
 break;
 case m_time:
-gettime (myconfig[counter]);
+set_time (myconfig[counter]);
 json_setout (myconfig[counter].json_output);
 break;
 case m_hwmon:
-gethwmon (myconfig[counter]);
+set_hwmon (myconfig[counter]);
 json_setout (myconfig[counter].json_output);
 break;
 case m_nvidia:
-getnvidia (myconfig[counter]);
+set_nvidia (myconfig[counter]);
 json_setout (myconfig[counter].json_output);
 break;
 case m_asound:
-getasound (myconfig[counter]);
+set_asound (myconfig[counter]);
 json_setout (myconfig[counter].json_output);
 break;
 case m_bat:
-getbat (myconfig[counter]);
+set_battery (myconfig[counter]);
 json_setout (myconfig[counter].json_output);
 break;
 }
 }
 cout << "[\n" << output << "\n]," << endl;
-setpause (5);
+set_pause (5);
 }
 iniparser_freedict(ini);
 return 0;

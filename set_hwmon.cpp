@@ -1,11 +1,10 @@
 #include <fstream>
 #include <sstream>
-
-#ifndef GETHWMON_H_
+#include "barconfig.h"
 
 using namespace std;
 
-int gethwmon (barconfig &myconfig) {
+int set_hwmon (barconfig &myconfig) {
 string out;
 int temp;
 ifstream infile;
@@ -33,5 +32,3 @@ json_object_object_add(myconfig.json_output, "icon_color", json_object_new_strin
 }
 return 0;
 }
-
-#endif

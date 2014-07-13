@@ -1,11 +1,10 @@
 #include <fstream>
 #include <sstream>
-
-#ifndef GETNVIDIA_H_
+#include "barconfig.h"
 
 using namespace std;
 
-int getnvidia (barconfig &myconfig) {
+int set_nvidia (barconfig &myconfig) {
 ifstream infile;
 infile.open("/proc/modules");
 stringstream ss;
@@ -44,5 +43,3 @@ pclose(fd);
 }
 return 0;
 }
-
-#endif

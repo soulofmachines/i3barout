@@ -1,10 +1,9 @@
 #include <alsa/asoundlib.h>
-
-#ifndef GETASOUND_H_
+#include "barconfig.h"
 
 using namespace std;
 
-int getasound (barconfig &myconfig) {
+int set_asound (barconfig &myconfig) {
 string out, icon, width = "100%";
 int volume_mute, volume;
 long volume_cur, volume_min, volume_max;
@@ -63,5 +62,3 @@ json_object_object_add(myconfig.json_output, "icon_color", json_object_new_strin
 snd_mixer_close(handle);
 return 0;
 }
-
-#endif

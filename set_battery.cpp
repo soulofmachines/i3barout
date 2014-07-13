@@ -1,6 +1,8 @@
 #include <fstream>
 #include <sstream>
+#include <string.h>
 #include <time.h>
+#include "barconfig.h"
 
 #ifndef GETHWMON_H_
 
@@ -43,7 +45,7 @@ value = ss.str();
 return 0;
 }
 
-int getbat (barconfig &myconfig) {
+int set_battery (barconfig &myconfig) {
 no_fail = TRUE;
 string out, path, icon, status, width = "12:00 100%";
 long perc, e_now, e_full ,p_now, seconds;
