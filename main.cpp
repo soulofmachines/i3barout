@@ -1,3 +1,4 @@
+#include <pwd.h>
 #include <iniparser.h>
 #include <json-c/json.h>
 #include <iostream>
@@ -23,11 +24,22 @@ return 0;
 }
 
 int main () {
-dictionary *ini;
-ini = iniparser_load(".i3/config.ini");
 int ini_nsec = 0;
+struct passwd *pw = getpwuid (getuid());
+char *dir = pw->pw_dir;
+strcat (dir, "/.i3/i3barout.ini");
+dictionary *ini;
+ini = iniparser_load(dir);
 while (iniparser_getsecname (ini, ini_nsec) != NULL) {
 ini_nsec += 1;
+}
+if (ini_nsec == 0) {
+ini = iniparser_load("/etc/i3/i3barout.ini");
+while (iniparser_getsecname (ini, ini_nsec) != NULL) {
+ini_nsec += 1;
+}
+if (ini_nsec == 0)
+return 0;
 }
 barconfig myconfig[ini_nsec];
 for (int counter = 0; counter < ini_nsec; ++counter) {
