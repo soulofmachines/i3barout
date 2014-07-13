@@ -6,12 +6,12 @@ using namespace std;
 
 enum modes {
 m_null = 0,
-m_time,
 m_asound,
+m_bat,
 m_hwmon,
 m_nvidia,
-m_wlan,
-m_bat
+m_time,
+m_wlan
 };
 
 class barconfig {
@@ -109,6 +109,12 @@ if (strcmp (iniparser_getsecname (ini, counter), "bat") == 0) {
 myconfig[counter].json_output = json_object_new_object();
 myconfig[counter].mode = m_bat;
 myconfig[counter].device = iniparser_getstring (ini, "bat:device", NULL);
+myconfig[counter].color = iniparser_getstring (ini, "bat:color", (char *)("#ffffff"));
+myconfig[counter].color_urgent = iniparser_getstring (ini, "bat:color_urgent", (char *)("#ff0000"));
+myconfig[counter].icon = iniparser_getstring (ini, "bat:icon", NULL);
+myconfig[counter].icon_mask = iniparser_getstring (ini, "bat:icon_mask", NULL);
+myconfig[counter].icon_count = iniparser_getint (ini, "bat:icon_count", 1);
+myconfig[counter].icon_ext = iniparser_getstring (ini, "bat:icon_ext", (char *)(".xbm"));
 }
 }
 cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;

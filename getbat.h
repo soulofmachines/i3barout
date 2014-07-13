@@ -6,7 +6,7 @@
 
 using namespace std;
 
-bool sec_fail = 0;
+bool no_fail = TRUE;
 
 int filetolong (const char *path, long &value) {
 char *spos[1];
@@ -14,35 +14,46 @@ ifstream infile;
 stringstream ss;
 infile.open(path);
 if (!infile.is_open()) {
-sec_fail = 1;
+no_fail = FALSE;
 return 0;
 }
 ss << infile.rdbuf();
+infile.close();
 string file = ss.str();
 strtol (file.c_str(), spos, 0);
 if (*spos == file.c_str()) {
-sec_fail = 1;
+no_fail = FALSE;
 return 0;
 }
 value = stol (file);
 return 0;
 }
 
-int getbat (barconfig &myconfig) {
-string out, path;
-long perc, e_now, e_full ,p_now, seconds;
-path = myconfig.device;
-path += "/status";
+int filetostr (const char *path, string &value) {
 ifstream infile;
 stringstream ss;
-string file;
-infile.open (path.c_str());
-if (!infile.is_open())
+infile.open (path);
+if (!infile.is_open()) {
+no_fail = FALSE;
 return 0;
+}
 ss << infile.rdbuf();
-file = ss.str();
 infile.close();
-if (strcmp (file.c_str(), "Discharging\n") == 0) {
+value = ss.str();
+return 0;
+}
+
+int getbat (barconfig &myconfig) {
+no_fail = TRUE;
+string out, path, icon, status;
+long perc, e_now, e_full ,p_now, seconds;
+path = myconfig.device;
+path += "/capacity";
+filetolong (path.c_str(), perc);
+path = myconfig.device;
+path += "/status";
+filetostr (path.c_str(), status);
+if (strcmp (status.c_str(), "Discharging\n") == 0) {
 path = myconfig.device;
 path += "/energy_now";
 filetolong (path.c_str(), e_now);
@@ -65,11 +76,8 @@ seconds = (e_full - e_now) * 3600 / p_now;
 else
 seconds = 0;
 }
-if (sec_fail == 1)
+if (no_fail == FALSE)
 return 0;
-path = myconfig.device;
-path += "/capacity";
-filetolong (path.c_str(), perc);
 time_t tseconds(seconds);
 tm *tpoint = gmtime(&seconds);
 char buffer[128];
@@ -77,6 +85,24 @@ strftime (buffer,128,"%H:%M",tpoint);
 out = buffer;
 out += " " + to_string (perc) + "%";
 json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
+if (myconfig.icon != NULL) {
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_warn));
+} else
+if (strcmp (status.c_str(), "Discharging\n") == 0) {
+if (myconfig.icon_mask != NULL) {
+for (int counter = myconfig.icon_count; counter >= 0; --counter)
+if (perc <= 100 * counter / myconfig.icon_count) {
+icon = myconfig.icon_mask + to_string (counter) + myconfig.icon_ext;
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+}
+}
+} else {
+icon = myconfig.icon_mask + to_string (0) + myconfig.icon_ext;
+json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
+json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+}
 return 0;
 }
 
