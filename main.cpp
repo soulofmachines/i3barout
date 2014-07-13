@@ -38,8 +38,14 @@ ini = iniparser_load("/etc/i3/i3barout.ini");
 while (iniparser_getsecname (ini, ini_nsec) != NULL) {
 ini_nsec += 1;
 }
+if (ini_nsec == 0) {
+ini = iniparser_load("i3barout.ini");
+while (iniparser_getsecname (ini, ini_nsec) != NULL) {
+ini_nsec += 1;
+}
 if (ini_nsec == 0)
 return 0;
+}
 }
 barconfig myconfig[ini_nsec];
 for (int counter = 0; counter < ini_nsec; ++counter) {
