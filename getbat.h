@@ -45,7 +45,7 @@ return 0;
 
 int getbat (barconfig &myconfig) {
 no_fail = TRUE;
-string out, path, icon, status;
+string out, path, icon, status, width = "12:00 100%";
 long perc, e_now, e_full ,p_now, seconds;
 path = myconfig.device;
 path += "/capacity";
@@ -85,6 +85,8 @@ strftime (buffer,128,"%H:%M",tpoint);
 out = buffer;
 out += " " + to_string (perc) + "%";
 json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
+json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
+json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align));
 if (myconfig.icon != NULL) {
 json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
 json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));

@@ -19,7 +19,7 @@ public:
 char *color, *color_warn, *color_urgent;
 char *icon, *icon_mask, *icon_ext;
 string name, exec;
-const char *device, *format, *card, *program;
+const char *device, *format, *card, *program, *align;
 int offset, urgent, icon_count;
 modes mode;
 json_object *json_output;
@@ -64,6 +64,7 @@ myconfig[counter].mode = m_wlan;
 myconfig[counter].device = iniparser_getstring (ini, "wlan:device", (char *)("wlan0"));
 myconfig[counter].color = iniparser_getstring (ini, "wlan:color", (char *)("#ffffff"));
 myconfig[counter].icon = iniparser_getstring (ini, "wlan:icon", NULL);
+myconfig[counter].align = iniparser_getstring (ini, "wlan:align", (char *)("center"));
 }
 if (strcmp (iniparser_getsecname (ini, counter), "time") == 0) {
 myconfig[counter].json_output = json_object_new_object();
@@ -104,6 +105,7 @@ myconfig[counter].icon = iniparser_getstring (ini, "asound:icon", NULL);
 myconfig[counter].icon_mask = iniparser_getstring (ini, "asound:icon_mask", NULL);
 myconfig[counter].icon_count = iniparser_getint (ini, "asound:icon_count", 1);
 myconfig[counter].icon_ext = iniparser_getstring (ini, "asound:icon_ext", (char *)(".xbm"));
+myconfig[counter].align = iniparser_getstring (ini, "asound:align", (char *)("center"));
 }
 if (strcmp (iniparser_getsecname (ini, counter), "bat") == 0) {
 myconfig[counter].json_output = json_object_new_object();
@@ -116,6 +118,7 @@ myconfig[counter].icon = iniparser_getstring (ini, "bat:icon", NULL);
 myconfig[counter].icon_mask = iniparser_getstring (ini, "bat:icon_mask", NULL);
 myconfig[counter].icon_count = iniparser_getint (ini, "bat:icon_count", 1);
 myconfig[counter].icon_ext = iniparser_getstring (ini, "bat:icon_ext", (char *)(".xbm"));
+myconfig[counter].align = iniparser_getstring (ini, "bat:align", (char *)("center"));
 }
 }
 cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
