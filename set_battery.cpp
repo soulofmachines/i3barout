@@ -80,7 +80,6 @@ seconds = 0;
 }
 if (no_fail == FALSE)
 return 0;
-time_t tseconds(seconds);
 tm *tpoint = gmtime(&seconds);
 char buffer[128];
 strftime (buffer,128,"%H:%M",tpoint);
