@@ -54,31 +54,27 @@ int set_battery (barconfig &myconfig) {
 	path = myconfig.device;
 	path += "/status";
 	filetostr (path.c_str(), status);
-	if (strcmp (status.c_str(), "Discharging\n") == 0) {
-		path = myconfig.device;
-		path += "/energy_now";
-		filetolong (path.c_str(), e_now);
-		path = myconfig.device;
-		path += "/power_now";
-		filetolong (path.c_str(), p_now);
-		seconds = e_now * 3600 / p_now;
-	} else {
-		path = myconfig.device;
-		path += "/energy_full";
-		filetolong (path.c_str(), e_full);
-		path = myconfig.device;
-		path += "/energy_now";
-		filetolong (path.c_str(), e_now);
-		path = myconfig.device;
-		path += "/power_now";
-		filetolong (path.c_str(), p_now);
-		if (p_now != 0)
-			seconds = (e_full - e_now) * 3600 / p_now;
-		else
-			seconds = 0;
-		}
+	path = myconfig.device;
+	path += "/energy_now";
+	filetolong (path.c_str(), e_now);
+	path = myconfig.device;
+	path += "/power_now";
+	filetolong (path.c_str(), p_now);
 	if (no_fail == FALSE)
 		return 0;
+	if (p_now != 0)
+		if (strcmp (status.c_str(), "Discharging\n") == 0)
+			seconds = e_now * 3600 / p_now;
+		else {
+			path = myconfig.device;
+			path += "/energy_full";
+			filetolong (path.c_str(), e_full);
+			if (no_fail == FALSE)
+				return 0;
+			seconds = (e_full - e_now) * 3600 / p_now;
+			}
+		else
+			seconds = 0;
 	tm *tpoint = gmtime(&seconds);
 	char buffer[128];
 	strftime (buffer,128,"%H:%M",tpoint);

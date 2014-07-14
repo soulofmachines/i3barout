@@ -6,6 +6,8 @@
 using namespace std;
 
 int set_hwmon (barconfig &myconfig) {
+	if (myconfig.offset <= 0)
+		return 0;
 	string out;
 	int temp;
 	ifstream infile;
