@@ -9,7 +9,7 @@ using namespace std;
 enum modes {
 	m_null = 0,
 	m_asound,
-	m_bat,
+	m_battery,
 	m_hwmon,
 	m_nvidia,
 	m_time,
