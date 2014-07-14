@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "barconfig.hpp"
+#include "set_icon.hpp"
 
 using namespace std;
 
@@ -86,35 +87,14 @@ int set_battery (barconfig &myconfig) {
 	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 	json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
 	json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align));
-	if (myconfig.icon != NULL) {
-		json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
+	if (perc <= myconfig.urgent) {
+		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent));
+		json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent));
+	} else {
+		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
 		json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
-	} else
-		if (strcmp (status.c_str(), "Discharging\n") == 0) {
-			if (myconfig.icon_mask != NULL) {
-				for (int counter = myconfig.icon_count; counter >= 0; --counter)
-				if (perc <= 100 * counter / myconfig.icon_count) {
-					icon = myconfig.icon_mask + to_string (counter) + myconfig.icon_ext;
-					json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
-					if (perc <= myconfig.urgent) {
-						json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent));
-						json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent));
-					} else {
-						json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
-						json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
-						}
-					}
-				if (perc > 100) {
-					icon = myconfig.icon_mask + to_string (myconfig.icon_count) + myconfig.icon_ext;
-					json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
-					json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
-					json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
-					}
-				}
-		} else {
-			icon = myconfig.icon_mask + to_string (0) + myconfig.icon_ext;
-			json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
-			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
-			}
+		}
+	set_icon (myconfig);
+	set_icon_mask (myconfig, perc, 100);
 	return 0;
 }

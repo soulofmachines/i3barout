@@ -1,6 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include "barconfig.hpp"
+#include "set_icon.hpp"
 
 using namespace std;
 
@@ -19,16 +20,11 @@ int set_hwmon (barconfig &myconfig) {
 	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 	if (temp >= myconfig.urgent) {
 		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent));
-		if (myconfig.icon != NULL) {
-			json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
-			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent));
-			}
+		json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent));
 	} else {
 		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
-		if (myconfig.icon != NULL) {
-			json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
-			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
-			}
+		json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
 		}
+	set_icon (myconfig);
 	return 0;
 }

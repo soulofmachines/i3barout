@@ -18,7 +18,7 @@ enum modes {
 
 class barconfig {
 	public:
-		char *color, *color_warn, *color_urgent;
+		char *color, *color_urgent;
 		char *icon, *icon_mask, *icon_ext;
 		string name, exec;
 		const char *device, *format, *card, *program, *align;

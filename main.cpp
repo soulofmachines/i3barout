@@ -108,7 +108,7 @@ int main () {
 				myconfig[counter].card = iniparser_getstring (ini, string2arg (mode, ":card"), (char *)("default"));
 				myconfig[counter].device = iniparser_getstring (ini, string2arg (mode, ":device"), (char *)("Master"));
 				myconfig[counter].color = iniparser_getstring (ini, string2arg (mode, ":color"), (char *)("#ffffff"));
-				myconfig[counter].color_warn = iniparser_getstring (ini, string2arg (mode, ":color_warn"), (char *)("#00ffff"));
+				myconfig[counter].color_urgent = iniparser_getstring (ini, string2arg (mode, ":color_warn"), (char *)("#00ffff"));
 				myconfig[counter].icon = iniparser_getstring (ini, string2arg (mode, ":icon"), NULL);
 				myconfig[counter].icon_mask = iniparser_getstring (ini, string2arg (mode, ":icon_mask"), NULL);
 				myconfig[counter].icon_count = iniparser_getint (ini, string2arg (mode, ":icon_count"), 1);
