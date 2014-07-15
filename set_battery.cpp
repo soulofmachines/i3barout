@@ -1,5 +1,3 @@
-//#include <fstream>
-//#include <sstream>
 #include <string.h>
 #include <time.h>
 #include "barconfig.hpp"
@@ -7,43 +5,6 @@
 #include "set_icon.hpp"
 
 using namespace std;
-
-//bool no_fail = TRUE;
-
-/*int filetolong (const char *path, long &value) {
-	char *spos[1];
-	ifstream infile;
-	stringstream ss;
-	infile.open(path);
-	if (!infile.is_open()) {
-		no_fail = FALSE;
-		return 0;
-		}
-	ss << infile.rdbuf();
-	infile.close();
-	string file = ss.str();
-	strtol (file.c_str(), spos, 0);
-	if (*spos == file.c_str()) {
-		no_fail = FALSE;
-		return 0;
-		}
-	value = stol (file);
-	return 0;
-	}
-
-int filetostr (const char *path, string &value) {
-	ifstream infile;
-	stringstream ss;
-	infile.open (path);
-	if (!infile.is_open()) {
-		no_fail = FALSE;
-		return 0;
-		}
-	ss << infile.rdbuf();
-	infile.close();
-	value = ss.str();
-	return 0;
-	}*/
 
 int set_battery (barconfig &myconfig) {
 	bool fail;
