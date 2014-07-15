@@ -1,5 +1,7 @@
 i3barout
 ========
-dependencies:	alsa
-		json-c
-		iniparser
+dependencies:
++ C++11
++ alsa
++ json-c
++ iniparser
