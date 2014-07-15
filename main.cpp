@@ -9,7 +9,7 @@ using namespace std;
 
 string output;
 
-modes str2enum (const char *value) {
+modes str2modes (const char *value) {
 	if (strcmp (value, (const char *)("asound")) == 0) return m_asound;
 	if (strcmp (value, (const char *)("battery")) == 0) return m_battery;
 	if (strcmp (value, (const char *)("hwmon")) == 0) return m_hwmon;
@@ -19,11 +19,11 @@ modes str2enum (const char *value) {
 	return m_null;
 	}
 
-const char *string2arg (string first, string second) {
+string string2arg (string first, string second) {
 	string value;
 	value = first;
 	value += second;
-	return value.c_str();
+	return value;
 	}
 
 int json_setout (json_object *json_output) {
@@ -65,24 +65,24 @@ int main () {
 	barconfig myconfig[ini_nsec];
 	for (int counter = 0; counter < ini_nsec; ++counter) {
 		mode = iniparser_getsecname (ini, counter);
-		myconfig[counter].mode = str2enum (iniparser_getstring (ini, string2arg (mode, ":mode"), (char *)("null")));
+		myconfig[counter].mode = str2modes (iniparser_getstring (ini, string2arg (mode, ":mode").c_str(), (char *)("null")));
 		if (myconfig[counter].mode != m_null) {
 			myconfig[counter].json_output = json_object_new_object();
-			myconfig[counter].align = iniparser_getstring (ini, string2arg (mode, ":align"), (char *)("center"));
-			myconfig[counter].color = iniparser_getstring (ini, string2arg (mode, ":color"), (char *)("#ffffff"));
-			myconfig[counter].color_urgent = iniparser_getstring (ini, string2arg (mode, ":color_urgent"), (char *)("#ff0000"));
-			myconfig[counter].icon = iniparser_getstring (ini, string2arg (mode, ":icon"), NULL);
-			myconfig[counter].icon_mask = iniparser_getstring (ini, string2arg (mode, ":icon_mask"), NULL);
-			myconfig[counter].icon_ext = iniparser_getstring (ini, string2arg (mode, ":icon_ext"), (char *)(".xbm"));
-			myconfig[counter].icon_count = iniparser_getint (ini, string2arg (mode, ":icon_count"), 1);
-			myconfig[counter].card = iniparser_getstring (ini, string2arg (mode, ":card"), NULL);
-			myconfig[counter].device = iniparser_getstring (ini, string2arg (mode, ":device"), NULL);
-			myconfig[counter].format = iniparser_getstring (ini, string2arg (mode, ":format"), NULL);
-			myconfig[counter].program = iniparser_getstring (ini, string2arg (mode, ":program"), NULL);
-			myconfig[counter].offset = iniparser_getint (ini, string2arg (mode, ":offset"), 0);
-			myconfig[counter].urgent = iniparser_getint (ini, string2arg (mode, ":urgent"), 0);
-			myconfig[counter].name = iniparser_getstring (ini, string2arg (mode, ":name"), NULL);
-			myconfig[counter].exec = iniparser_getstring (ini, string2arg (mode, ":exec"), NULL);
+			myconfig[counter].align = iniparser_getstring (ini, string2arg (mode, ":align").c_str(), (char *)("center"));
+			myconfig[counter].color = iniparser_getstring (ini, string2arg (mode, ":color").c_str(), (char *)("#ffffff"));
+			myconfig[counter].color_urgent = iniparser_getstring (ini, string2arg (mode, ":color_urgent").c_str(), (char *)("#ff0000"));
+			myconfig[counter].icon = iniparser_getstring (ini, string2arg (mode, ":icon").c_str(), NULL);
+			myconfig[counter].icon_mask = iniparser_getstring (ini, string2arg (mode, ":icon_mask").c_str(), NULL);
+			myconfig[counter].icon_ext = iniparser_getstring (ini, string2arg (mode, ":icon_ext").c_str(), (char *)(".xbm"));
+			myconfig[counter].icon_count = iniparser_getint (ini, string2arg (mode, ":icon_count").c_str(), 1);
+			myconfig[counter].card = iniparser_getstring (ini, string2arg (mode, ":card").c_str(), NULL);
+			myconfig[counter].device = iniparser_getstring (ini, string2arg (mode, ":device").c_str(), NULL);
+			myconfig[counter].format = iniparser_getstring (ini, string2arg (mode, ":format").c_str(), NULL);
+			myconfig[counter].program = iniparser_getstring (ini, string2arg (mode, ":program").c_str(), NULL);
+			myconfig[counter].offset = iniparser_getint (ini, string2arg (mode, ":offset").c_str(), 0);
+			myconfig[counter].urgent = iniparser_getint (ini, string2arg (mode, ":urgent").c_str(), 0);
+			myconfig[counter].name = iniparser_getstring (ini, string2arg (mode, ":name").c_str(), NULL);
+			myconfig[counter].exec = iniparser_getstring (ini, string2arg (mode, ":exec").c_str(), NULL);
 			}
 		}
 	cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
