@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <json-c/json.h>
+#include <string.h>
 
 #ifndef GET_INPUT_HPP
 #define GET_INPUT_HPP
