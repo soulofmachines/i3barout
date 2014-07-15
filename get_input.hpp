@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include "barconfig.hpp"
 
 #ifndef GET_INPUT_HPP
 #define GET_INPUT_HPP

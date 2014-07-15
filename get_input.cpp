@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include "barconfig.hpp"
 
 using namespace std;
 
