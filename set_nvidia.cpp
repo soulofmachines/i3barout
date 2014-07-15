@@ -35,6 +35,7 @@ int set_nvidia (barconfig &myconfig) {
 			return 0;
 		out = to_string (temp) + "°C";
 		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
+		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 		if (temp >= myconfig.urgent) {
 			json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent));
 			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent));

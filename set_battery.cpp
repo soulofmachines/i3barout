@@ -44,6 +44,7 @@ int set_battery (barconfig &myconfig) {
 	out = buffer;
 	out += " " + to_string (perc) + "%";
 	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
+	json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 	json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
 	json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align));
 	if (perc <= myconfig.urgent) {

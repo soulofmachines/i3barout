@@ -2,8 +2,10 @@
 #include <iniparser.h>
 #include <json-c/json.h>
 #include <iostream>
+#include <future>
 #include "barconfig.hpp"
 #include "set_var.hpp"
+#include "get_input.hpp"
 
 using namespace std;
 
@@ -64,6 +66,8 @@ int main () {
 			}
 		}
 	string mode;
+	vector <string> input_name;
+	vector <string> input_exec;
 	barconfig myconfig[ini_nsec];
 	for (int counter = 0; counter < ini_nsec; ++counter) {
 		mode = iniparser_getsecname (ini, counter);
@@ -83,10 +87,12 @@ int main () {
 			myconfig[counter].program = iniparser_getstring (ini, string2arg (mode, ":program"), NULL);
 			myconfig[counter].offset = iniparser_getint (ini, string2arg (mode, ":offset"), 0);
 			myconfig[counter].urgent = iniparser_getint (ini, string2arg (mode, ":urgent"), 0);
-			myconfig[counter].name = iniparser_getstring (ini, string2arg (mode, ":name"), NULL);
-			myconfig[counter].exec = iniparser_getstring (ini, string2arg (mode, ":exec"), NULL);
+			myconfig[counter].name = iniparser_getstring (ini, string2arg (mode, ":name"), (char *)("null"));
+			input_name.push_back (iniparser_getstring (ini, string2arg (mode, ":name"), (char *)("")));
+			input_exec.push_back (iniparser_getstring (ini, string2arg (mode, ":exec"), (char *)("")));
 			}
 		}
+	auto input = async (launch::async, get_input, input_name, input_exec);
 	cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
 	while (true) {
 		output = "";

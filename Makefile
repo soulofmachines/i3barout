@@ -1,9 +1,9 @@
 CC=g++
-LIBS=-liniparser -ljson-c -lasound
+LIBS=-liniparser -ljson-c -lasound -pthread
 CFLAGS=-std=c++11 -c -Wall -O3 -fomit-frame-pointer
 
-all: main.o file_to.o set_asound.o set_battery.o set_hwmon.o set_icon.o set_nvidia.o set_pause.o set_time.o set_wlan.o
-	$(CC) $(LIBS) main.o file_to.o set_asound.o set_battery.o set_hwmon.o set_icon.o set_nvidia.o set_pause.o set_time.o set_wlan.o -o i3barout
+all: main.o file_to.o set_asound.o set_battery.o set_hwmon.o set_icon.o set_nvidia.o set_pause.o set_time.o set_wlan.o get_input.o
+	$(CC) $(LIBS) main.o file_to.o set_asound.o set_battery.o set_hwmon.o set_icon.o set_nvidia.o set_pause.o set_time.o set_wlan.o get_input.o -o i3barout
 
 main.o:
 	$(CC) $(CFLAGS) main.cpp
@@ -34,6 +34,9 @@ set_time.o:
 
 set_wlan.o:
 	$(CC) $(CFLAGS) set_wlan.cpp
+
+get_input.o:
+	$(CC) $(CFLAGS) get_input.cpp
 
 clean:
 	rm *.o i3barout

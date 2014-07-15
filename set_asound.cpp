@@ -26,6 +26,7 @@ int set_asound (barconfig &myconfig) {
 		volume = int (volume_cur * 100 / (volume_max - volume_min));
 		out = to_string (volume) + "%";
 		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
+		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 		json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
 		json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align));
 		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
@@ -34,6 +35,7 @@ int set_asound (barconfig &myconfig) {
 		set_icon_mask (myconfig, volume, 100);
 	} else {
 		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string ("0%"));
+		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 		json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
 		json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align));
 		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent));
