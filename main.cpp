@@ -66,8 +66,7 @@ int main () {
 			}
 		}
 	string mode;
-	vector <string> input_name;
-	vector <string> input_exec;
+	vector <string> input_name, input_exec1, input_exec2, input_exec3;
 	barconfig myconfig[ini_nsec];
 	for (int counter = 0; counter < ini_nsec; ++counter) {
 		mode = iniparser_getsecname (ini, counter);
@@ -89,10 +88,12 @@ int main () {
 			myconfig[counter].urgent = iniparser_getint (ini, string2arg (mode, ":urgent"), 0);
 			myconfig[counter].name = iniparser_getstring (ini, string2arg (mode, ":name"), (char *)("null"));
 			input_name.push_back (iniparser_getstring (ini, string2arg (mode, ":name"), (char *)("")));
-			input_exec.push_back (iniparser_getstring (ini, string2arg (mode, ":exec"), (char *)("")));
+			input_exec1.push_back (iniparser_getstring (ini, string2arg (mode, ":exec1"), (char *)("")));
+			input_exec2.push_back (iniparser_getstring (ini, string2arg (mode, ":exec2"), (char *)("")));
+			input_exec3.push_back (iniparser_getstring (ini, string2arg (mode, ":exec3"), (char *)("")));
 			}
 		}
-	auto input = async (launch::async, get_input, input_name, input_exec);
+	auto input = async (launch::async, get_input, input_name, input_exec1, input_exec2, input_exec3);
 	cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
 	while (true) {
 		output = "";

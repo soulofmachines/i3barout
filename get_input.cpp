@@ -5,8 +5,9 @@
 
 using namespace std;
 
-void get_input (vector <string> input_name, vector <string> input_exec) {
-	string input, jinput;
+void get_input (vector <string> input_name, vector <string> input_exec1, vector <string> input_exec2, vector <string> input_exec3) {
+	string input, jinput, name;
+	int button = 0;
 	size_t begin, end;
 	json_object *jobj;
 	json_tokener_error jerr;
@@ -20,11 +21,24 @@ void get_input (vector <string> input_name, vector <string> input_exec) {
 			if (jerr == json_tokener_success) {
 				json_object_object_foreach(jobj, key, val) {
 					if (strcmp (key, "name") == 0) {
-						for (u_int counter = 0; counter < input_name.size(); ++counter) {
-							if (strcmp (json_object_get_string(val), input_name[counter].c_str()) == 0) {
-								if (input_exec[counter].size() != 0)
-									system (input_exec[counter].c_str());
-								}
+						name = json_object_get_string(val);
+						}
+					if (strcmp (key, "button") == 0) {
+						button = json_object_get_int(val);
+						}
+					}
+				for (u_int counter = 0; counter < input_name.size(); ++counter) {
+					if (input_name[counter] == name) {
+						switch (button) {
+							case 1:
+								system (input_exec1[counter].c_str());
+								break;
+							case 2:
+								system (input_exec2[counter].c_str());
+								break;
+							case 3:
+								system (input_exec3[counter].c_str());
+								break;
 							}
 						}
 					}
