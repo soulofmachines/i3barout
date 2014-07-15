@@ -13,7 +13,7 @@ int set_hwmon (barconfig &myconfig) {
 	long temp = file_to_long (myconfig.device, fail);
 	if (fail == true)
 		return 0;
-	temp = temp / myconfig.offset;
+	temp /= myconfig.offset;
 	out = to_string (temp) + "°C";
 	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 	if (temp >= myconfig.urgent) {
