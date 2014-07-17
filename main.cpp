@@ -87,6 +87,7 @@ int main () {
 			myconfig[counter].offset = iniparser_getint (ini, string2arg (mode, ":offset"), 0);
 			myconfig[counter].urgent = iniparser_getint (ini, string2arg (mode, ":urgent"), 0);
 			myconfig[counter].name = iniparser_getstring (ini, string2arg (mode, ":name"), (char *)("null"));
+			myconfig[counter].width = iniparser_getboolean (ini, string2arg (mode, ":width"), false);
 			input_name.push_back (iniparser_getstring (ini, string2arg (mode, ":name"), (char *)("")));
 			input_exec1.push_back (iniparser_getstring (ini, string2arg (mode, ":exec1"), (char *)("")));
 			input_exec2.push_back (iniparser_getstring (ini, string2arg (mode, ":exec2"), (char *)("")));

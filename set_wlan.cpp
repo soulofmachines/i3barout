@@ -46,7 +46,8 @@ int set_wlan (barconfig &myconfig) {
 	width = name + " 100%";
 	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 	json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
-	json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
+	if (myconfig.width)
+		json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
 	json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align));
 	json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
 	set_icon (myconfig);

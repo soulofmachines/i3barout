@@ -26,6 +26,7 @@ class barconfig {
 		const char *card, *device, *format, *program;
 		int offset, urgent;
 		char *name;
+		bool width;
 	};
 
 
