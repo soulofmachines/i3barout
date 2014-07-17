@@ -47,14 +47,20 @@ int set_battery (barconfig &myconfig) {
 	json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 	json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
 	json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align));
-	if (perc <= myconfig.urgent) {
-		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent));
-		json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent));
+	if (strcmp (status.c_str(), "Discharging\n") == 0) {
+		if (perc <= myconfig.urgent) {
+			json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent));
+			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent));
+		} else {
+			json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
+			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+			}
+		set_icon_mask (myconfig, perc, 100);
 	} else {
 		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
 		json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color));
+		set_icon_mask_zero (myconfig);
 		}
 	set_icon (myconfig);
-	set_icon_mask (myconfig, perc, 100);
 	return 0;
 }
