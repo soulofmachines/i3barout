@@ -9,7 +9,7 @@
 using namespace std;
 
 int set_wlan (barconfig &myconfig) {
-	string out, name, width;
+	string out = myconfig.prefix, name, width = myconfig.prefix;
 	int perc;
 	struct iwreq req;
 	struct iw_statistics stat;
@@ -29,7 +29,7 @@ int set_wlan (barconfig &myconfig) {
 	req.u.data.pointer = &stat;
 	req.u.data.length = sizeof(stat);
 	if(ioctl(soketfd, SIOCGIWSTATS, &req) == -1) {
-		out = "Null";
+		out += "Null";
 		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
@@ -42,8 +42,8 @@ int set_wlan (barconfig &myconfig) {
 	if(ioctl(soketfd, SIOCGIWRANGE, &req) == -1)
 		return 0;
 	perc = int (char (stat.qual.qual)) * 100 / int (char (range.max_qual.qual));
-	out = name + " " + to_string (perc) + "%";
-	width = name + " 100%";
+	out += name + " " + to_string (perc) + "%";
+	width += name + " 100%";
 	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 	json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 	if (myconfig.width)

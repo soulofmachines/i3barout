@@ -9,12 +9,12 @@ int set_hwmon (barconfig &myconfig) {
 		return 0;
 	bool fail;
 	fail = false;
-	string out;
+	string out = myconfig.prefix;
 	long temp = file_to_long (myconfig.device, fail);
 	if (fail == true)
 		return 0;
 	temp /= myconfig.offset;
-	out = to_string (temp) + "°C";
+	out += to_string (temp) + "°C";
 	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 	json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 	if (temp >= myconfig.urgent) {

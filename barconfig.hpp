@@ -25,7 +25,7 @@ class barconfig {
 		int icon_count;
 		const char *card, *device, *format, *program;
 		int offset, urgent;
-		char *name;
+		char *name, *prefix;
 		bool width;
 	};
 

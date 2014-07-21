@@ -20,7 +20,7 @@ int set_nvidia (barconfig &myconfig) {
 	infile.open("/proc/modules");
 	stringstream ss;
 	ss << infile.rdbuf();
-	string out, fields, file = ss.str();
+	string out = myconfig.prefix, fields, file = ss.str();
 	if ( ( file.find ("\nnvidia ") != string::npos ) || ( file.find ("nvidia ") == 0 ) ) {
 		bool fail;
 		fail = false;
@@ -33,7 +33,7 @@ int set_nvidia (barconfig &myconfig) {
 		long temp = string_to_long (fields.substr (fields.find (myconfig.format) + myconfig.offset, 2), fail);
 		if (fail == true)
 			return 0;
-		out = to_string (temp) + "°C";
+		out += to_string (temp) + "°C";
 		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 		if (temp >= myconfig.urgent) {

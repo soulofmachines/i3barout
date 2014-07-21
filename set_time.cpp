@@ -5,13 +5,15 @@
 using namespace std;
 
 int set_time (barconfig &myconfig) {
+	string out = myconfig.prefix;
 	time_t rawtime;
 	struct tm *timeinfo;
 	char buffer[128];
 	time (&rawtime);
 	timeinfo = localtime (&rawtime);
 	strftime (buffer, 128, myconfig.format, timeinfo);
-	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (buffer));
+	out += buffer;
+	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 	json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
 	json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
 	set_icon (myconfig);
