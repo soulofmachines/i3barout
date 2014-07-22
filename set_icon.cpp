@@ -1,15 +1,16 @@
+#include <string.h>
 #include "barconfig.hpp"
 
 using namespace std;
 
 void set_icon (barconfig &myconfig) {
-	if (myconfig.icon != NULL)
+	if (strlen (myconfig.icon) != 0)
 		json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
 	return;
 	}
 
 void set_icon_mask (barconfig &myconfig, int value, int max) {
-	if (myconfig.icon_mask != NULL) {
+	if (strlen (myconfig.icon_mask) != 0) {
 		string icon;
 		for (int counter = myconfig.icon_count; counter >= 0; --counter)
 			if (value <= max * counter / myconfig.icon_count)
@@ -22,7 +23,7 @@ void set_icon_mask (barconfig &myconfig, int value, int max) {
 	}
 
 void set_icon_mask_zero (barconfig &myconfig) {
-	if (myconfig.icon_mask != NULL) {
+	if (strlen (myconfig.icon_mask) != 0) {
 		string icon;
 		icon = myconfig.icon_mask + to_string (0) + myconfig.icon_ext;
 		json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));

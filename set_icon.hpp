@@ -1,3 +1,4 @@
+#include <string.h>
 #include "barconfig.hpp"
 
 #ifndef SET_ICON_HPP

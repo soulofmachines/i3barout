@@ -20,28 +20,27 @@ void get_input (vector <string> input_name, vector <string> input_exec1, vector 
 			jobj = json_tokener_parse_verbose (jinput.c_str(), &jerr);
 			if (jerr == json_tokener_success) {
 				json_object_object_foreach(jobj, key, val) {
-					if (strcmp (key, "name") == 0) {
+					if (strcmp (key, "name") == 0)
 						name = json_object_get_string(val);
-						}
-					if (strcmp (key, "button") == 0) {
+					if (strcmp (key, "button") == 0)
 						button = json_object_get_int(val);
-						}
 					}
-				for (u_int counter = 0; counter < input_name.size(); ++counter) {
-					if (input_name[counter] == name) {
+				for (u_int counter = 0; counter < input_name.size(); ++counter)
+					if (input_name[counter] == name)
 						switch (button) {
 							case 1:
-								system (input_exec1[counter].c_str());
+								if (input_exec1[counter].size() != 0)
+									system (input_exec1[counter].c_str());
 								break;
 							case 2:
-								system (input_exec2[counter].c_str());
+								if (input_exec2[counter].size() != 0)
+									system (input_exec2[counter].c_str());
 								break;
 							case 3:
-								system (input_exec3[counter].c_str());
+								if (input_exec3[counter].size() != 0)
+									system (input_exec3[counter].c_str());
 								break;
 							}
-						}
-					}
 				}
 			}
 		}

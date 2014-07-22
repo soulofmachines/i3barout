@@ -4,4 +4,3 @@ dependencies:
 + C++11
 + alsa
 + json-c
-+ iniparser

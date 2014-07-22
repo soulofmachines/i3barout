@@ -1,5 +1,7 @@
 #include <pwd.h>
-#include <iniparser.h>
+#include <unistd.h>
+#include <fstream>
+#include <sstream>
 #include <json-c/json.h>
 #include <iostream>
 #include <future>
@@ -45,61 +47,89 @@ int json_setout (json_object *json_output) {
 	}
 
 int main () {
-	int ini_nsec = 0;
+	vector <barconfig> myconfig;
+	vector <string> input_name, input_exec1, input_exec2, input_exec3;
+	int lines = 0;
+	ifstream configfile;
+	stringstream ss;
 	struct passwd *pw = getpwuid (getuid());
 	char *dir = pw->pw_dir;
-	strcat (dir, "/.i3/i3barout.ini");
-	dictionary *ini;
-	ini = iniparser_load(dir);
-	while (iniparser_getsecname (ini, ini_nsec) != NULL)
-		ini_nsec += 1;
-	if (ini_nsec == 0) {
-		ini = iniparser_load("/etc/i3/i3barout.ini");
-		while (iniparser_getsecname (ini, ini_nsec) != NULL)
-			ini_nsec += 1;
-		if (ini_nsec == 0) {
-			ini = iniparser_load("i3barout.ini");
-			while (iniparser_getsecname (ini, ini_nsec) != NULL)
-				ini_nsec += 1;
-			if (ini_nsec == 0)
-				return 0;
-			}
+	strcat (dir, "/.i3/i3barout.json");
+	configfile.open (dir);
+	if (!configfile.is_open())
+		configfile.open ("/etc/i3/i3barout.json");
+	if (!configfile.is_open())
+		configfile.open ("i3barout.json");
+	if (!configfile.is_open()) {
+		cout << "i3barout.json not found" << endl;
+		return 0;
 		}
-	string mode;
-	vector <string> input_name, input_exec1, input_exec2, input_exec3;
-	barconfig myconfig[ini_nsec];
-	for (int counter = 0; counter < ini_nsec; ++counter) {
-		mode = iniparser_getsecname (ini, counter);
-		myconfig[counter].mode = str2modes (iniparser_getstring (ini, string2arg (mode, ":mode"), (char *)("null")));
-		if (myconfig[counter].mode != m_null) {
-			myconfig[counter].json_output = json_object_new_object();
-			myconfig[counter].align = iniparser_getstring (ini, string2arg (mode, ":align"), (char *)("center"));
-			myconfig[counter].color = iniparser_getstring (ini, string2arg (mode, ":color"), (char *)("#ffffff"));
-			myconfig[counter].color_urgent = iniparser_getstring (ini, string2arg (mode, ":color_urgent"), (char *)("#ff0000"));
-			myconfig[counter].icon = iniparser_getstring (ini, string2arg (mode, ":icon"), NULL);
-			myconfig[counter].icon_mask = iniparser_getstring (ini, string2arg (mode, ":icon_mask"), NULL);
-			myconfig[counter].icon_ext = iniparser_getstring (ini, string2arg (mode, ":icon_ext"), (char *)(".xbm"));
-			myconfig[counter].icon_count = iniparser_getint (ini, string2arg (mode, ":icon_count"), 1);
-			myconfig[counter].card = iniparser_getstring (ini, string2arg (mode, ":card"), NULL);
-			myconfig[counter].device = iniparser_getstring (ini, string2arg (mode, ":device"), NULL);
-			myconfig[counter].format = iniparser_getstring (ini, string2arg (mode, ":format"), NULL);
-			myconfig[counter].program = iniparser_getstring (ini, string2arg (mode, ":program"), NULL);
-			myconfig[counter].offset = iniparser_getint (ini, string2arg (mode, ":offset"), 0);
-			myconfig[counter].urgent = iniparser_getint (ini, string2arg (mode, ":urgent"), 0);
-			myconfig[counter].name = iniparser_getstring (ini, string2arg (mode, ":name"), (char *)("null"));
-			myconfig[counter].prefix = iniparser_getstring (ini, string2arg (mode, ":prefix"), (char *)(""));
-			myconfig[counter].width = iniparser_getboolean (ini, string2arg (mode, ":width"), false);
-			input_name.push_back (iniparser_getstring (ini, string2arg (mode, ":name"), (char *)("")));
-			input_exec1.push_back (iniparser_getstring (ini, string2arg (mode, ":exec1"), (char *)("")));
-			input_exec2.push_back (iniparser_getstring (ini, string2arg (mode, ":exec2"), (char *)("")));
-			input_exec3.push_back (iniparser_getstring (ini, string2arg (mode, ":exec3"), (char *)("")));
+	ss << configfile.rdbuf();
+	configfile.close();
+	string config;
+	json_object *jobj;
+	json_tokener_error jerr;
+	while (getline(ss, config)) {
+		jobj = json_tokener_parse_verbose (config.c_str(), &jerr);
+		if (jerr == json_tokener_success) {
+			myconfig.push_back(barconfig());
+			myconfig[lines].json_output = json_object_new_object();
+			input_name.push_back ("");
+			input_exec1.push_back ("");
+			input_exec2.push_back ("");
+			input_exec3.push_back ("");
+			json_object_object_foreach(jobj, key, val) {
+				if (strcmp (key, "mode") == 0)
+					myconfig[lines].mode = str2modes (json_object_get_string(val));
+				if (strcmp (key, "card") == 0)
+					myconfig[lines].card = (char *) json_object_get_string(val);
+				if (strcmp (key, "device") == 0)
+					myconfig[lines].device = (char *) json_object_get_string(val);
+				if (strcmp (key, "format") == 0)
+					myconfig[lines].format = (char *) json_object_get_string(val);
+				if (strcmp (key, "program") == 0)
+					myconfig[lines].program = (char *) json_object_get_string(val);
+				if (strcmp (key, "align") == 0)
+					myconfig[lines].align = (char *) json_object_get_string(val);
+				if (strcmp (key, "color") == 0)
+					myconfig[lines].color = (char *) json_object_get_string(val);
+				if (strcmp (key, "color_urgent") == 0)
+					myconfig[lines].color_urgent = (char *) json_object_get_string(val);
+				if (strcmp (key, "icon") == 0)
+					myconfig[lines].icon = (char *) json_object_get_string(val);
+				if (strcmp (key, "icon_mask") == 0)
+					myconfig[lines].icon_mask = (char *) json_object_get_string(val);
+				if (strcmp (key, "icon_ext") == 0)
+					myconfig[lines].icon_ext = (char *) json_object_get_string(val);
+				if (strcmp (key, "name") == 0)
+					myconfig[lines].name = (char *) json_object_get_string(val);
+				if (strcmp (key, "prefix") == 0)
+					myconfig[lines].prefix = (char *) json_object_get_string(val);
+				if (strcmp (key, "icon_count") == 0)
+					myconfig[lines].icon_count = (int) json_object_get_int(val);
+				if (strcmp (key, "offset") == 0)
+					myconfig[lines].offset = (int) json_object_get_int(val);
+				if (strcmp (key, "urgent") == 0)
+					myconfig[lines].urgent = (int) json_object_get_int(val);
+				if (strcmp (key, "width") == 0)
+					myconfig[lines].width = (bool) json_object_get_boolean(val);
+				if (strcmp (key, "name") == 0)
+					input_name[lines] = json_object_get_string(val);
+				if (strcmp (key, "exec1") == 0)
+					input_exec1[lines] = json_object_get_string(val);
+				if (strcmp (key, "exec2") == 0)
+					input_exec2[lines] = json_object_get_string(val);
+				if (strcmp (key, "exec3") == 0)
+					input_exec3[lines] = json_object_get_string(val);
+				}
+			lines += 1;
 			}
 		}
 	auto input = async (launch::async, get_input, input_name, input_exec1, input_exec2, input_exec3);
 	cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
 	while (true) {
 		output = "";
-		for (int counter = 0; counter < ini_nsec; ++counter) {
+		for (int counter = 0; counter < lines; ++counter) {
 			switch (myconfig[counter].mode) {
 				case m_null:
 					break;
@@ -132,6 +162,6 @@ int main () {
 		cout << "[\n" << output << "\n]," << endl;
 		set_pause (5);
 		}
-	iniparser_freedict(ini);
+//	iniparser_freedict(ini);
 	return 0;
 }

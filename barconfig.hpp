@@ -18,15 +18,15 @@ enum modes {
 
 class barconfig {
 	public:
-		modes mode;
+		modes mode = m_null;
 		json_object *json_output;
-		char *align, *color, *color_urgent;
-		char *icon, *icon_mask, *icon_ext;
-		int icon_count;
-		const char *card, *device, *format, *program;
-		int offset, urgent;
-		char *name, *prefix;
-		bool width;
+		char *align = "center", *color = "#ffffff", *color_urgent = "#ff0000";
+		char *icon = "", *icon_mask = "", *icon_ext = "";
+		int icon_count = 0;
+		char *card = "", *device = "", *format = "", *program = "";
+		int offset = 0, urgent = 0;
+		char *name = "", *prefix = "";
+		bool width = false;
 	};
 
 
