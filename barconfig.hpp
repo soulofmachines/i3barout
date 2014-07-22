@@ -20,12 +20,12 @@ class barconfig {
 	public:
 		modes mode = m_null;
 		json_object *json_output;
-		char *align = "center", *color = "#ffffff", *color_urgent = "#ff0000";
-		char *icon = "", *icon_mask = "", *icon_ext = "";
+		string align = "center", color = "#ffffff", color_urgent = "#ff0000";
+		string icon = "", icon_mask = "", icon_ext = "";
 		int icon_count = 0;
-		char *card = "", *device = "", *format = "", *program = "";
+		string card = "", device = "", format = "", program = "";
 		int offset = 0, urgent = 0;
-		char *name = "", *prefix = "";
+		string name = "", prefix = "";
 		bool width = false;
 	};
 

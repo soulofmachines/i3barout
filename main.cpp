@@ -41,7 +41,7 @@ int json_setout (json_object *json_output) {
 			output += json_object_to_json_string (json_output);
 			}
 		json_object_object_foreach (json_output, key, val)
-		json_object_object_del (json_output, key);
+			json_object_object_del (json_output, key);
 		}
 	return 0;
 	}
@@ -82,37 +82,37 @@ int main () {
 				if (strcmp (key, "mode") == 0)
 					myconfig[lines].mode = str2modes (json_object_get_string(val));
 				if (strcmp (key, "card") == 0)
-					myconfig[lines].card = (char *) json_object_get_string(val);
+					myconfig[lines].card = json_object_get_string(val);
 				if (strcmp (key, "device") == 0)
-					myconfig[lines].device = (char *) json_object_get_string(val);
+					myconfig[lines].device = json_object_get_string(val);
 				if (strcmp (key, "format") == 0)
-					myconfig[lines].format = (char *) json_object_get_string(val);
+					myconfig[lines].format = json_object_get_string(val);
 				if (strcmp (key, "program") == 0)
-					myconfig[lines].program = (char *) json_object_get_string(val);
+					myconfig[lines].program = json_object_get_string(val);
 				if (strcmp (key, "align") == 0)
-					myconfig[lines].align = (char *) json_object_get_string(val);
+					myconfig[lines].align = json_object_get_string(val);
 				if (strcmp (key, "color") == 0)
-					myconfig[lines].color = (char *) json_object_get_string(val);
+					myconfig[lines].color = json_object_get_string(val);
 				if (strcmp (key, "color_urgent") == 0)
-					myconfig[lines].color_urgent = (char *) json_object_get_string(val);
+					myconfig[lines].color_urgent = json_object_get_string(val);
 				if (strcmp (key, "icon") == 0)
-					myconfig[lines].icon = (char *) json_object_get_string(val);
+					myconfig[lines].icon = json_object_get_string(val);
 				if (strcmp (key, "icon_mask") == 0)
-					myconfig[lines].icon_mask = (char *) json_object_get_string(val);
+					myconfig[lines].icon_mask = json_object_get_string(val);
 				if (strcmp (key, "icon_ext") == 0)
-					myconfig[lines].icon_ext = (char *) json_object_get_string(val);
+					myconfig[lines].icon_ext = json_object_get_string(val);
 				if (strcmp (key, "name") == 0)
-					myconfig[lines].name = (char *) json_object_get_string(val);
+					myconfig[lines].name = json_object_get_string(val);
 				if (strcmp (key, "prefix") == 0)
-					myconfig[lines].prefix = (char *) json_object_get_string(val);
+					myconfig[lines].prefix = json_object_get_string(val);
 				if (strcmp (key, "icon_count") == 0)
-					myconfig[lines].icon_count = (int) json_object_get_int(val);
+					myconfig[lines].icon_count = json_object_get_int(val);
 				if (strcmp (key, "offset") == 0)
-					myconfig[lines].offset = (int) json_object_get_int(val);
+					myconfig[lines].offset = json_object_get_int(val);
 				if (strcmp (key, "urgent") == 0)
-					myconfig[lines].urgent = (int) json_object_get_int(val);
+					myconfig[lines].urgent = json_object_get_int(val);
 				if (strcmp (key, "width") == 0)
-					myconfig[lines].width = (bool) json_object_get_boolean(val);
+					myconfig[lines].width = json_object_get_boolean(val);
 				if (strcmp (key, "name") == 0)
 					input_name[lines] = json_object_get_string(val);
 				if (strcmp (key, "exec1") == 0)
@@ -162,6 +162,5 @@ int main () {
 		cout << "[\n" << output << "\n]," << endl;
 		set_pause (5);
 		}
-//	iniparser_freedict(ini);
 	return 0;
 }

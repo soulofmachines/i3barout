@@ -18,7 +18,7 @@ int set_wlan (barconfig &myconfig) {
 	char *id[IW_ESSID_MAX_SIZE+1];
 	memset(&req, 0, sizeof(iwreq));
 	req.u.essid.length = IW_ESSID_MAX_SIZE+1;
-	memcpy(req.ifr_name, myconfig.device, strlen (myconfig.device));
+	memcpy(req.ifr_name, myconfig.device.c_str(), myconfig.device.size());
 	if((soketfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
 		return 0;
 	req.u.essid.pointer = id;
@@ -31,8 +31,8 @@ int set_wlan (barconfig &myconfig) {
 	if(ioctl(soketfd, SIOCGIWSTATS, &req) == -1) {
 		out += "Null";
 		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
-		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
+		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
+		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
 		set_icon (myconfig);
 		return 0;
 		}
@@ -45,11 +45,11 @@ int set_wlan (barconfig &myconfig) {
 	out += name + " " + to_string (perc) + "%";
 	width += name + " 100%";
 	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-	json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name));
+	json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
 	if (myconfig.width)
 		json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
-	json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align));
-	json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color));
+	json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align.c_str()));
+	json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
 	set_icon (myconfig);
 	close(soketfd);
 	return 0;

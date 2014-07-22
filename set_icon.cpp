@@ -4,13 +4,13 @@
 using namespace std;
 
 void set_icon (barconfig &myconfig) {
-	if (strlen (myconfig.icon) != 0)
-		json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon));
+	if (myconfig.icon.size() != 0)
+		json_object_object_add(myconfig.json_output, "icon", json_object_new_string (myconfig.icon.c_str()));
 	return;
 	}
 
 void set_icon_mask (barconfig &myconfig, int value, int max) {
-	if (strlen (myconfig.icon_mask) != 0) {
+	if (myconfig.icon_mask.size() != 0) {
 		string icon;
 		for (int counter = myconfig.icon_count; counter >= 0; --counter)
 			if (value <= max * counter / myconfig.icon_count)
@@ -23,7 +23,7 @@ void set_icon_mask (barconfig &myconfig, int value, int max) {
 	}
 
 void set_icon_mask_zero (barconfig &myconfig) {
-	if (strlen (myconfig.icon_mask) != 0) {
+	if (myconfig.icon_mask.size() != 0) {
 		string icon;
 		icon = myconfig.icon_mask + to_string (0) + myconfig.icon_ext;
 		json_object_object_add(myconfig.json_output, "icon", json_object_new_string (icon.c_str()));
