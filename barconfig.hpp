@@ -11,6 +11,7 @@ enum modes {
 	m_asound,
 	m_battery,
 	m_hwmon,
+	m_ip4,
 	m_nvidia,
 	m_time,
 	m_wlan
