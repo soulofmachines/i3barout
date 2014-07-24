@@ -15,13 +15,17 @@ long string_to_long (string value, bool &fail) {
 	return stol (value);
 }
 
-int set_nvidia (barconfig &myconfig, bool line) {
-	myconfig.line_output = myconfig.line_prefix;
+int set_nvidia (barconfig &myconfig, bool json) {
+	string out;
+	if (json)
+		out = myconfig.prefix;
+	else
+		out = myconfig.line_prefix;
 	ifstream infile;
 	infile.open("/proc/modules");
 	stringstream ss;
 	ss << infile.rdbuf();
-	string out = myconfig.prefix, fields, file = ss.str();
+	string fields, file = ss.str();
 	if ( ( file.find ("\nnvidia ") != string::npos ) || ( file.find ("nvidia ") == 0 ) ) {
 		bool fail;
 		fail = false;
@@ -35,9 +39,10 @@ int set_nvidia (barconfig &myconfig, bool line) {
 		if (fail == true)
 			return 0;
 		out += to_string (temp) + "°C";
-		if (!line) {
+		if (json) {
 			json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-			json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
+			if (myconfig.name.size() > 0)
+				json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
 			if (temp >= myconfig.urgent) {
 				json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent.c_str()));
 				json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent.c_str()));
@@ -45,9 +50,9 @@ int set_nvidia (barconfig &myconfig, bool line) {
 				json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
 				json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color.c_str()));
 				}
+			set_icon (myconfig);
 		} else
-			myconfig.line_output += out;
-		set_icon (myconfig);
+			myconfig.line_output = out;
 		pclose(fd);
 		}
 	return 0;

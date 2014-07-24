@@ -4,10 +4,14 @@
 
 using namespace std;
 
-int set_asound (barconfig &myconfig, bool line) {
-	string out = myconfig.prefix, icon, width = myconfig.prefix;
-	myconfig.line_output = myconfig.line_prefix;
-	width += "100%";
+int set_asound (barconfig &myconfig, bool json) {
+	string out, width;
+	if (json) {
+		out = myconfig.prefix;
+		width = myconfig.prefix;
+		width += "100%";
+	} else
+		out = myconfig.line_prefix;
 	int volume_mute, volume;
 	long volume_cur, volume_min, volume_max;
 	snd_mixer_t *handle;
@@ -27,9 +31,10 @@ int set_asound (barconfig &myconfig, bool line) {
 		snd_mixer_selem_get_playback_volume_range(elem, &volume_min, &volume_max);
 		volume = int (volume_cur * 100 / (volume_max - volume_min));
 		out += to_string (volume) + "%";
-		if (!line) {
+		if (json) {
 			json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-			json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
+			if (myconfig.name.size() > 0)
+				json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
 			if (myconfig.width)
 				json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
 			json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align.c_str()));
@@ -38,12 +43,13 @@ int set_asound (barconfig &myconfig, bool line) {
 			set_icon (myconfig);
 			set_icon_mask (myconfig, volume, 100);
 		} else 
-			myconfig.line_output += out;
+			myconfig.line_output = out;
 	} else {
 		out += "0%";
-		if (!line) {
+		if (json) {
 			json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-			json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
+			if (myconfig.name.size() > 0)
+				json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
 			if (myconfig.width)
 				json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
 			json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align.c_str()));
@@ -52,7 +58,7 @@ int set_asound (barconfig &myconfig, bool line) {
 			set_icon (myconfig);
 			set_icon_mask_zero (myconfig);
 		} else
-			myconfig.line_output += out;
+			myconfig.line_output = out;
 		}
 	snd_mixer_close(handle);
 	return 0;

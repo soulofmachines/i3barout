@@ -63,10 +63,10 @@ int line_setout (string &line_output) {
 
 
 int main (int argc, char *argv[]) {
-	bool varforcycle = true;
+	bool infinite = true;
 	bool background_input = true;
-	bool onetime = true;
-	bool line = false;
+	bool onetime = false;
+	bool json = true;
 	ifstream configfile;
 	stringstream ss;
 	if (argc > 1) {
@@ -74,7 +74,7 @@ int main (int argc, char *argv[]) {
 		while ((cmd = getopt (argc, argv, "1c:l")) != -1)
 			switch (cmd) {
 				case '1':
-					varforcycle = false;
+					onetime = true;
 					background_input = false;
 					break;
 				case 'c':
@@ -83,7 +83,7 @@ int main (int argc, char *argv[]) {
 						cerr << optarg << " not found" << endl;
 					break;
 				case 'l':
-					line = true;
+					json = false;
 					background_input = false;
 					break;
 				};
@@ -114,7 +114,8 @@ int main (int argc, char *argv[]) {
 		jobj = json_tokener_parse_verbose (config.c_str(), &jerr);
 		if (jerr == json_tokener_success) {
 			myconfig.push_back(barconfig());
-			myinput.push_back(input_exec());
+			if (background_input)
+				myinput.push_back(input_exec());
 			myconfig[lines].json_output = json_object_new_object();
 			json_object_object_foreach(jobj, key, val) {
 				if (strcmp (key, "mode") == 0)
@@ -127,116 +128,96 @@ int main (int argc, char *argv[]) {
 					myconfig[lines].format = json_object_get_string(val);
 				if (strcmp (key, "program") == 0)
 					myconfig[lines].program = json_object_get_string(val);
-				if (strcmp (key, "align") == 0)
-					myconfig[lines].align = json_object_get_string(val);
-				if (strcmp (key, "color") == 0)
-					myconfig[lines].color = json_object_get_string(val);
-				if (strcmp (key, "color_urgent") == 0)
-					myconfig[lines].color_urgent = json_object_get_string(val);
-				if (strcmp (key, "icon") == 0)
-					myconfig[lines].icon = json_object_get_string(val);
-				if (strcmp (key, "icon_mask") == 0)
-					myconfig[lines].icon_mask = json_object_get_string(val);
-				if (strcmp (key, "icon_ext") == 0)
-					myconfig[lines].icon_ext = json_object_get_string(val);
-				if (strcmp (key, "name") == 0)
-					myconfig[lines].name = json_object_get_string(val);
-				if (strcmp (key, "prefix") == 0)
-					myconfig[lines].prefix = json_object_get_string(val);
-				if (strcmp (key, "icon_count") == 0)
-					myconfig[lines].icon_count = json_object_get_int(val);
 				if (strcmp (key, "offset") == 0)
 					myconfig[lines].offset = json_object_get_int(val);
-				if (strcmp (key, "urgent") == 0)
-					myconfig[lines].urgent = json_object_get_int(val);
-				if (strcmp (key, "width") == 0)
-					myconfig[lines].width = json_object_get_boolean(val);
-				if (strcmp (key, "name") == 0)
-					myinput.back().name = json_object_get_string(val);
-				if (strcmp (key, "exec1") == 0)
-					myinput.back().exec1 = json_object_get_string(val);
-				if (strcmp (key, "exec2") == 0)
-					myinput.back().exec2 = json_object_get_string(val);
-				if (strcmp (key, "exec3") == 0)
-					myinput.back().exec3 = json_object_get_string(val);
-				if (strcmp (key, "line_prefix") == 0)
-					myconfig[lines].line_prefix = json_object_get_string(val);
+				if (json) {
+					if (strcmp (key, "align") == 0)
+						myconfig[lines].align = json_object_get_string(val);
+					if (strcmp (key, "color") == 0)
+						myconfig[lines].color = json_object_get_string(val);
+					if (strcmp (key, "color_urgent") == 0)
+						myconfig[lines].color_urgent = json_object_get_string(val);
+					if (strcmp (key, "icon") == 0)
+						myconfig[lines].icon = json_object_get_string(val);
+					if (strcmp (key, "icon_mask") == 0)
+						myconfig[lines].icon_mask = json_object_get_string(val);
+					if (strcmp (key, "icon_ext") == 0)
+						myconfig[lines].icon_ext = json_object_get_string(val);
+					if (strcmp (key, "name") == 0)
+						myconfig[lines].name = json_object_get_string(val);
+					if (strcmp (key, "prefix") == 0)
+						myconfig[lines].prefix = json_object_get_string(val);
+					if (strcmp (key, "icon_count") == 0)
+						myconfig[lines].icon_count = json_object_get_int(val);
+					if (strcmp (key, "urgent") == 0)
+						myconfig[lines].urgent = json_object_get_int(val);
+					if (strcmp (key, "width") == 0)
+						myconfig[lines].width = json_object_get_boolean(val);
+				} else
+					if (strcmp (key, "line_prefix") == 0)
+						myconfig[lines].line_prefix = json_object_get_string(val);
+				if (background_input) {
+					if (strcmp (key, "name") == 0)
+						myinput.back().name = json_object_get_string(val);
+					if (strcmp (key, "exec1") == 0)
+						myinput.back().exec1 = json_object_get_string(val);
+					if (strcmp (key, "exec2") == 0)
+						myinput.back().exec2 = json_object_get_string(val);
+					if (strcmp (key, "exec3") == 0)
+						myinput.back().exec3 = json_object_get_string(val);
+					}
 				}
-			if (myinput.back().name.size() == 0)
-				myinput.pop_back();
+			if ((background_input) && (myinput.back().name.size() == 0))
+					myinput.pop_back();
 			lines += 1;
 			}
 		}
 	if (myinput.size() == 0)
 		background_input = false;
 	auto input = async (launch::async, get_input, myinput, background_input);
-	if (!line)
+	if (json)
 		cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
-	while (onetime) {
+	while (infinite) {
 		output = "";
 		for (int counter = 0; counter < lines; ++counter) {
 			switch (myconfig[counter].mode) {
 				case m_null:
 					break;
 				case m_asound:
-					set_asound (myconfig[counter], line);
-					if (!line)
-						json_setout (myconfig[counter].json_output);
-					else
-						line_setout (myconfig[counter].line_output);
+					set_asound (myconfig[counter], json);
 					break;
 				case m_battery:
-					set_battery (myconfig[counter], line);
-					if (!line)
-						json_setout (myconfig[counter].json_output);
-					else
-						line_setout (myconfig[counter].line_output);
+					set_battery (myconfig[counter], json);
 					break;
 				case m_hwmon:
-					set_hwmon (myconfig[counter], line);
-					if (!line)
-						json_setout (myconfig[counter].json_output);
-					else
-						line_setout (myconfig[counter].line_output);
+					set_hwmon (myconfig[counter], json);
 					break;
 				case m_ip4:
-					set_ip4 (myconfig[counter], line);
-					if (!line)
-						json_setout (myconfig[counter].json_output);
-					else
-						line_setout (myconfig[counter].line_output);
+					set_ip4 (myconfig[counter], json);
 					break;
 				case m_nvidia:
-					set_nvidia (myconfig[counter], line);
-					if (!line)
-						json_setout (myconfig[counter].json_output);
-					else
-						line_setout (myconfig[counter].line_output);
+					set_nvidia (myconfig[counter], json);
 					break;
 				case m_time:
-					set_time (myconfig[counter], line);
-					if (!line)
-						json_setout (myconfig[counter].json_output);
-					else
-						line_setout (myconfig[counter].line_output);
+					set_time (myconfig[counter], json);
 					break;
 				case m_wlan:
-					set_wlan (myconfig[counter], line);
-					if (!line)
-						json_setout (myconfig[counter].json_output);
-					else
-						line_setout (myconfig[counter].line_output);
+					set_wlan (myconfig[counter], json);
 					break;
 				}
+			if (json)
+				json_setout (myconfig[counter].json_output);
+			else
+				line_setout (myconfig[counter].line_output);
 			}
-		if (!line)
+		if (json)
 			cout << "[\n" << output << "\n]," << endl;
 		else
 			cout << output << endl;
-		if (varforcycle)
+		if (!onetime)
 			set_pause (5);
 		else
-			onetime = false;
+			infinite = false;
 		}
 	return 0;
 }

@@ -6,12 +6,16 @@
 
 using namespace std;
 
-int set_battery (barconfig &myconfig, bool line) {
-	myconfig.line_output = myconfig.line_prefix;
+int set_battery (barconfig &myconfig, bool json) {
+	string out, path, status, width;
+	if (json) {
+		out = myconfig.prefix;
+		width = myconfig.prefix;
+		width += "12:00 100%";
+	} else 
+		out = myconfig.line_prefix;
 	bool fail;
 	fail = false;
-	string out = myconfig.prefix, path, icon, status, width = myconfig.prefix;
-	width += "12:00 100%";
 	long perc, e_now, e_full ,p_now, seconds;
 	path = myconfig.device;
 	path += "/capacity";
@@ -45,9 +49,10 @@ int set_battery (barconfig &myconfig, bool line) {
 	strftime (buffer,128,"%H:%M",tpoint);
 	out += buffer;
 	out += " " + to_string (perc) + "%";
-	if (!line) {
+	if (json) {
 		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
+		if (myconfig.name.size() > 0)
+			json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
 		if (myconfig.width)
 			json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
 		json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align.c_str()));
@@ -65,8 +70,8 @@ int set_battery (barconfig &myconfig, bool line) {
 			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color.c_str()));
 			set_icon_mask_zero (myconfig);
 			}
+		set_icon (myconfig);
 	} else
-		myconfig.line_output += out;
-	set_icon (myconfig);
+		myconfig.line_output = out;
 	return 0;
 }
