@@ -50,6 +50,7 @@ int json_setout (json_object *json_output) {
 
 int main (int argc, char *argv[]) {
 	bool varforcycle = true;
+	bool background_input = true;
 	bool onetime = true;
 	bool line = false;
 	if (argc > 1) {
@@ -58,9 +59,11 @@ int main (int argc, char *argv[]) {
 			switch (cmd) {
 				case '1':
 					varforcycle = false;
+					background_input = false;
 					break;
 				case 'l':
 					line = true;
+					background_input = false;
 					break;
 				};
 		}
@@ -128,18 +131,22 @@ int main (int argc, char *argv[]) {
 				if (strcmp (key, "width") == 0)
 					myconfig[lines].width = json_object_get_boolean(val);
 				if (strcmp (key, "name") == 0)
-					myinput[lines].name = json_object_get_string(val);
+					myinput.back().name = json_object_get_string(val);
 				if (strcmp (key, "exec1") == 0)
-					myinput[lines].exec1 = json_object_get_string(val);
+					myinput.back().exec1 = json_object_get_string(val);
 				if (strcmp (key, "exec2") == 0)
-					myinput[lines].exec2 = json_object_get_string(val);
+					myinput.back().exec2 = json_object_get_string(val);
 				if (strcmp (key, "exec3") == 0)
-					myinput[lines].exec3 = json_object_get_string(val);
+					myinput.back().exec3 = json_object_get_string(val);
 				}
+			if (myinput.back().name.size() == 0)
+				myinput.pop_back();
 			lines += 1;
 			}
 		}
-	auto input = async (launch::async, get_input, myinput, varforcycle);
+	if (myinput.size() == 0)
+		background_input = false;
+	auto input = async (launch::async, get_input, myinput, background_input);
 	cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
 	while (onetime) {
 		output = "";
