@@ -48,6 +48,20 @@ int json_setout (json_object *json_output) {
 	return 0;
 	}
 
+int line_setout (string &line_output) {
+	if (line_output.size() > 0) {
+		if (output.size () == 0)
+			output = line_output;
+		else {
+			output += " | ";
+			output += line_output;
+			}
+		line_output = "";
+		}
+	return 0;
+	}
+
+
 int main (int argc, char *argv[]) {
 	bool varforcycle = true;
 	bool background_input = true;
@@ -138,6 +152,8 @@ int main (int argc, char *argv[]) {
 					myinput.back().exec2 = json_object_get_string(val);
 				if (strcmp (key, "exec3") == 0)
 					myinput.back().exec3 = json_object_get_string(val);
+				if (strcmp (key, "line_prefix") == 0)
+					myconfig[lines].line_prefix = json_object_get_string(val);
 				}
 			if (myinput.back().name.size() == 0)
 				myinput.pop_back();
@@ -147,7 +163,8 @@ int main (int argc, char *argv[]) {
 	if (myinput.size() == 0)
 		background_input = false;
 	auto input = async (launch::async, get_input, myinput, background_input);
-	cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
+	if (!line)
+		cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
 	while (onetime) {
 		output = "";
 		for (int counter = 0; counter < lines; ++counter) {
@@ -155,36 +172,60 @@ int main (int argc, char *argv[]) {
 				case m_null:
 					break;
 				case m_asound:
-					set_asound (myconfig[counter]);
-					json_setout (myconfig[counter].json_output);
+					set_asound (myconfig[counter], line);
+					if (!line)
+						json_setout (myconfig[counter].json_output);
+					else
+						line_setout (myconfig[counter].line_output);
 					break;
 				case m_battery:
-					set_battery (myconfig[counter]);
-					json_setout (myconfig[counter].json_output);
+					set_battery (myconfig[counter], line);
+					if (!line)
+						json_setout (myconfig[counter].json_output);
+					else
+						line_setout (myconfig[counter].line_output);
 					break;
 				case m_hwmon:
-					set_hwmon (myconfig[counter]);
-					json_setout (myconfig[counter].json_output);
+					set_hwmon (myconfig[counter], line);
+					if (!line)
+						json_setout (myconfig[counter].json_output);
+					else
+						line_setout (myconfig[counter].line_output);
 					break;
 				case m_ip4:
-					set_ip4 (myconfig[counter]);
-					json_setout (myconfig[counter].json_output);
+					set_ip4 (myconfig[counter], line);
+					if (!line)
+						json_setout (myconfig[counter].json_output);
+					else
+						line_setout (myconfig[counter].line_output);
 					break;
 				case m_nvidia:
-					set_nvidia (myconfig[counter]);
-					json_setout (myconfig[counter].json_output);
+					set_nvidia (myconfig[counter], line);
+					if (!line)
+						json_setout (myconfig[counter].json_output);
+					else
+						line_setout (myconfig[counter].line_output);
 					break;
 				case m_time:
-					set_time (myconfig[counter]);
-					json_setout (myconfig[counter].json_output);
+					set_time (myconfig[counter], line);
+					if (!line)
+						json_setout (myconfig[counter].json_output);
+					else
+						line_setout (myconfig[counter].line_output);
 					break;
 				case m_wlan:
-					set_wlan (myconfig[counter]);
-					json_setout (myconfig[counter].json_output);
+					set_wlan (myconfig[counter], line);
+					if (!line)
+						json_setout (myconfig[counter].json_output);
+					else
+						line_setout (myconfig[counter].line_output);
 					break;
 				}
 			}
-		cout << "[\n" << output << "\n]," << endl;
+		if (!line)
+			cout << "[\n" << output << "\n]," << endl;
+		else
+			cout << output << endl;
 		if (varforcycle)
 			set_pause (5);
 		else

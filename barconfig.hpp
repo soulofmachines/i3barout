@@ -26,7 +26,7 @@ class barconfig {
 		int icon_count = 0;
 		string card = "", device = "", format = "", program = "";
 		int offset = 0, urgent = 0;
-		string name = "", prefix = "", line_output = "";
+		string name = "", prefix = "", line_output = "", line_prefix = "";
 		bool width = false;
 	};
 

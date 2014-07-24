@@ -8,8 +8,9 @@
 
 using namespace std;
 
-int set_wlan (barconfig &myconfig) {
+int set_wlan (barconfig &myconfig, bool line) {
 	string out = myconfig.prefix, name, width = myconfig.prefix;
+	myconfig.line_output = myconfig.line_prefix;
 	int perc;
 	struct iwreq req;
 	struct iw_statistics stat;
@@ -30,10 +31,13 @@ int set_wlan (barconfig &myconfig) {
 	req.u.data.length = sizeof(stat);
 	if(ioctl(soketfd, SIOCGIWSTATS, &req) == -1) {
 		out += "Null";
-		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
-		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
-		set_icon (myconfig);
+		if (!line) {
+			json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
+			json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
+			json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
+			set_icon (myconfig);
+		} else
+			myconfig.line_output += out;
 		return 0;
 		}
 	memset(&range, 0, sizeof(range));
@@ -42,15 +46,18 @@ int set_wlan (barconfig &myconfig) {
 	if(ioctl(soketfd, SIOCGIWRANGE, &req) == -1)
 		return 0;
 	perc = int (char (stat.qual.qual)) * 100 / int (char (range.max_qual.qual));
-	out += name + " " + to_string (perc) + "%";
-	width += name + " 100%";
-	json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-	json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
-	if (myconfig.width)
-		json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
-	json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align.c_str()));
-	json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
-	set_icon (myconfig);
 	close(soketfd);
+	out += name + " " + to_string (perc) + "%";
+	if (!line) {
+		width += name + " 100%";
+		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
+		json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
+		if (myconfig.width)
+			json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
+		json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align.c_str()));
+		json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
+		set_icon (myconfig);
+	} else
+		myconfig.line_output += out;
 	return 0;
 }
