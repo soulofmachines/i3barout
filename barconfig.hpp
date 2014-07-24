@@ -30,5 +30,9 @@ class barconfig {
 		bool width = false;
 	};
 
+class input_exec {
+	public:
+		string name = "", exec1 = "", exec2 = "", exec3 = "";
+	};
 
 #endif

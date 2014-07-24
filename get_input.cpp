@@ -2,10 +2,11 @@
 #include <vector>
 #include <json-c/json.h>
 #include <string.h>
+#include "barconfig.hpp"
 
 using namespace std;
 
-void get_input (vector <string> input_name, vector <string> input_exec1, vector <string> input_exec2, vector <string> input_exec3, bool onetime) {
+void get_input (vector <input_exec> myinput, bool onetime) {
 	if (!onetime)
 		return;
 	string input, jinput, name;
@@ -27,20 +28,20 @@ void get_input (vector <string> input_name, vector <string> input_exec1, vector 
 					if (strcmp (key, "button") == 0)
 						button = json_object_get_int(val);
 					}
-				for (u_int counter = 0; counter < input_name.size(); ++counter)
-					if (input_name[counter] == name)
+				for (u_int counter = 0; counter < myinput.size(); ++counter)
+					if (myinput[counter].name == name)
 						switch (button) {
 							case 1:
-								if (input_exec1[counter].size() != 0)
-									system (input_exec1[counter].c_str());
+								if (myinput[counter].exec1.size() != 0)
+									system (myinput[counter].exec1.c_str());
 								break;
 							case 2:
-								if (input_exec2[counter].size() != 0)
-									system (input_exec2[counter].c_str());
+								if (myinput[counter].exec2.size() != 0)
+									system (myinput[counter].exec2.c_str());
 								break;
 							case 3:
-								if (input_exec3[counter].size() != 0)
-									system (input_exec3[counter].c_str());
+								if (myinput[counter].exec3.size() != 0)
+									system (myinput[counter].exec3.c_str());
 								break;
 							}
 				}

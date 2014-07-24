@@ -65,7 +65,7 @@ int main (int argc, char *argv[]) {
 				};
 		}
 	vector <barconfig> myconfig;
-	vector <string> input_name, input_exec1, input_exec2, input_exec3;
+	vector <input_exec> myinput;
 	int lines = 0;
 	ifstream configfile;
 	stringstream ss;
@@ -90,11 +90,8 @@ int main (int argc, char *argv[]) {
 		jobj = json_tokener_parse_verbose (config.c_str(), &jerr);
 		if (jerr == json_tokener_success) {
 			myconfig.push_back(barconfig());
+			myinput.push_back(input_exec());
 			myconfig[lines].json_output = json_object_new_object();
-			input_name.push_back ("");
-			input_exec1.push_back ("");
-			input_exec2.push_back ("");
-			input_exec3.push_back ("");
 			json_object_object_foreach(jobj, key, val) {
 				if (strcmp (key, "mode") == 0)
 					myconfig[lines].mode = str2modes (json_object_get_string(val));
@@ -131,18 +128,18 @@ int main (int argc, char *argv[]) {
 				if (strcmp (key, "width") == 0)
 					myconfig[lines].width = json_object_get_boolean(val);
 				if (strcmp (key, "name") == 0)
-					input_name[lines] = json_object_get_string(val);
+					myinput[lines].name = json_object_get_string(val);
 				if (strcmp (key, "exec1") == 0)
-					input_exec1[lines] = json_object_get_string(val);
+					myinput[lines].exec1 = json_object_get_string(val);
 				if (strcmp (key, "exec2") == 0)
-					input_exec2[lines] = json_object_get_string(val);
+					myinput[lines].exec2 = json_object_get_string(val);
 				if (strcmp (key, "exec3") == 0)
-					input_exec3[lines] = json_object_get_string(val);
+					myinput[lines].exec3 = json_object_get_string(val);
 				}
 			lines += 1;
 			}
 		}
-	auto input = async (launch::async, get_input, input_name, input_exec1, input_exec2, input_exec3, varforcycle);
+	auto input = async (launch::async, get_input, myinput, varforcycle);
 	cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
 	while (onetime) {
 		output = "";
