@@ -67,13 +67,20 @@ int main (int argc, char *argv[]) {
 	bool background_input = true;
 	bool onetime = true;
 	bool line = false;
+	ifstream configfile;
+	stringstream ss;
 	if (argc > 1) {
 		int cmd;
-		while ((cmd = getopt (argc, argv, "1l")) != -1)
+		while ((cmd = getopt (argc, argv, "1c:l")) != -1)
 			switch (cmd) {
 				case '1':
 					varforcycle = false;
 					background_input = false;
+					break;
+				case 'c':
+					configfile.open (optarg);
+					if (!configfile.is_open())
+						cerr << optarg << " not found" << endl;
 					break;
 				case 'l':
 					line = true;
@@ -84,12 +91,12 @@ int main (int argc, char *argv[]) {
 	vector <barconfig> myconfig;
 	vector <input_exec> myinput;
 	int lines = 0;
-	ifstream configfile;
-	stringstream ss;
-	struct passwd *pw = getpwuid (getuid());
-	char *dir = pw->pw_dir;
-	strcat (dir, "/.i3/i3barout.json");
-	configfile.open (dir);
+	if (!configfile.is_open()) {
+		struct passwd *pw = getpwuid (getuid());
+		char *dir = pw->pw_dir;
+		strcat (dir, "/.i3/i3barout.json");
+		configfile.open (dir);
+		}
 	if (!configfile.is_open())
 		configfile.open ("/etc/i3/i3barout.json");
 	if (!configfile.is_open())
