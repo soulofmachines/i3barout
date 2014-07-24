@@ -5,7 +5,9 @@
 
 using namespace std;
 
-void get_input (vector <string> input_name, vector <string> input_exec1, vector <string> input_exec2, vector <string> input_exec3) {
+void get_input (vector <string> input_name, vector <string> input_exec1, vector <string> input_exec2, vector <string> input_exec3, bool onetime) {
+	if (!onetime)
+		return;
 	string input, jinput, name;
 	int button = 0;
 	size_t begin, end;

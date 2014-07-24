@@ -1,5 +1,6 @@
 #include <pwd.h>
 #include <unistd.h>
+#include <getopt.h>
 #include <fstream>
 #include <sstream>
 #include <json-c/json.h>
@@ -47,7 +48,22 @@ int json_setout (json_object *json_output) {
 	return 0;
 	}
 
-int main () {
+int main (int argc, char *argv[]) {
+	bool varforcycle = true;
+	bool onetime = true;
+	bool line = false;
+	if (argc > 1) {
+		int cmd;
+		while ((cmd = getopt (argc, argv, "1l")) != -1)
+			switch (cmd) {
+				case '1':
+					varforcycle = false;
+					break;
+				case 'l':
+					line = true;
+					break;
+				};
+		}
 	vector <barconfig> myconfig;
 	vector <string> input_name, input_exec1, input_exec2, input_exec3;
 	int lines = 0;
@@ -126,9 +142,9 @@ int main () {
 			lines += 1;
 			}
 		}
-	auto input = async (launch::async, get_input, input_name, input_exec1, input_exec2, input_exec3);
+	auto input = async (launch::async, get_input, input_name, input_exec1, input_exec2, input_exec3, varforcycle);
 	cout << "{\"version\":1,\"click_events\":true}\n[\n[]," << endl;
-	while (true) {
+	while (onetime) {
 		output = "";
 		for (int counter = 0; counter < lines; ++counter) {
 			switch (myconfig[counter].mode) {
@@ -165,7 +181,10 @@ int main () {
 				}
 			}
 		cout << "[\n" << output << "\n]," << endl;
-		set_pause (5);
+		if (varforcycle)
+			set_pause (5);
+		else
+			onetime = false;
 		}
 	return 0;
 }
