@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-int set_ip4 (barconfig &myconfig, bool json) {
+int set_ipv4 (barconfig &myconfig, bool json) {
 	string out, ip;
 	if (json)
 		out = myconfig.prefix;

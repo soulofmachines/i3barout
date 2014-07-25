@@ -18,7 +18,7 @@ modes str2modes (const char *value) {
 	if (strcmp (value, (const char *)("asound")) == 0) return m_asound;
 	if (strcmp (value, (const char *)("battery")) == 0) return m_battery;
 	if (strcmp (value, (const char *)("hwmon")) == 0) return m_hwmon;
-	if (strcmp (value, (const char *)("ip4")) == 0) return m_ip4;
+	if (strcmp (value, (const char *)("ipv4")) == 0) return m_ipv4;
 	if (strcmp (value, (const char *)("nvidia")) == 0) return m_nvidia;
 	if (strcmp (value, (const char *)("time")) == 0) return m_time;
 	if (strcmp (value, (const char *)("wlan")) == 0) return m_wlan;
@@ -192,8 +192,8 @@ int main (int argc, char *argv[]) {
 				case m_hwmon:
 					set_hwmon (myconfig[counter], json);
 					break;
-				case m_ip4:
-					set_ip4 (myconfig[counter], json);
+				case m_ipv4:
+					set_ipv4 (myconfig[counter], json);
 					break;
 				case m_nvidia:
 					set_nvidia (myconfig[counter], json);

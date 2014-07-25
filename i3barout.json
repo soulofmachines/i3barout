@@ -1,5 +1,5 @@
 {"mode":"battery","device":"/sys/class/power_supply/BAT0","color":"#ffffff","color_urgent":"#ff0000","urgent":"20","align":"center","icon_mask":".i3/icons/power","icon_count":"10","icon_ext":".xbm","width":true}
-{"mode":"ip4","device":"wlp3s0","color":"#ffffff","icon":".i3/icons/ip.xbm"}
+{"mode":"ipv4","device":"wlp3s0","color":"#ffffff","icon":".i3/icons/ip.xbm"}
 {"mode":"wlan","device":"wlp3s0","color":"#ffffff","align":"center","icon":".i3/icons/wifi.xbm","name":"wlan","exec1":"wpa_gui&","width":true}
 {"mode":"nvidia","program":"nvidia-smi -q -d TEMPERATURE","format":"GPU Current Temp","offset":"30","color":"#ffffff","color_urgent":"#ff0000","urgent":"80","icon":".i3/icons/gpu.xbm"}
 {"mode":"hwmon","device":"/sys/devices/platform/coretemp.0/temp1_input","color":"#ffffff","color_urgent":"#ff0000","offset":"1000","urgent":"80","icon":".i3/icons/cpu.xbm"}

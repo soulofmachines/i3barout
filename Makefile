@@ -2,8 +2,8 @@ CC=g++
 LIBS=-ljson-c -lasound -pthread
 CFLAGS=-std=c++11 -c -Wall -O3 -fomit-frame-pointer
 
-all: main.o file_to.o set_asound.o set_battery.o set_hwmon.o set_icon.o set_ip4.o set_nvidia.o set_pause.o set_time.o set_wlan.o get_input.o
-	$(CC) $(LIBS) main.o file_to.o set_asound.o set_battery.o set_hwmon.o set_icon.o set_ip4.o set_nvidia.o set_pause.o set_time.o set_wlan.o get_input.o -o i3barout
+all: main.o file_to.o set_asound.o set_battery.o set_hwmon.o set_icon.o set_ipv4.o set_nvidia.o set_pause.o set_time.o set_wlan.o get_input.o
+	$(CC) $(LIBS) main.o file_to.o set_asound.o set_battery.o set_hwmon.o set_icon.o set_ipv4.o set_nvidia.o set_pause.o set_time.o set_wlan.o get_input.o -o i3barout
 
 main.o:
 	$(CC) $(CFLAGS) main.cpp
@@ -23,8 +23,8 @@ set_hwmon.o:
 set_icon.o:
 	$(CC) $(CFLAGS) set_icon.cpp
 
-set_ip4.o:
-	$(CC) $(CFLAGS) set_ip4.cpp
+set_ipv4.o:
+	$(CC) $(CFLAGS) set_ipv4.cpp
 
 set_nvidia.o:
 	$(CC) $(CFLAGS) set_nvidia.cpp
