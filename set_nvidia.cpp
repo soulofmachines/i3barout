@@ -17,6 +17,7 @@ long string_to_long (string value, bool &fail) {
 
 int set_nvidia (barconfig &myconfig, bool json) {
 	string out;
+	long temp = 0;
 	if (json)
 		out = myconfig.prefix;
 	else
@@ -35,10 +36,14 @@ int set_nvidia (barconfig &myconfig, bool json) {
 			return 0;
 		while (fgets (buffer, 128, fd) != NULL)
 			fields.append(buffer);
-		long temp = string_to_long (fields.substr (fields.find (myconfig.format) + myconfig.offset, 2), fail);
+		if (fields.size() > 0)
+			temp = string_to_long (fields.substr (fields.find (myconfig.format) + myconfig.offset, 2), fail);
+		else
+			fail = true;
 		if (fail == true)
-			return 0;
-		out += to_string (temp) + "°C";
+			out += "NA";
+		else
+			out += to_string (temp) + "°C";
 		if (json) {
 			json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
 			if (myconfig.name.size() > 0)
