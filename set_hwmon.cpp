@@ -1,7 +1,6 @@
 #include "barconfig.hpp"
 #include "file_to.hpp"
 #include "set_icon.hpp"
-#include <iostream>
 
 using namespace std;
 

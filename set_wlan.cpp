@@ -24,11 +24,15 @@ int set_wlan (barconfig &myconfig, bool json) {
 	memset(&req, 0, sizeof(iwreq));
 	req.u.essid.length = IW_ESSID_MAX_SIZE+1;
 	memcpy(req.ifr_name, myconfig.device.c_str(), myconfig.device.size());
-	if((soketfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
+	if((soketfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+		close (soketfd);
 		return 0;
+		}
 	req.u.essid.pointer = id;
-	if (ioctl(soketfd,SIOCGIWESSID, &req) == -1)
+	if (ioctl(soketfd,SIOCGIWESSID, &req) == -1) {
+		close (soketfd);
 		return 0;
+		}
 	name = (char *)req.u.essid.pointer;
 	memset(&stat, 0, sizeof(stat));
 	req.u.data.pointer = &stat;
@@ -43,15 +47,17 @@ int set_wlan (barconfig &myconfig, bool json) {
 			set_icon (myconfig);
 		} else
 			myconfig.line_output = out;
+		close (soketfd);
 		return 0;
 		}
 	memset(&range, 0, sizeof(range));
 	req.u.data.pointer = &range;
 	req.u.data.length = sizeof(range);
-	if(ioctl(soketfd, SIOCGIWRANGE, &req) == -1)
+	if(ioctl(soketfd, SIOCGIWRANGE, &req) == -1) {
+		close (soketfd);
 		return 0;
+		}
 	perc = int (char (stat.qual.qual)) * 100 / int (char (range.max_qual.qual));
-	close(soketfd);
 	out += name + " " + to_string (perc) + "%";
 	if (json) {
 		width += name + " 100%";
@@ -65,5 +71,6 @@ int set_wlan (barconfig &myconfig, bool json) {
 		set_icon (myconfig);
 	} else
 		myconfig.line_output = out;
+	close(soketfd);
 	return 0;
 }
