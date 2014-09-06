@@ -1,0 +1,16 @@
+{
+    "time": {
+        "mode" : "time",
+        "device" : "%d/%m/%y %H:%M:%S"
+    },
+    "time2": {
+        "mode" : "time",
+        "device" : "%d/%m/%y %H:%M:%S"
+    },
+    "asound": {
+        "mode" : "asound",
+        "card" : "default",
+        "urgent" : 85,
+        "device" : "Master"
+    }
+}

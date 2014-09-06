@@ -1,77 +1,54 @@
+#include "set_battery.hpp"
+#include "file_to.hpp"
 #include <string.h>
 #include <time.h>
-#include "barconfig.hpp"
-#include "file_to.hpp"
-#include "set_icon.hpp"
 
 using namespace std;
 
-int set_battery (barconfig &myconfig, bool json) {
-	string out, path, status, width;
-	if (json) {
-		out = myconfig.prefix;
-		width = myconfig.prefix;
-		width += "12:00 100%";
-	} else 
-		out = myconfig.line_prefix;
-	bool fail;
-	fail = false;
-	long perc, e_now, e_full ,p_now, seconds;
-	path = myconfig.device;
-	path += "/capacity";
-	perc = file_to_long (path.c_str(), fail);
-	path = myconfig.device;
-	path += "/status";
-	status = file_to_string (path.c_str(), fail);
-	path = myconfig.device;
-	path += "/energy_now";
-	e_now = file_to_long (path.c_str(), fail);
-	path = myconfig.device;
-	path += "/power_now";
-	p_now = file_to_long (path.c_str(), fail);
-	if (fail == true)
-		return 0;
-	if (p_now != 0)
-		if (strcmp (status.c_str(), "Discharging\n") == 0)
-			seconds = e_now * 3600 / p_now;
-		else {
-			path = myconfig.device;
-			path += "/energy_full";
-			e_full = file_to_long (path.c_str(), fail);
-			if (fail == true)
-				return 0;
-			seconds = (e_full - e_now) * 3600 / p_now;
-			}
-		else
-			seconds = 0;
-	tm *tpoint = gmtime(&seconds);
-	char buffer[128];
-	strftime (buffer,128,"%H:%M",tpoint);
-	out += buffer;
-	out += " " + to_string (perc) + "%";
-	if (json) {
-		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-		if (myconfig.name.size() > 0)
-			json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
-		if (myconfig.width)
-			json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
-		json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align.c_str()));
-		if (strcmp (status.c_str(), "Discharging\n") == 0) {
-			if (perc <= myconfig.urgent) {
-				json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent.c_str()));
-				json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent.c_str()));
-			} else {
-				json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
-				json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color.c_str()));
-				}
-			set_icon_mask (myconfig, perc, 100);
-		} else {
-			json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
-			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color.c_str()));
-			set_icon_mask_zero (myconfig);
-			}
-		set_icon (myconfig);
-	} else
-		myconfig.line_output = out;
-	return 0;
+int set_battery (bar_config &my_bar_config) {
+    int return_value = 99;
+    string path, status, width;
+    long e_now, e_full ,p_now, seconds;
+    char buffer[128];
+    tm *tpoint;
+    path = my_bar_config.device + "/capacity";
+    if (!file_to_int (path.c_str(), my_bar_config.integer)) {
+        return_value = -1;
+        goto close;
+    }
+    path = my_bar_config.device + "/power_now";
+    if (!file_to_long (path.c_str(), p_now)) {
+        return_value = 1;
+        goto close;
+    }
+    if (p_now != 0) {
+        path = my_bar_config.device + "/status";
+        if (!file_to_string (path.c_str(), status)) {
+            return_value = 2;
+            goto close;
+        }
+        path = my_bar_config.device + "/energy_now";
+        if (!file_to_long (path.c_str(), e_now)) {
+            return_value = 3;
+            goto close;
+        }
+        if (strcmp (status.c_str(), "Discharging\n") == 0)
+            seconds = e_now * 3600 / p_now;
+        else {
+            path = my_bar_config.device + "/energy_full";
+            if (!file_to_long (path.c_str(), e_full)) {
+                return_value = 4;
+                goto close;
+            }
+            seconds = (e_full - e_now) * 3600 / p_now;
+        }
+    } else
+        seconds = 0;
+    tpoint = gmtime (&seconds);
+    strftime (buffer, 128, "%H:%M", tpoint);
+    my_bar_config.output = buffer;
+    my_bar_config.output += " " + to_string (my_bar_config.integer) + "%";
+    return_value = 0;
+close:
+    return return_value;
 }

@@ -1,14 +1,11 @@
-#include <iostream>
-#include <vector>
-#include <json-c/json.h>
-#include <string.h>
-#include "barconfig.hpp"
-
 #ifndef GET_INPUT_HPP
 #define GET_INPUT_HPP
 
+#include <vector>
+#include "main.hpp"
+
 using namespace std;
 
-void get_input (vector <input_exec> myinput, bool onetime);
+void get_input (vector <input_config> my_input_config);
 
 #endif

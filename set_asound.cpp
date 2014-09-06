@@ -1,86 +1,53 @@
+#include "set_asound.hpp"
 #include <alsa/asoundlib.h>
-#include "barconfig.hpp"
-#include "set_icon.hpp"
 
 using namespace std;
 
-int set_asound (barconfig &myconfig, bool json) {
-	string out, width;
-	if (json) {
-		out = myconfig.prefix;
-		width = myconfig.prefix;
-		width += "100%";
-	} else
-		out = myconfig.line_prefix;
-	int volume_mute, volume;
-	long volume_cur, volume_min, volume_max;
-	snd_mixer_t *handle;
-	snd_mixer_selem_id_t *selem_id;
-	const snd_mixer_selem_channel_id_t selem_channel = SND_MIXER_SCHN_FRONT_LEFT;
-	if (snd_mixer_open (&handle, 0) < 0) {
-		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string ((char *)("ERR0")));
-		snd_mixer_close(handle);
-		return 0;
-		}
-	if (snd_mixer_attach (handle, myconfig.card.c_str()) < 0) {
-		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string ((char *)("ERR1")));
-		snd_mixer_close(handle);
-		return 0;
-		}
-	if (snd_mixer_selem_register (handle, NULL, NULL) < 0) {
-		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string ((char *)("ERR2")));
-		snd_mixer_close(handle);
-		return 0;
-		}
-	if (snd_mixer_load (handle) < 0) {
-		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string ((char *)("ERR3")));
-		snd_mixer_close(handle);
-		return 0;
-		}
-	snd_mixer_selem_id_alloca (&selem_id);
-	snd_mixer_selem_id_set_index (selem_id, 0);
-	snd_mixer_selem_id_set_name (selem_id, myconfig.device.c_str());
-	snd_mixer_elem_t *elem = snd_mixer_find_selem (handle, selem_id);
-	if (!elem) {
-		json_object_object_add(myconfig.json_output, "full_text", json_object_new_string ((char *)("ERR4")));
-		snd_mixer_close(handle);
-		return 0;
-		}
-	snd_mixer_selem_get_playback_switch (elem, selem_channel, &volume_mute);
-	if (volume_mute == 1) {
-		snd_mixer_selem_get_playback_volume(elem, selem_channel, &volume_cur);
-		snd_mixer_selem_get_playback_volume_range(elem, &volume_min, &volume_max);
-		volume = int (volume_cur * 100 / (volume_max - volume_min));
-		out += to_string (volume) + "%";
-		if (json) {
-			json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-			if (myconfig.name.size() > 0)
-				json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
-			if (myconfig.width)
-				json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
-			json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align.c_str()));
-			json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color.c_str()));
-			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color.c_str()));
-			set_icon (myconfig);
-			set_icon_mask (myconfig, volume, 100);
-		} else 
-			myconfig.line_output = out;
-	} else {
-		out += "0%";
-		if (json) {
-			json_object_object_add(myconfig.json_output, "full_text", json_object_new_string (out.c_str()));
-			if (myconfig.name.size() > 0)
-				json_object_object_add(myconfig.json_output, "name", json_object_new_string (myconfig.name.c_str()));
-			if (myconfig.width)
-				json_object_object_add(myconfig.json_output, "min_width", json_object_new_string (width.c_str()));
-			json_object_object_add(myconfig.json_output, "align", json_object_new_string (myconfig.align.c_str()));
-			json_object_object_add(myconfig.json_output, "color", json_object_new_string (myconfig.color_urgent.c_str()));
-			json_object_object_add(myconfig.json_output, "icon_color", json_object_new_string (myconfig.color_urgent.c_str()));
-			set_icon (myconfig);
-			set_icon_mask_zero (myconfig);
-		} else
-			myconfig.line_output = out;
-		}
-	snd_mixer_close(handle);
-	return 0;
-	}
+int set_asound (bar_config &my_bar_config) {
+    int return_value = 99;
+    int volume_unmute, volume;
+    long volume_cur, volume_min, volume_max;
+    snd_mixer_t *handle;
+    snd_mixer_selem_id_t *selem_id;
+    snd_mixer_elem_t *elem;
+    const snd_mixer_selem_channel_id_t selem_channel = SND_MIXER_SCHN_FRONT_LEFT;
+    if (snd_mixer_open (&handle, 0) < 0) {
+        return_value = 1;
+        goto close;
+    }
+    if (snd_mixer_attach (handle, my_bar_config.device.c_str()) < 0) {
+        return_value = 2;
+        goto close;
+    }
+    if (snd_mixer_selem_register (handle, NULL, NULL) < 0) {
+        return_value = 3;
+        goto close;
+    }
+    if (snd_mixer_load (handle) < 0) {
+        return_value = 4;
+        goto close;
+    }
+    snd_mixer_selem_id_alloca (&selem_id);
+    snd_mixer_selem_id_set_index (selem_id, 0);
+    snd_mixer_selem_id_set_name (selem_id, my_bar_config.param.c_str());
+    elem = snd_mixer_find_selem (handle, selem_id);
+    if (!elem) {
+        return_value = 5;
+        goto close;
+    }
+    snd_mixer_selem_get_playback_switch (elem, selem_channel, &volume_unmute);
+    if (volume_unmute == true) {
+        snd_mixer_selem_get_playback_volume(elem, selem_channel, &volume_cur);
+        snd_mixer_selem_get_playback_volume_range(elem, &volume_min, &volume_max);
+        volume = int (volume_cur * 100 / (volume_max - volume_min));
+        my_bar_config.integer = volume;
+        my_bar_config.output = to_string (volume) + "%";
+    } else {
+        my_bar_config.integer = -1;
+        my_bar_config.output = "0%";
+    }
+    return_value = 0;
+close:
+    snd_mixer_close(handle);
+    return return_value;
+}
