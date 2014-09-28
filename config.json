@@ -1,16 +1,31 @@
 {
-    "time": {
+    "05:time": {
         "mode" : "time",
-        "device" : "%d/%m/%y %H:%M:%S"
+        "param" : "%d/%m/%y %H:%M:%S"
     },
-    "time2": {
-        "mode" : "time",
-        "device" : "%d/%m/%y %H:%M:%S"
-    },
-    "asound": {
+    "04:asound": {
         "mode" : "asound",
-        "card" : "default",
+    "prefix":"V:",
+        "urgent" : 100,
+        "device" : "default",
+	"param" : "Master",
+	"exec1" : "pavucontrol&"
+    },
+    "03:hwmon": {
+    "prefix":"CPU:",
+    "mode":"hwmon",
+    "device":"/sys/devices/platform/coretemp.0/temp1_input",
         "urgent" : 85,
-        "device" : "Master"
+    "offset":1000
+    },
+    "02:nvidia": {
+    "mode":"nvidia",
+    "prefix":"GPU:",
+        "urgent" : 85,
+    "device":"nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader"
+    },
+    "01:ipv4":{
+    "mode":"ipv4",
+    "device":"br0"
     }
 }

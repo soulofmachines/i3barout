@@ -75,7 +75,7 @@ void show_output () {
         if (j_output.empty())
             cout << endl;
         else
-            cout << writer.write (j_output);
+            cout << writer.write (j_output) << "," << endl;
         j_output.clear();
         break;
     case v_line:
@@ -175,6 +175,13 @@ int main (int argc, char *argv[]) {
     if (my_bar_config.size() < 1)
         return 1;
     future <void> input = async (launch::async, get_input, my_input_config);
+    if (e_view == v_json) {
+        if (b_input == true)
+            cout << "{ \"version\": 1, \"click_events\": true }" << endl;
+        else
+            cout << "{ \"version\": 1 }" << endl;
+        cout << "[" << endl;
+    }
     do {
         return_value = 0;
         for (unsigned int counter = 0; counter < my_bar_config.size(); ++counter) {

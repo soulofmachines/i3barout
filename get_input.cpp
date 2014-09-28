@@ -24,7 +24,7 @@ void get_input (vector <input_config> my_input_config) {
         end = input.find_first_of ("}");
         if ((begin != string::npos) && (end != string::npos)) {
             jinput = input.substr (begin, end - begin + 1);
-            if (reader.parse(input, element, false)) {
+            if (reader.parse(jinput, element, false)) {
                 name = element.get ("name", "").asString();
                 button = element.get ("button", "0").asInt();
                 if ((name.size() != 0) && (button != 0))
@@ -44,8 +44,9 @@ void get_input (vector <input_config> my_input_config) {
                                     system (my_input_config[counter].exec3.c_str());
                                 break;
                             }
-            } else
-                cerr << reader.getFormattedErrorMessages() << endl;
+                /*} else
+                cerr << reader.getFormattedErrorMessages() << endl;*/
+            }
         }
     }
     return;

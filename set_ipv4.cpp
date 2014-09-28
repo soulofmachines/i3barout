@@ -13,6 +13,7 @@ int set_ipv4 (bar_config &my_bar_config) {
     strncpy (ifr.ifr_name, my_bar_config.device.c_str(), IFNAMSIZ-1);
     ioctl (fd, SIOCGIFADDR, &ifr);
     close (fd);
+    my_bar_config.integer = 0;
     my_bar_config.output = inet_ntoa (((struct sockaddr_in *)(&ifr.ifr_addr))->sin_addr);
     if (my_bar_config.output == "0.0.0.0") {
         return_value = -1;
