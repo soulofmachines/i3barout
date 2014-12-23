@@ -12,6 +12,7 @@
 #include <fstream>
 #include <getopt.h>
 #include <jsoncpp/json/json.h>
+#include <math.h>
 #include <vector>
 #include <future>
 
@@ -53,6 +54,23 @@ void add_output (bar_config my_bar_config) {
         }
         output["color"] = my_bar_config.color;
         output["icon_color"] = my_bar_config.color;
+        if (my_bar_config.icon_name.empty()) {
+            if (!my_bar_config.icon_mask.empty()) {
+                if (my_bar_config.integer > -1) {
+                    if (my_bar_config.integer < 100) {
+                        my_bar_config.icon = my_bar_config.icon_mask + to_string((int)ceil((float)my_bar_config.integer*(float)my_bar_config.icon_count/(float)100)) + my_bar_config.icon_ext;
+                    } else {
+                        my_bar_config.icon = my_bar_config.icon_mask + to_string(my_bar_config.icon_count) + my_bar_config.icon_ext;
+                    }
+                } else {
+                    my_bar_config.icon = my_bar_config.icon_mask + "0" + my_bar_config.icon_ext;
+                }
+                output["icon"] = my_bar_config.icon;
+            }
+        } else {
+            my_bar_config.icon = my_bar_config.icon_name;
+            output["icon"] = my_bar_config.icon;
+        }
         j_output.append (output);
         break;
     case v_line:

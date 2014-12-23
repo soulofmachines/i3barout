@@ -5,11 +5,14 @@
     },
     "04:asound": {
         "mode" : "asound",
-    "prefix":"V:",
+    	"prefix":"V:",
         "urgent" : 100,
         "device" : "default",
 	"param" : "Master",
-	"exec1" : "pavucontrol&"
+	"exec1" : "pavucontrol&",
+	"icon_mask" : "volume",
+	"icon_count": 3,
+	"icon_ext" : ".xbm"
     },
     "03:hwmon": {
     "prefix":"CPU:",
