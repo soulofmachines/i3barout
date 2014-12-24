@@ -8,6 +8,7 @@
 #include "set_pause.hpp"
 #include "set_time.hpp"
 #include "set_wlan.hpp"
+#include "string_to.hpp"
 
 #include <fstream>
 #include <getopt.h>
@@ -43,7 +44,7 @@ void add_output (bar_config my_bar_config) {
     switch (e_view) {
     case v_json:
         output["name"] = my_bar_config.name;
-        output["full_text"] = my_bar_config.prefix + my_bar_config.output;
+        output["full_text"] = my_bar_config.label + my_bar_config.output;
         if (my_bar_config.integer > -1) {
             if (my_bar_config.integer > my_bar_config.urgent)
                 my_bar_config.color = my_bar_config.color_urgent;
@@ -54,7 +55,7 @@ void add_output (bar_config my_bar_config) {
         }
         output["color"] = my_bar_config.color;
         output["icon_color"] = my_bar_config.color;
-        if (my_bar_config.icon_name.empty()) {
+        if (!my_bar_config.icon_name.empty()) {
             if (!my_bar_config.icon_mask.empty()) {
                 if (my_bar_config.integer > -1) {
                     if (my_bar_config.integer < 100) {
@@ -66,17 +67,17 @@ void add_output (bar_config my_bar_config) {
                     my_bar_config.icon = my_bar_config.icon_mask + "0" + my_bar_config.icon_ext;
                 }
                 output["icon"] = my_bar_config.icon;
+            } else {
+                my_bar_config.icon = my_bar_config.icon_name;
+                output["icon"] = my_bar_config.icon;
             }
-        } else {
-            my_bar_config.icon = my_bar_config.icon_name;
-            output["icon"] = my_bar_config.icon;
         }
         j_output.append (output);
         break;
     case v_line:
         if (!s_output.empty())
             s_output += " | ";
-        s_output += my_bar_config.prefix + my_bar_config.output;
+        s_output += my_bar_config.label + my_bar_config.output;
         break;
     }
     my_bar_config.output.clear();
@@ -112,6 +113,10 @@ int read_config (string config_path) {
     Json::Reader reader;
     ifstream config_file;
     config_file.open (config_path);
+    if (config_path.empty()) {
+        cerr << "no config file" << endl;
+        return -1;
+    }
     if (!config_file.is_open()) {
         cerr << config_path << ": can't open" << endl;
         return -1;
@@ -131,18 +136,31 @@ int read_config (string config_path) {
             my_bar_config.back().device = element.get ("device", "").asString();
             my_bar_config.back().offset = element.get ("offset", 0).asInt();
             my_bar_config.back().param = element.get ("param", "").asString();
-            my_bar_config.back().prefix = element.get ("prefix", "").asString();
+            my_bar_config.back().label = element.get ("label", "").asString();
             if (e_view == v_json) {
                 my_bar_config.back().align = element.get ("align", "center").asString();
                 my_bar_config.back().color_normal = element.get ("color_normal", "#ffffff").asString();
                 my_bar_config.back().color_urgent = element.get ("color_urgent", "#ff0000").asString();
                 my_bar_config.back().color_warning = element.get ("color_warning", "#00ffff").asString();
-                my_bar_config.back().icon_count = element.get ("icon_count", 0).asInt();
+                /*my_bar_config.back().icon_count = element.get ("icon_count", 0).asInt();
                 my_bar_config.back().icon_ext = element.get ("icon_ext", "xbm").asString();
-                my_bar_config.back().icon_mask = element.get ("icon_mask", "").asString();
-                my_bar_config.back().icon_name = element.get ("icon_name", "").asString();
+                my_bar_config.back().icon_mask = element.get ("icon_mask", "").asString();*/
+                my_bar_config.back().icon_name = element.get ("icon", "").asString();
                 my_bar_config.back().urgent = element.get ("urgent", 0).asInt();
                 my_bar_config.back().width = element.get ("width", false).asBool();
+                if (!my_bar_config.back().icon_name.empty()) {
+                    size_t begin = my_bar_config.back().icon_name.find_first_of("%");
+                    size_t end = my_bar_config.back().icon_name.find_last_of(".");
+                    if ((begin != string::npos) && (end != string::npos)) {
+                        my_bar_config.back().icon_mask = (my_bar_config.back().icon_name.substr(0,begin));
+                        my_bar_config.back().icon_ext = (my_bar_config.back().icon_name.substr(end));
+                        bool convert = string_to_int (my_bar_config.back().icon_name.substr(begin+1,end-begin-1), my_bar_config.back().icon_count);
+                        if (!convert) {
+                            cout << my_bar_config.back().name << ": icon format error" << endl;
+                            return 1;
+                        }
+                    }
+                }
             }
             if (my_bar_config.back().mode == m_null)
                 my_bar_config.pop_back();
@@ -186,10 +204,8 @@ int main (int argc, char *argv[]) {
             }
         }
     }
-    if (config_file.size() != 0)
-        read_config (config_file);
-    if (my_bar_config.size() < 1)
-        read_config ("config.json");
+    if (read_config (config_file) != 0)
+        return 1;
     if (my_bar_config.size() < 1)
         return 1;
     future <void> input = async (launch::async, get_input, my_input_config);

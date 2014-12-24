@@ -1,3 +1,4 @@
+//g++ format.cpp --std=c++11 -ljsoncpp -o format
 #include <fstream>
 #include <getopt.h>
 #include <jsoncpp/json/json.h>

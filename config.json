@@ -10,9 +10,7 @@
         "device" : "default",
 	"param" : "Master",
 	"exec1" : "pavucontrol&",
-	"icon_mask" : "volume",
-	"icon_count": 3,
-	"icon_ext" : ".xbm"
+	"icon" : "volume%3.xbm"
     },
     "03:hwmon": {
     "prefix":"CPU:",

@@ -25,11 +25,10 @@ class bar_config {
 public:
     modes mode = m_null;
     string output = "", icon = "", color = "", max_output = "";
-    string name = "", prefix = "", param = "", device = "";
+    string name = "", label = "", param = "", device = "";
     string color_normal = "#ffffff", color_warning = "#00ffff", color_urgent = "#ff0000", align = "center";
     string icon_name = "", icon_mask = "", icon_ext = "";
-    unsigned int icon_count = 0, offset = 0;
-    int urgent = -1, integer = -1;
+    int urgent = -1, integer = -1, icon_count = 0, offset = 0;
     bool width = false;
 };
 
