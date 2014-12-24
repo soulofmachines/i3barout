@@ -142,9 +142,6 @@ int read_config (string config_path) {
                 my_bar_config.back().color_normal = element.get ("color_normal", "#ffffff").asString();
                 my_bar_config.back().color_urgent = element.get ("color_urgent", "#ff0000").asString();
                 my_bar_config.back().color_warning = element.get ("color_warning", "#00ffff").asString();
-                /*my_bar_config.back().icon_count = element.get ("icon_count", 0).asInt();
-                my_bar_config.back().icon_ext = element.get ("icon_ext", "xbm").asString();
-                my_bar_config.back().icon_mask = element.get ("icon_mask", "").asString();*/
                 my_bar_config.back().icon_name = element.get ("icon", "").asString();
                 my_bar_config.back().urgent = element.get ("urgent", 0).asInt();
                 my_bar_config.back().width = element.get ("width", false).asBool();
@@ -154,8 +151,7 @@ int read_config (string config_path) {
                     if ((begin != string::npos) && (end != string::npos)) {
                         my_bar_config.back().icon_mask = (my_bar_config.back().icon_name.substr(0,begin));
                         my_bar_config.back().icon_ext = (my_bar_config.back().icon_name.substr(end));
-                        bool convert = string_to_int (my_bar_config.back().icon_name.substr(begin+1,end-begin-1), my_bar_config.back().icon_count);
-                        if (!convert) {
+                        if (!string_to_int (my_bar_config.back().icon_name.substr(begin+1,end-begin-1), my_bar_config.back().icon_count)) {
                             cout << my_bar_config.back().name << ": icon format error" << endl;
                             return 1;
                         }
