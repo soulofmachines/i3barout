@@ -5,11 +5,6 @@
 
 using namespace std;
 
-enum views {
-    v_json = 0,
-    v_line
-};
-
 enum modes {
     m_null = 0,
     m_asound,

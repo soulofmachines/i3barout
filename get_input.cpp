@@ -44,8 +44,6 @@ void get_input (vector <input_config> my_input_config) {
                                     system (my_input_config[counter].exec3.c_str());
                                 break;
                             }
-                /*} else
-                cerr << reader.getFormattedErrorMessages() << endl;*/
             }
         }
     }

@@ -1,4 +1,6 @@
 {
+"json":false,
+"loop":false,
     "05:time": {
         "mode" : "time",
         "param" : "%d/%m/%y %H:%M:%S"

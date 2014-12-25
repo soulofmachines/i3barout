@@ -21,10 +21,10 @@ using namespace std;
 
 Json::Value j_output;
 string s_output = "";
-views e_view = v_json;
-bool b_infinite = true;
-bool b_pause = true;
+bool b_json = true;
+bool b_loop = true;
 bool b_input = true;
+int timeout = 5;
 vector <bar_config> my_bar_config;
 vector <input_config> my_input_config;
 
@@ -41,8 +41,8 @@ modes string2modes (string input) {
 
 void add_output (bar_config my_bar_config) {
     Json::Value output;
-    switch (e_view) {
-    case v_json:
+    switch (b_json) {
+    case true:
         output["name"] = my_bar_config.name;
         output["full_text"] = my_bar_config.label + my_bar_config.output;
         if (my_bar_config.integer > -1) {
@@ -74,7 +74,7 @@ void add_output (bar_config my_bar_config) {
         }
         j_output.append (output);
         break;
-    case v_line:
+    case false:
         if (!s_output.empty())
             s_output += " | ";
         s_output += my_bar_config.label + my_bar_config.output;
@@ -89,15 +89,15 @@ void add_output (bar_config my_bar_config) {
 
 void show_output () {
     Json::FastWriter writer;
-    switch (e_view) {
-    case v_json:
+    switch (b_json) {
+    case true:
         if (j_output.empty())
             cout << endl;
         else
             cout << writer.write (j_output) << "," << endl;
         j_output.clear();
         break;
-    case v_line:
+    case false:
         if (s_output.empty())
             cout << endl;
         else
@@ -105,6 +105,10 @@ void show_output () {
         s_output.clear();
         break;
     }
+}
+
+void show_help (string cmd) {
+    cout << "usage: " << cmd << " config.json [options]" << endl;
 }
 
 int read_config (string config_path) {
@@ -126,6 +130,12 @@ int read_config (string config_path) {
         return 1;
     }
     config_file.close();
+    b_json = config.get("json", true).asBool();
+    b_loop = config.get("loop", true).asBool();
+    b_input = config.get("input", true).asBool();
+    timeout = config.get("timeout", 5).asInt();
+    if (!b_json || !b_loop)
+        b_input = false;
     vector <string> names = config.getMemberNames();
     for (unsigned int counter = 0; counter < names.size(); ++counter) {
         if (config[names[counter]].isObject()) {
@@ -137,7 +147,7 @@ int read_config (string config_path) {
             my_bar_config.back().offset = element.get ("offset", 0).asInt();
             my_bar_config.back().param = element.get ("param", "").asString();
             my_bar_config.back().label = element.get ("label", "").asString();
-            if (e_view == v_json) {
+            if (b_json) {
                 my_bar_config.back().align = element.get ("align", "center").asString();
                 my_bar_config.back().color_normal = element.get ("color_normal", "#ffffff").asString();
                 my_bar_config.back().color_urgent = element.get ("color_urgent", "#ff0000").asString();
@@ -177,42 +187,36 @@ int read_config (string config_path) {
 
 int main (int argc, char *argv[]) {
     int return_value;
-    int timeout = 5;
     string config_file = "";
     if (argc > 1) {
         int cmd;
-        while ((cmd = getopt (argc, argv, "1c:ilt:")) != -1) {
+        while ((cmd = getopt (argc, argv, "h")) != -1) {
             switch (cmd) {
-            case '1':
-                b_infinite = false;
-                b_pause = false;
-                b_input = false;
+            case 'h':
+                show_help(argv[0]);
+                return 1;
                 break;
-            case 'c':
-                config_file = optarg;
-                break;
-            case 'i':
-                b_pause = false;
-                break;
-            case 'l':
-                e_view = v_line;
-                b_input = false;
-                break;
-            case 't':
-                if (!string_to_int(optarg, timeout)) {
-                    cerr << "wrong timeout value" << endl;
-                    return 1;
-                }
             }
         }
+    } else {
+        show_help(argv[0]);
+        return 1;
+    }
+    if (optind < argc) {
+        while (optind < argc) {
+            config_file = argv[optind++];
+        }
+    } else {
+        show_help(argv[0]);
+        return 1;
     }
     if (read_config (config_file) != 0)
         return 1;
-    if (my_bar_config.size() < 1)
+    if (my_bar_config.empty())
         return 1;
     future <void> input = async (launch::async, get_input, my_input_config);
-    if (e_view == v_json) {
-        if (b_input == true)
+    if (b_json) {
+        if (b_input)
             cout << "{ \"version\": 1, \"click_events\": true }" << endl;
         else
             cout << "{ \"version\": 1 }" << endl;
@@ -256,8 +260,8 @@ int main (int argc, char *argv[]) {
             }
         }
         show_output();
-        if (b_pause)
+        if (b_loop)
             set_pause (timeout);
-    } while (b_infinite);
+    } while (b_loop);
     return 0;
 }
