@@ -152,7 +152,7 @@ int read_config (string config_path) {
                         my_bar_config.back().icon_mask = (my_bar_config.back().icon_name.substr(0,begin));
                         my_bar_config.back().icon_ext = (my_bar_config.back().icon_name.substr(end));
                         if (!string_to_int (my_bar_config.back().icon_name.substr(begin+1,end-begin-1), my_bar_config.back().icon_count)) {
-                            cout << my_bar_config.back().name << ": icon format error" << endl;
+                            cerr << my_bar_config.back().name << ": icon format error" << endl;
                             return 1;
                         }
                     }
@@ -177,10 +177,11 @@ int read_config (string config_path) {
 
 int main (int argc, char *argv[]) {
     int return_value;
+    int timeout = 5;
     string config_file = "";
     if (argc > 1) {
         int cmd;
-        while ((cmd = getopt (argc, argv, "1c:il")) != -1) {
+        while ((cmd = getopt (argc, argv, "1c:ilt:")) != -1) {
             switch (cmd) {
             case '1':
                 b_infinite = false;
@@ -197,6 +198,11 @@ int main (int argc, char *argv[]) {
                 e_view = v_line;
                 b_input = false;
                 break;
+            case 't':
+                if (!string_to_int(optarg, timeout)) {
+                    cerr << "wrong timeout value" << endl;
+                    return 1;
+                }
             }
         }
     }
@@ -251,7 +257,7 @@ int main (int argc, char *argv[]) {
         }
         show_output();
         if (b_pause)
-            set_pause (5);
+            set_pause (timeout);
     } while (b_infinite);
     return 0;
 }
