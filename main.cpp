@@ -24,7 +24,10 @@ string s_output = "";
 bool b_json = true;
 bool b_loop = true;
 bool b_input = true;
+bool b_colored = true;
+bool b_tmux = false;
 int timeout = 5;
+string color_normal = "#ffffff", color_urgent = "#ff0000", color_warning = "#00ffff";
 vector <bar_config> my_bar_config;
 vector <input_config> my_input_config;
 
@@ -41,18 +44,22 @@ modes string2modes (string input) {
 
 void add_output (bar_config my_bar_config) {
     Json::Value output;
+    if (b_colored) {
+        if (my_bar_config.color.empty()) {
+            if (my_bar_config.integer > -1) {
+                if (my_bar_config.integer > my_bar_config.urgent)
+                    my_bar_config.color = my_bar_config.color_urgent;
+                else
+                    my_bar_config.color = my_bar_config.color_normal;
+            } else {
+                my_bar_config.color = my_bar_config.color_warning;
+            }
+        }
+    }
     switch (b_json) {
     case true:
         output["name"] = my_bar_config.name;
         output["full_text"] = my_bar_config.label + my_bar_config.output;
-        if (my_bar_config.integer > -1) {
-            if (my_bar_config.integer > my_bar_config.urgent)
-                my_bar_config.color = my_bar_config.color_urgent;
-            else
-                my_bar_config.color = my_bar_config.color_normal;
-        } else {
-            my_bar_config.color = my_bar_config.color_warning;
-        }
         output["color"] = my_bar_config.color;
         output["icon_color"] = my_bar_config.color;
         if (!my_bar_config.icon_name.empty()) {
@@ -77,7 +84,15 @@ void add_output (bar_config my_bar_config) {
     case false:
         if (!s_output.empty())
             s_output += " | ";
-        s_output += my_bar_config.label + my_bar_config.output;
+        if (b_colored) {
+            if (b_tmux) {
+                s_output += "#[fg=" + my_bar_config.color + "]" + my_bar_config.label + my_bar_config.output + "#[fg=" + color_normal + "]";
+            } else {
+                s_output += "\033[" + my_bar_config.color + "m" + my_bar_config.label + my_bar_config.output + "\033[" + color_normal + "m";
+            }
+        } else {
+            s_output += my_bar_config.label + my_bar_config.output;
+        }
         break;
     }
     my_bar_config.output.clear();
@@ -108,7 +123,7 @@ void show_output () {
 }
 
 void show_help (string cmd) {
-    cout << "usage: " << cmd << " config.json [options]" << endl;
+    cout << "usage: " << cmd << " config.json" << endl;
 }
 
 int read_config (string config_path) {
@@ -133,7 +148,26 @@ int read_config (string config_path) {
     b_json = config.get("json", true).asBool();
     b_loop = config.get("loop", true).asBool();
     b_input = config.get("input", true).asBool();
+    b_colored = config.get("colored", true).asBool();
+    b_tmux = config.get("tmux", false).asBool();
     timeout = config.get("timeout", 5).asInt();
+    if (b_colored) {
+        if (b_json) {
+            color_normal = config.get ("color_normal", "#ffffff").asString();
+            color_urgent = config.get ("color_urgent", "#ff0000").asString();
+            color_warning = config.get ("color_warning", "#00ffff").asString();
+        } else {
+            if (b_tmux) {
+                color_normal = config.get("color_normal", "white").asString();
+                color_urgent = config.get("color_urgent", "red").asString();
+                color_warning = config.get("color_warning", "cyan").asString();
+            } else {
+                color_normal = config.get("color_normal", "37").asString();
+                color_urgent = config.get("color_urgent", "31").asString();
+                color_warning = config.get("color_warning", "36").asString();
+            }
+        }
+    }
     if (!b_json || !b_loop)
         b_input = false;
     vector <string> names = config.getMemberNames();
@@ -147,13 +181,15 @@ int read_config (string config_path) {
             my_bar_config.back().offset = element.get ("offset", 0).asInt();
             my_bar_config.back().param = element.get ("param", "").asString();
             my_bar_config.back().label = element.get ("label", "").asString();
+            if (b_colored) {
+                my_bar_config.back().urgent = element.get ("urgent", 0).asInt();
+                my_bar_config.back().color_normal = element.get ("color_normal", color_normal).asString();
+                my_bar_config.back().color_urgent = element.get ("color_urgent", color_urgent).asString();
+                my_bar_config.back().color_warning = element.get ("color_warning", color_warning).asString();
+            }
             if (b_json) {
                 my_bar_config.back().align = element.get ("align", "center").asString();
-                my_bar_config.back().color_normal = element.get ("color_normal", "#ffffff").asString();
-                my_bar_config.back().color_urgent = element.get ("color_urgent", "#ff0000").asString();
-                my_bar_config.back().color_warning = element.get ("color_warning", "#00ffff").asString();
                 my_bar_config.back().icon_name = element.get ("icon", "").asString();
-                my_bar_config.back().urgent = element.get ("urgent", 0).asInt();
                 my_bar_config.back().width = element.get ("width", false).asBool();
                 if (!my_bar_config.back().icon_name.empty()) {
                     size_t begin = my_bar_config.back().icon_name.find_first_of("%");
@@ -190,9 +226,9 @@ int main (int argc, char *argv[]) {
     string config_file = "";
     if (argc > 1) {
         int cmd;
-        while ((cmd = getopt (argc, argv, "h")) != -1) {
+        while ((cmd = getopt (argc, argv, "?")) != -1) {
             switch (cmd) {
-            case 'h':
+            case '?':
                 show_help(argv[0]);
                 return 1;
                 break;
@@ -255,7 +291,8 @@ int main (int argc, char *argv[]) {
             }
             if (return_value > 0) {
                 my_bar_config.at (counter).output = "ERR" + to_string (return_value);
-                my_bar_config.at (counter).color = "#ff0000";
+                if (b_colored)
+                    my_bar_config.at (counter).color = my_bar_config.at (counter).color_urgent;
                 add_output (my_bar_config.at (counter));
             }
         }
