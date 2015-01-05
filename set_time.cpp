@@ -9,8 +9,8 @@ int set_time (bar_config &my_bar_config) {
     tm *timeinfo;
     time (&rawtime);
     timeinfo = localtime (&rawtime);
-    strftime (buffer, sizeof (buffer), my_bar_config.param.c_str(), timeinfo);
-    my_bar_config.integer = 0;
-    my_bar_config.output = buffer;
+    strftime (buffer, sizeof (buffer), my_bar_config.input.param.c_str(), timeinfo);
+    my_bar_config.output.integer = 0;
+    my_bar_config.output.output = buffer;
     return 0;
 }

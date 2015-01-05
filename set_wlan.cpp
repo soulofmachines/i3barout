@@ -16,7 +16,7 @@ int set_wlan (bar_config &my_bar_config) {
     char *id[IW_ESSID_MAX_SIZE+1];
     memset(&req, 0, sizeof(iwreq));
     req.u.essid.length = IW_ESSID_MAX_SIZE+1;
-    memcpy(req.ifr_name, my_bar_config.device.c_str(), my_bar_config.device.size());
+    memcpy(req.ifr_name, my_bar_config.input.device.c_str(), my_bar_config.input.device.size());
     if((soketfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
         return_value = 1;
         goto close;
@@ -26,12 +26,12 @@ int set_wlan (bar_config &my_bar_config) {
         return_value = 2;
         goto close;
     }
-    my_bar_config.output = (char *)req.u.essid.pointer;
+    my_bar_config.output.output = (char *)req.u.essid.pointer;
     memset(&stat, 0, sizeof(stat));
     req.u.data.pointer = &stat;
     req.u.data.length = sizeof(stat);
     if(ioctl(soketfd, SIOCGIWSTATS, &req) == -1) {
-        my_bar_config.output = "Null";
+        my_bar_config.output.output = "Null";
         return_value = 0;
         goto close;
     }
@@ -42,8 +42,8 @@ int set_wlan (bar_config &my_bar_config) {
         return_value = 3;
         goto close;
     }
-    my_bar_config.integer = int (char (stat.qual.qual)) * 100 / int (char (range.max_qual.qual));
-    my_bar_config.output += " " + to_string (my_bar_config.integer) + "%";
+    my_bar_config.output.integer = int (char (stat.qual.qual)) * 100 / int (char (range.max_qual.qual));
+    my_bar_config.output.output += " " + to_string (my_bar_config.output.integer) + "%";
 close:
     close(soketfd);
     return return_value;

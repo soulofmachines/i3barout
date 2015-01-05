@@ -26,10 +26,10 @@ bool b_loop = true;
 bool b_input = true;
 bool b_colored = true;
 bool b_tmux = false;
+bool b_use_input = false;
 int timeout = 5;
 string color_normal = "#ffffff", color_urgent = "#ff0000", color_warning = "#00ffff";
 vector <bar_config> my_bar_config;
-vector <input_config> my_input_config;
 
 modes string2modes (string input) {
     if (input == "asound") return m_asound;
@@ -45,38 +45,38 @@ modes string2modes (string input) {
 void add_output (bar_config my_bar_config) {
     Json::Value output;
     if (b_colored) {
-        if (my_bar_config.color.empty()) {
-            if (my_bar_config.integer > -1) {
-                if (my_bar_config.integer > my_bar_config.urgent)
-                    my_bar_config.color = my_bar_config.color_urgent;
+        if (my_bar_config.output.color.empty()) {
+            if (my_bar_config.output.integer > -1) {
+                if (my_bar_config.output.integer > my_bar_config.input.urgent)
+                    my_bar_config.output.color = my_bar_config.color.urgent;
                 else
-                    my_bar_config.color = my_bar_config.color_normal;
+                    my_bar_config.output.color = my_bar_config.color.normal;
             } else {
-                my_bar_config.color = my_bar_config.color_warning;
+                my_bar_config.output.color = my_bar_config.color.warning;
             }
         }
     }
     switch (b_json) {
     case true:
-        output["name"] = my_bar_config.name;
-        output["full_text"] = my_bar_config.label + my_bar_config.output;
-        output["color"] = my_bar_config.color;
-        output["icon_color"] = my_bar_config.color;
-        if (!my_bar_config.icon_name.empty()) {
-            if (!my_bar_config.icon_mask.empty()) {
-                if (my_bar_config.integer > -1) {
-                    if (my_bar_config.integer < 100) {
-                        my_bar_config.icon = my_bar_config.icon_mask + to_string((int)ceil((float)my_bar_config.integer*(float)my_bar_config.icon_count/(float)100)) + my_bar_config.icon_ext;
+        output["name"] = my_bar_config.input.name;
+        output["full_text"] = my_bar_config.input.label + my_bar_config.output.output;
+        output["color"] = my_bar_config.output.color;
+        if (!my_bar_config.icon.name.empty()) {
+            output["icon_color"] = my_bar_config.output.color;
+            if (!my_bar_config.icon.mask.empty()) {
+                if (my_bar_config.output.integer > -1) {
+                    if (my_bar_config.output.integer < 100) {
+                        my_bar_config.output.icon = my_bar_config.icon.mask + to_string((int)ceil((float)my_bar_config.output.integer*(float)my_bar_config.icon.count/(float)100)) + my_bar_config.icon.ext;
                     } else {
-                        my_bar_config.icon = my_bar_config.icon_mask + to_string(my_bar_config.icon_count) + my_bar_config.icon_ext;
+                        my_bar_config.output.icon = my_bar_config.icon.mask + to_string(my_bar_config.icon.count) + my_bar_config.icon.ext;
                     }
                 } else {
-                    my_bar_config.icon = my_bar_config.icon_mask + "0" + my_bar_config.icon_ext;
+                    my_bar_config.output.icon = my_bar_config.icon.mask + "0" + my_bar_config.icon.ext;
                 }
-                output["icon"] = my_bar_config.icon;
+                output["icon"] = my_bar_config.output.icon;
             } else {
-                my_bar_config.icon = my_bar_config.icon_name;
-                output["icon"] = my_bar_config.icon;
+                my_bar_config.output.icon = my_bar_config.icon.name;
+                output["icon"] = my_bar_config.output.icon;
             }
         }
         j_output.append (output);
@@ -86,20 +86,20 @@ void add_output (bar_config my_bar_config) {
             s_output += " | ";
         if (b_colored) {
             if (b_tmux) {
-                s_output += "#[fg=" + my_bar_config.color + "]" + my_bar_config.label + my_bar_config.output + "#[fg=" + color_normal + "]";
+                s_output += "#[fg=" + my_bar_config.output.color + "]" + my_bar_config.input.label + my_bar_config.output.output + "#[fg=" + color_normal + "]";
             } else {
-                s_output += "\033[" + my_bar_config.color + "m" + my_bar_config.label + my_bar_config.output + "\033[" + color_normal + "m";
+                s_output += "\033[" + my_bar_config.output.color + "m" + my_bar_config.input.label + my_bar_config.output.output + "\033[" + color_normal + "m";
             }
         } else {
-            s_output += my_bar_config.label + my_bar_config.output;
+            s_output += my_bar_config.input.label + my_bar_config.output.output;
         }
         break;
     }
-    my_bar_config.output.clear();
-    my_bar_config.max_output.clear();
-    my_bar_config.icon.clear();
-    my_bar_config.color.clear();
-    my_bar_config.integer = -1;
+    my_bar_config.output.output.clear();
+    //my_bar_config.max_output.clear();
+    my_bar_config.output.icon.clear();
+    my_bar_config.output.color.clear();
+    my_bar_config.output.integer = -1;
 }
 
 void show_output () {
@@ -175,47 +175,50 @@ int read_config (string config_path) {
         if (config[names[counter]].isObject()) {
             my_bar_config.push_back (bar_config());
             element = config[names.at (counter)];
-            my_bar_config.back().name = names.at (counter);
+            my_bar_config.back().input.name = names.at (counter);
             my_bar_config.back().mode = string2modes (element.get ("mode", "").asString());
-            my_bar_config.back().device = element.get ("device", "").asString();
-            my_bar_config.back().offset = element.get ("offset", 0).asInt();
-            my_bar_config.back().param = element.get ("param", "").asString();
-            my_bar_config.back().label = element.get ("label", "").asString();
+            my_bar_config.back().input.device = element.get ("device", "").asString();
+            my_bar_config.back().input.offset = element.get ("offset", 0).asInt();
+            my_bar_config.back().input.param = element.get ("param", "").asString();
+            my_bar_config.back().input.label = element.get ("label", "").asString();
             if (b_colored) {
-                my_bar_config.back().urgent = element.get ("urgent", 0).asInt();
-                my_bar_config.back().color_normal = element.get ("color_normal", color_normal).asString();
-                my_bar_config.back().color_urgent = element.get ("color_urgent", color_urgent).asString();
-                my_bar_config.back().color_warning = element.get ("color_warning", color_warning).asString();
+                my_bar_config.back().input.urgent = element.get ("urgent", 0).asInt();
+                my_bar_config.back().color.normal = element.get ("color_normal", color_normal).asString();
+                my_bar_config.back().color.urgent = element.get ("color_urgent", color_urgent).asString();
+                my_bar_config.back().color.warning = element.get ("color_warning", color_warning).asString();
             }
             if (b_json) {
-                my_bar_config.back().align = element.get ("align", "center").asString();
-                my_bar_config.back().icon_name = element.get ("icon", "").asString();
-                my_bar_config.back().width = element.get ("width", false).asBool();
-                if (!my_bar_config.back().icon_name.empty()) {
-                    size_t begin = my_bar_config.back().icon_name.find_first_of("%");
-                    size_t end = my_bar_config.back().icon_name.find_last_of(".");
+                //my_bar_config.back().align = element.get ("align", "center").asString();
+                my_bar_config.back().icon.name = element.get ("icon", "").asString();
+                //my_bar_config.back().width = element.get ("width", false).asBool();
+                if (!my_bar_config.back().icon.name.empty()) {
+                    size_t begin = my_bar_config.back().icon.name.find_first_of("%");
+                    size_t end = my_bar_config.back().icon.name.find_last_of(".");
                     if ((begin != string::npos) && (end != string::npos)) {
-                        my_bar_config.back().icon_mask = (my_bar_config.back().icon_name.substr(0,begin));
-                        my_bar_config.back().icon_ext = (my_bar_config.back().icon_name.substr(end));
-                        if (!string_to_int (my_bar_config.back().icon_name.substr(begin+1,end-begin-1), my_bar_config.back().icon_count)) {
-                            cerr << my_bar_config.back().name << ": icon format error" << endl;
+                        my_bar_config.back().icon.mask = (my_bar_config.back().icon.name.substr(0,begin));
+                        my_bar_config.back().icon.ext = (my_bar_config.back().icon.name.substr(end));
+                        if (!string_to_int (my_bar_config.back().icon.name.substr(begin+1,end-begin-1), my_bar_config.back().icon.count)) {
+                            cerr << my_bar_config.back().input.name << ": icon format error" << endl;
                             return 1;
                         }
                     }
                 }
-            }
-            if (my_bar_config.back().mode == m_null)
-                my_bar_config.pop_back();
-            else
+
+
                 if (b_input) {
-                    my_input_config.push_back (input_config());
-                    my_input_config.back().name = names.at (counter);
-                    my_input_config.back().exec1 = element.get ("exec1", "").asString();
-                    my_input_config.back().exec2 = element.get ("exec2", "").asString();
-                    my_input_config.back().exec3 = element.get ("exec3", "").asString();
-                    if ((my_input_config.back().exec1.size() == 0) && (my_input_config.back().exec2.size() == 0) && (my_input_config.back().exec3.size() == 0))
-                        my_input_config.pop_back();
+                    //my_input_config.push_back (input_config());
+                    //my_input_config.back().name = names.at (counter);
+                    my_bar_config.back().exec.exec1 = element.get ("exec1", "").asString();
+                    my_bar_config.back().exec.exec2 = element.get ("exec2", "").asString();
+                    my_bar_config.back().exec.exec3 = element.get ("exec3", "").asString();
+                    if ((!my_bar_config.back().exec.exec1.empty()) || (!my_bar_config.back().exec.exec2.empty()) || (!my_bar_config.back().exec.exec3.empty()))
+                        b_use_input = true;
+                    //if ((my_input_config.back().exec1.size() == 0) && (my_input_config.back().exec2.size() == 0) && (my_input_config.back().exec3.size() == 0))
+                        //my_input_config.pop_back();
                 }
+            }
+                    if (my_bar_config.back().mode == m_null)
+                        my_bar_config.pop_back();
         }
     }
     return 0;
@@ -250,7 +253,7 @@ int main (int argc, char *argv[]) {
         return 1;
     if (my_bar_config.empty())
         return 1;
-    future <void> input = async (launch::async, get_input, my_input_config);
+    future <void> input = async (launch::async, get_input, my_bar_config, b_use_input);
     if (b_json) {
         if (b_input)
             cout << "{ \"version\": 1, \"click_events\": true }" << endl;
@@ -290,9 +293,9 @@ int main (int argc, char *argv[]) {
                 add_output (my_bar_config.at (counter));
             }
             if (return_value > 0) {
-                my_bar_config.at (counter).output = "ERR" + to_string (return_value);
+                my_bar_config.at (counter).output.output = "ERR" + to_string (return_value);
                 if (b_colored)
-                    my_bar_config.at (counter).color = my_bar_config.at (counter).color_urgent;
+                    my_bar_config.at (counter).output.color = my_bar_config.at (counter).color.urgent;
                 add_output (my_bar_config.at (counter));
             }
         }

@@ -15,7 +15,7 @@ int set_asound (bar_config &my_bar_config) {
         return_value = 1;
         goto close;
     }
-    if (snd_mixer_attach (handle, my_bar_config.device.c_str()) < 0) {
+    if (snd_mixer_attach (handle, my_bar_config.input.device.c_str()) < 0) {
         return_value = 2;
         goto close;
     }
@@ -29,7 +29,7 @@ int set_asound (bar_config &my_bar_config) {
     }
     snd_mixer_selem_id_alloca (&selem_id);
     snd_mixer_selem_id_set_index (selem_id, 0);
-    snd_mixer_selem_id_set_name (selem_id, my_bar_config.param.c_str());
+    snd_mixer_selem_id_set_name (selem_id, my_bar_config.input.param.c_str());
     elem = snd_mixer_find_selem (handle, selem_id);
     if (!elem) {
         return_value = 5;
@@ -40,11 +40,11 @@ int set_asound (bar_config &my_bar_config) {
         snd_mixer_selem_get_playback_volume(elem, selem_channel, &volume_cur);
         snd_mixer_selem_get_playback_volume_range(elem, &volume_min, &volume_max);
         volume = int (volume_cur * 100 / (volume_max - volume_min));
-        my_bar_config.integer = volume;
-        my_bar_config.output = to_string (volume) + "%";
+        my_bar_config.output.integer = volume;
+        my_bar_config.output.output = to_string (volume) + "%";
     } else {
-        my_bar_config.integer = -1;
-        my_bar_config.output = "0%";
+        my_bar_config.output.integer = -1;
+        my_bar_config.output.output = "0%";
     }
     return_value = 0;
 close:

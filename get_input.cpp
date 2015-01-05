@@ -6,8 +6,10 @@
 
 using namespace std;
 
-void get_input (vector <input_config> my_input_config) {
-    if (my_input_config.size() == 0)
+void get_input (vector <bar_config> my_bar_config, bool b_use_input) {
+    if (my_bar_config.size() == 0)
+        return;
+    if (!b_use_input)
         return;
     string input, jinput, name;
     int button;
@@ -28,20 +30,20 @@ void get_input (vector <input_config> my_input_config) {
                 name = element.get ("name", "").asString();
                 button = element.get ("button", "0").asInt();
                 if ((name.size() != 0) && (button != 0))
-                    for (unsigned int counter = 0; counter < my_input_config.size(); ++counter)
-                        if (my_input_config.at (counter).name == name)
+                    for (unsigned int counter = 0; counter < my_bar_config.size(); ++counter)
+                        if (my_bar_config.at (counter).input.name == name)
                             switch (button) {
                             case 1:
-                                if (my_input_config[counter].exec1.size() != 0)
-                                    system (my_input_config[counter].exec1.c_str());
+                                if (my_bar_config[counter].exec.exec1.size() != 0)
+                                    system (my_bar_config[counter].exec.exec1.c_str());
                                 break;
                             case 2:
-                                if (my_input_config[counter].exec2.size() != 0)
-                                    system (my_input_config[counter].exec2.c_str());
+                                if (my_bar_config[counter].exec.exec2.size() != 0)
+                                    system (my_bar_config[counter].exec.exec2.c_str());
                                 break;
                             case 3:
-                                if (my_input_config[counter].exec3.size() != 0)
-                                    system (my_input_config[counter].exec3.c_str());
+                                if (my_bar_config[counter].exec.exec3.size() != 0)
+                                    system (my_bar_config[counter].exec.exec3.c_str());
                                 break;
                             }
             }

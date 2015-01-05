@@ -11,23 +11,23 @@ int set_battery (bar_config &my_bar_config) {
     long e_now, e_full ,p_now, seconds;
     char buffer[128];
     tm *tpoint;
-    path = my_bar_config.device + "/capacity";
-    if (!file_to_int (path.c_str(), my_bar_config.integer)) {
+    path = my_bar_config.input.device + "/capacity";
+    if (!file_to_int (path.c_str(), my_bar_config.output.integer)) {
         return_value = -1;
         goto close;
     }
-    path = my_bar_config.device + "/power_now";
+    path = my_bar_config.input.device + "/power_now";
     if (!file_to_long (path.c_str(), p_now)) {
         return_value = 1;
         goto close;
     }
     if (p_now != 0) {
-        path = my_bar_config.device + "/status";
+        path = my_bar_config.input.device + "/status";
         if (!file_to_string (path.c_str(), status)) {
             return_value = 2;
             goto close;
         }
-        path = my_bar_config.device + "/energy_now";
+        path = my_bar_config.input.device + "/energy_now";
         if (!file_to_long (path.c_str(), e_now)) {
             return_value = 3;
             goto close;
@@ -35,7 +35,7 @@ int set_battery (bar_config &my_bar_config) {
         if (strcmp (status.c_str(), "Discharging\n") == 0)
             seconds = e_now * 3600 / p_now;
         else {
-            path = my_bar_config.device + "/energy_full";
+            path = my_bar_config.input.device + "/energy_full";
             if (!file_to_long (path.c_str(), e_full)) {
                 return_value = 4;
                 goto close;
@@ -46,8 +46,8 @@ int set_battery (bar_config &my_bar_config) {
         seconds = 0;
     tpoint = gmtime (&seconds);
     strftime (buffer, 128, "%H:%M", tpoint);
-    my_bar_config.output = buffer;
-    my_bar_config.output += " " + to_string (my_bar_config.integer) + "%";
+    my_bar_config.output.output = buffer;
+    my_bar_config.output.output += " " + to_string (my_bar_config.output.integer) + "%";
     return_value = 0;
 close:
     return return_value;
