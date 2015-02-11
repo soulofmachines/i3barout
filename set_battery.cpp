@@ -48,6 +48,7 @@ int set_battery (bar_config &my_bar_config) {
     strftime (buffer, 128, "%H:%M", tpoint);
     my_bar_config.output.output = buffer;
     my_bar_config.output.output += " " + to_string (my_bar_config.output.integer) + "%";
+    my_bar_config.output.integer = 100 - my_bar_config.output.integer;
     return_value = 0;
 close:
     return return_value;

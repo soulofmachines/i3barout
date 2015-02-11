@@ -44,6 +44,7 @@ int set_wlan (bar_config &my_bar_config) {
     }
     my_bar_config.output.integer = int (char (stat.qual.qual)) * 100 / int (char (range.max_qual.qual));
     my_bar_config.output.output += " " + to_string (my_bar_config.output.integer) + "%";
+    my_bar_config.output.integer = 100 - my_bar_config.output.integer;
 close:
     close(soketfd);
     return return_value;

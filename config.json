@@ -1,34 +1,51 @@
 {
-"json":false,
-"loop":false,
-    "05:time": {
-        "mode" : "time",
-        "param" : "%d/%m/%y %H:%M:%S"
-    },
-    "04:asound": {
-        "mode" : "asound",
-    	"prefix":"V:",
-        "urgent" : 100,
-        "device" : "default",
-	"param" : "Master",
-	"exec1" : "pavucontrol&",
-	"icon" : "volume%3.xbm"
-    },
-    "03:hwmon": {
-    "prefix":"CPU:",
-    "mode":"hwmon",
-    "device":"/sys/devices/platform/coretemp.0/temp1_input",
-        "urgent" : 85,
-    "offset":1000
-    },
-    "02:nvidia": {
-    "mode":"nvidia",
-    "prefix":"GPU:",
-        "urgent" : 85,
-    "device":"nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader"
-    },
-    "01:ipv4":{
-    "mode":"ipv4",
-    "device":"br0"
-    }
+   "00:battery" : {
+      "device" : "/sys/class/power_supply/BAT0",
+      "icon_name" : ".i3/icons/power%10.xbm",
+      "mode" : "battery",
+      "urgent" : 80
+   },
+   "01:wlan" : {
+      "device" : "wlan0",
+      "icon_name" : ".i3/icons/wifi.xbm",
+      "mode" : "wlan",
+      "urgent" : 80
+   },
+   "02:ipv4" : {
+      "device" : "eth0",
+      "icon_name" : ".i3/icons/ip.xbm",
+      "mode" : "ipv4"
+   },
+   "03:nvidia" : {
+      "device" : "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader --id=0",
+      "icon_name" : ".i3/icons/gpu.xbm",
+      "mode" : "nvidia",
+      "urgent" : 85
+   },
+   "04:hwmon" : {
+      "device" : "/sys/devices/platform/coretemp.0/hwmon/hwmon0/temp1_input",
+      "icon_name" : ".i3/icons/cpu.xbm",
+      "mode" : "hwmon",
+      "offset" : 1000,
+      "urgent" : 85
+   },
+   "05:asound" : {
+      "device" : "default",
+      "exec1" : "pavucontrol&",
+      "icon" : ".i3/icons/volume%3.xbm",
+      "mode" : "asound",
+      "param" : "Master",
+      "urgent" : 85
+   },
+   "06:time" : {
+      "icon_name" : ".i3/icons/time.xbm",
+      "mode" : "time",
+      "param" : "%d/%m/%y %H:%M:%S"
+   },
+   "colored" : true,
+   "input" : true,
+   "json" : true,
+   "loop" : true,
+   "timeout" : 5,
+   "tmux" : false
 }
