@@ -1,30 +1,30 @@
 {
    "00:battery" : {
       "device" : "/sys/class/power_supply/BAT0",
-      "icon_name" : ".i3/icons/power%10.xbm",
+      "icon" : ".i3/icons/power%10.xbm",
       "mode" : "battery",
       "urgent" : 80
    },
    "01:wlan" : {
       "device" : "wlan0",
-      "icon_name" : ".i3/icons/wifi.xbm",
+      "icon" : ".i3/icons/wifi.xbm",
       "mode" : "wlan",
       "urgent" : 80
    },
    "02:ipv4" : {
       "device" : "eth0",
-      "icon_name" : ".i3/icons/ip.xbm",
+      "icon" : ".i3/icons/ip.xbm",
       "mode" : "ipv4"
    },
    "03:nvidia" : {
       "device" : "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader --id=0",
-      "icon_name" : ".i3/icons/gpu.xbm",
+      "icon" : ".i3/icons/gpu.xbm",
       "mode" : "nvidia",
       "urgent" : 85
    },
    "04:hwmon" : {
       "device" : "/sys/devices/platform/coretemp.0/hwmon/hwmon0/temp1_input",
-      "icon_name" : ".i3/icons/cpu.xbm",
+      "icon" : ".i3/icons/cpu.xbm",
       "mode" : "hwmon",
       "offset" : 1000,
       "urgent" : 85
@@ -38,7 +38,7 @@
       "urgent" : 85
    },
    "06:time" : {
-      "icon_name" : ".i3/icons/time.xbm",
+      "icon" : ".i3/icons/time.xbm",
       "mode" : "time",
       "param" : "%d/%m/%y %H:%M:%S"
    },
