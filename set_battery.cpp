@@ -6,6 +6,7 @@
 using namespace std;
 
 int set_battery (bar_config &my_bar_config) {
+    bool charging = false;
     int return_value = 99;
     string path, status, width;
     long e_now, e_full ,p_now, seconds;
@@ -35,6 +36,7 @@ int set_battery (bar_config &my_bar_config) {
         if (strcmp (status.c_str(), "Discharging\n") == 0)
             seconds = e_now * 3600 / p_now;
         else {
+            charging = true;
             path = my_bar_config.input.device + "/energy_full";
             if (!file_to_long (path.c_str(), e_full)) {
                 return_value = 4;
@@ -48,7 +50,10 @@ int set_battery (bar_config &my_bar_config) {
     strftime (buffer, 128, "%H:%M", tpoint);
     my_bar_config.output.output = buffer;
     my_bar_config.output.output += " " + to_string (my_bar_config.output.integer) + "%";
-    my_bar_config.output.integer = 100 - my_bar_config.output.integer;
+    if (charging)
+        my_bar_config.output.integer = -1;
+    else
+        my_bar_config.output.integer = 100 - my_bar_config.output.integer;
     return_value = 0;
 close:
     return return_value;
