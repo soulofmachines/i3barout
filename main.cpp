@@ -291,14 +291,14 @@ int main (int argc, char *argv[]) {
             }
             if (return_value == 0) {
                 add_output (my_bar_config.at (counter));
-                if (b_colored)
-                    my_bar_config.at (counter).output.color = my_bar_config.at (counter).color.normal;
             }
             if (return_value > 0) {
                 my_bar_config.at (counter).output.output = "ERR" + to_string (return_value);
                 if (b_colored)
                     my_bar_config.at (counter).output.color = my_bar_config.at (counter).color.urgent;
                 add_output (my_bar_config.at (counter));
+                if (b_colored)
+                    my_bar_config.at (counter).output.color.clear();
             }
         }
         show_output();
