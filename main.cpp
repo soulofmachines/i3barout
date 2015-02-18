@@ -208,9 +208,9 @@ int read_config (string config_path) {
                 if (b_input) {
                     //my_input_config.push_back (input_config());
                     //my_input_config.back().name = names.at (counter);
-                    my_bar_config.back().exec.exec1 = element.get ("exec1", "").asString();
-                    my_bar_config.back().exec.exec2 = element.get ("exec2", "").asString();
-                    my_bar_config.back().exec.exec3 = element.get ("exec3", "").asString();
+                    my_bar_config.back().exec.exec1 = element.get ("exec1", "").asString() + " 1>/dev/null &";
+                    my_bar_config.back().exec.exec2 = element.get ("exec2", "").asString() + " 1>/dev/null &";
+                    my_bar_config.back().exec.exec3 = element.get ("exec3", "").asString() + " 1>/dev/null &";
                     if ((!my_bar_config.back().exec.exec1.empty()) || (!my_bar_config.back().exec.exec2.empty()) || (!my_bar_config.back().exec.exec3.empty()))
                         b_use_input = true;
                     //if ((my_input_config.back().exec1.size() == 0) && (my_input_config.back().exec2.size() == 0) && (my_input_config.back().exec3.size() == 0))

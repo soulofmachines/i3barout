@@ -31,13 +31,15 @@
    },
    "05:asound" : {
       "device" : "default",
-      "exec1" : "pavucontrol&",
+      "exec1" : "pavucontrol",
+      "exec2" : "amixer sset Master toggle",
       "icon" : ".i3/icons/volume%3.xbm",
       "mode" : "asound",
       "param" : "Master",
       "urgent" : 85
    },
    "06:time" : {
+      "exec1" : "zenity --calendar",
       "icon" : ".i3/icons/time.xbm",
       "mode" : "time",
       "param" : "%d/%m/%y %H:%M:%S"
