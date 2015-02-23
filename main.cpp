@@ -46,8 +46,14 @@ int main() {
     configStream.close();
     //int test = -1;
     std::cout << configFile.getMemberNames().size() << std::endl;
-    for (unsigned int x = 0; x < elements.size(); ++x)
+    for (unsigned int x = 0; x < elements.size(); ++x) {
+        elements.at(x)->json = false;
+        elements.at(x)->colored = true;
+        elements.at(x)->colorNormal = "37";
+        elements.at(x)->colorUrgent = "31";
+        elements.at(x)->colorWarning = "36";
     elements.at(x)->readConfig(configFile);
+    }
     while (true) {
 //    for (int loop = 0; loop < 17280; ++loop) {
     for (unsigned int x = 0; x < elements.size(); ++x) {

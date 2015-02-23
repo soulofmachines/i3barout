@@ -6,20 +6,23 @@
 
 class classBase {
 protected:
-    bool        colored,
-                json,
-                tmux;
     int         integer;
     std::string color,
-                colorNormal,
-                colorUrgent,
-                colorWarning,
-                error,
-                name,
-                output;
+    error,
+    output;
 public:
+    bool        colored,
+    json,
+    tmux;
+    std::string                 colorNormal,
+    colorUrgent,
+    colorWarning,
+    label,
+    name;
     virtual void    readConfig(Json::Value &config) = 0;
     virtual void    update() = 0;
+    void            setColor();
+    void setOutput(std::string input);
     std::string     show();
 };
 
