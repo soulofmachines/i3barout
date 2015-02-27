@@ -4,6 +4,7 @@
 #include <string>
 
 int pidGetPid(std::string name);
-std::string pidGetStatus(int pid);
+std::string pidGetStatus(int pid, int &ok);
+std::string pidGetStatusError(int ok);
 
 #endif //PIDGET_HPP

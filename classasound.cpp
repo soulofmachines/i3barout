@@ -14,19 +14,19 @@ void classAsound::update() {
     output.clear();
     error.clear();
     if (snd_mixer_open(&handle, 0) < 0) {
-        error = "snd_mixer_open";
+        error = "Asound: open";
         goto end;
     }
     if (snd_mixer_attach(handle, device.c_str()) < 0) {
-        error = "snd_mixer_attach";
+        error = "Asound: device";
         goto end;
     }
     if (snd_mixer_selem_register(handle, NULL, NULL) < 0) {
-        error = "snd_mixer_selem_register";
+        error = "Asound: register";
         goto end;
     }
     if (snd_mixer_load(handle) < 0) {
-        error = "snd_mixer_load";
+        error = "Asound: load";
         goto end;
     }
     snd_mixer_selem_id_alloca(&selem_id);
@@ -34,7 +34,7 @@ void classAsound::update() {
     snd_mixer_selem_id_set_name(selem_id, mixer.c_str());
     elem = snd_mixer_find_selem(handle, selem_id);
     if (!elem) {
-        error = "snd_mixer_find_selem";
+        error = "Asound: mixer";
         goto end;
     }
     snd_mixer_selem_get_playback_switch(elem, selem_channel_id, &volumeUnmute);

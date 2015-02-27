@@ -17,8 +17,8 @@ public:
     classWlan();
     void readConfig(Json::Value &config);
     void update();
-    void wlanName();
-    void wlanStrength();
+    bool wlanName();
+    bool wlanStrength();
 };
 
 #endif //CLASSWLAN_HPP

@@ -64,7 +64,8 @@ int main() {
     //std::cout << test << std::endl;
     //sleep(1);
 }
+    int ok;
     std::cout << pidGetPid("udevd") << std::endl;
-    std::cout << pidGetStatus(pidGetPid("sh")) << std::endl;
+    std::cout << pidGetStatus(pidGetPid("sh"), ok) << std::endl;
     return 0;
 }

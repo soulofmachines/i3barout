@@ -18,15 +18,15 @@ void classIpv4::update() {
     output.clear();
     error.clear();
     if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
-        error = "AF_INET";
+        error = "Lan: open";
         return;
     }
     if (ioctl(fd, SIOCGIFFLAGS, &ifr) == -1) {
-        error = "SIOCGIFFLAGS";
+        error = "Lan: device";
         goto end;
     }
     if (ioctl(fd, SIOCGIFADDR, &ifr) == -1) {
-        error = "SIOCGIFADDR";
+        error = "Lan: status";
         goto end;
     }
     output = inet_ntoa(((struct sockaddr_in*)(&ifr.ifr_addr))->sin_addr);

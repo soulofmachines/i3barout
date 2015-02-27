@@ -7,7 +7,7 @@
 #include <iostream>
 
 int pidGetPid(std::string name) {
-    int pid = -1;
+    int pid = 0;
     int id;
     std::ifstream cmdFile;
     std::stringstream ss;
@@ -15,7 +15,7 @@ int pidGetPid(std::string name) {
     dirent* dirp;
     dp = opendir("/proc");
     if (dp != NULL) {
-        while (pid < 0 && (dirp = readdir(dp))) {
+        while (pid < 1 && (dirp = readdir(dp))) {
             id = 0;
             if (stringToInt(dirp->d_name, id)) {
                 if (id > 0) {
@@ -32,11 +32,12 @@ int pidGetPid(std::string name) {
         }
         closedir(dp);
     } else
-        pid = -2;
+        pid = -1;
     return pid;
 }
 
-std::string pidGetStatus(int pid) {
+std::string pidGetStatus(int pid, int &ok) {
+    ok = 1;
     std::ifstream cmdFile;
     std::stringstream ss;
     unsigned int start;
@@ -46,14 +47,36 @@ std::string pidGetStatus(int pid) {
         cmdFile.close();
         start = ss.str().find(")");
         if (start == std::string::npos) {
-            return "-2";
+            ok = 3;
         }
         if (ss.str().length() > start + 3) {
+            ok = 0;
             return ss.str().substr(start + 2, 1);
         } else {
-            return "-1";
+            ok = 4;
         }
     } else {
-        return "-1";
+        ok = 2;
     }
+    return "";
+}
+
+std::string pidGetStatusError(int ok) {
+    switch (ok) {
+    case 1:
+        return "undefined";
+        break;
+    case 2:
+        return "open";
+        break;
+    case 3:
+        return "format";
+        break;
+    case 4:
+        return "too fast";
+        break;
+    default:
+        break;
+    }
+    return "";
 }

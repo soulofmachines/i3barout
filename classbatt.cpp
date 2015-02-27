@@ -14,12 +14,15 @@ void classBatt::update() {
     integer = 0;
     output.clear();
     if (!battCapacity()) {
+        error = "Capacity: " + fileToIntError(ok);
         return;
     }
     if (!battStatus()) {
+        error = "Status: " + fileToStringError(ok);
         return;
     }
     if (!battTime()) {
+        error = "Time: " + fileToIntError(ok);
         return;
     }
     output = time + " " + std::to_string(capacity) + "%";

@@ -10,7 +10,8 @@ private:
     reader,
     status;
     FILE* fd;
-    int pid;
+    int pid,
+    ok;
     char buffer[32];
 public:
     classNvidia();

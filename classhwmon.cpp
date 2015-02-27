@@ -19,6 +19,7 @@ void classHwmon::update() {
     output.clear();
     error.clear();
     if (!fileToInt(monitor, integer, ok)) {
+        error = "Monitor: " + fileToIntError(ok);
         return;
     }
     integer = integer / divider;

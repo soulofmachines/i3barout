@@ -17,38 +17,43 @@ void classNvidia::update() {
     integer = 0;
     output.clear();
     error.clear();
+    reader.clear();
     std::ifstream file;
     std::stringstream ss;
     file.open("/proc/modules");
     if (!file.is_open()) {
-        error = "ifstream.open";
+        error = "Module: open";
         return;
     }
     ss << file.rdbuf();
     file.close();
     if ((ss.str().find(module + " ") == std::string::npos)) {
-        error = "stringstream.str.find";
+        error = "Module: find";
         return;
     }
     if (exec.empty()) {
-        error = "string.empty";
+        error = "Exec: empty";
         return;
     }
     pid = pidGetPid(exec.substr(0, exec.find(" ")));
     if (pid > 0) {
-        status = pidGetStatus(pid);
+        status = pidGetStatus(pid, ok);
         if ((status == "S") || (status == "R")) {
-            error = "execSR";
+            error = "Status: SR";
             return;
         } else {
-            if (status == "-1") {
-                error = "pidGetStatus";
+            if (status.empty()) {
+                error = "Status: " + pidGetStatusError(ok);
                 return;
             } else {
-                error = "exec";
+                error = "Status: undefined";
                 return;
             }
         }
+    }
+    if (pid < 0) {
+        error = "Pid: proc";
+        return;
     }
     fd = popen(exec.c_str(), "r");
     if (fd != NULL) {
@@ -59,12 +64,12 @@ void classNvidia::update() {
         }
         pclose(fd);
         if (!stringToInt(reader, integer)) {
-            error = "stringToInt";
+            error = "Exec: output";
             return;
         }
         output = std::to_string(integer) + "°C";
     } else {
-        error = "popen";
+        error = "Exec: execute";
         return;
     }
 }

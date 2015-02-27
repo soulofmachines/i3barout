@@ -22,46 +22,53 @@ void classWlan::update() {
     integer = 0;
     output.clear();
     error.clear();
-    wlanName();
-    if (error.empty())
-        wlanStrength();
+    if (!wlanName())
+        return;
+    if (!wlanStrength())
+        return;
     output = wname + " " + std::to_string(integer) + "%";
 }
 
-void classWlan::wlanName() {
+bool classWlan::wlanName() {
+    bool ret = false;
     wname.clear();
     iwr.u.essid.length = IW_ESSID_MAX_SIZE + 1;
     if((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
-        error = "AF_INET";
-        return;
+        error = "Wlan: open";
+        return ret;
     }
     if (ioctl(fd, SIOCGIWESSID, &iwr) == -1) {
-        error = "SIOCGIWESSID";
+        error = "Wlan: device";
         goto end;
     }
     wname = (char*)iwr.u.essid.pointer;
+    ret = true;
 end:
     close(fd);
+    return ret;
 }
 
-void classWlan::wlanStrength() {
+bool classWlan::wlanStrength() {
+    bool ret = false;
     if((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
-        error = "AF_INET";
-        return;
-    }
-    iwr.u.data.pointer = &iwstat;
-    iwr.u.data.length = sizeof(iw_statistics);
-    if(ioctl(fd, SIOCGIWSTATS, &iwr) == -1) {
-        error = "SIOCGIWSTATS";
-        goto end;
+        error = "Wlan: open";
+        return ret;
     }
     iwr.u.data.pointer = &iwrange;
     iwr.u.data.length = sizeof(iw_range);
     if(ioctl(fd, SIOCGIWRANGE, &iwr) == -1) {
-        error = "SIOCGIWRANGE";
+        error = "Wlan: device";
+        goto end;
+    }
+    iwr.u.data.pointer = &iwstat;
+    iwr.u.data.length = sizeof(iw_statistics);
+    if(ioctl(fd, SIOCGIWSTATS, &iwr) == -1) {
+        error = "Wlan: status";
         goto end;
     }
     integer = int(char(iwstat.qual.qual)) * 100 / int(char(iwrange.max_qual.qual));
+    ret = true;
 end:
     close(fd);
+    return ret;
 }
