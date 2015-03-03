@@ -10,7 +10,7 @@ private:
     ok;
 public:
     classHwmon();
-    void readConfig(Json::Value &config);
+    void readCustomConfig(Json::Value &config);
     void update();
 };
 

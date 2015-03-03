@@ -5,7 +5,7 @@ classTime::classTime() {
     integer = 0;
 }
 
-void classTime::readConfig(Json::Value &config) {
+void classTime::readCustomConfig(Json::Value &config) {
     size = jsonGetInt(config["size"], 32);
     if (size < 1)
         size = 1;

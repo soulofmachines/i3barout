@@ -1,4 +1,9 @@
 #include "classbase.hpp"
+#include "jsonget.hpp"
+
+void classBase::readConfig(Json::Value &config) {
+    readCustomConfig(config);
+}
 
 void classBase::setColor() {
     if (colored) {

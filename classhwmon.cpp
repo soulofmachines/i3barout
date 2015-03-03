@@ -7,7 +7,7 @@
 classHwmon::classHwmon() {
 }
 
-void classHwmon::readConfig(Json::Value &config) {
+void classHwmon::readCustomConfig(Json::Value &config) {
     monitor = jsonGetString(config["monitor"], "/sys/devices/virtual/hwmon/hwmon0/temp1_input");
     divider = jsonGetInt(config["divider"], 1000);
     if (divider < 1)

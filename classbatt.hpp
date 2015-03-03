@@ -18,7 +18,7 @@ private:
     tm* timeinfo;
     public:
     classBatt();
-    void readConfig(Json::Value &config);
+    void readCustomConfig(Json::Value &config);
     void update();
     bool battCapacity();
     bool battStatus();

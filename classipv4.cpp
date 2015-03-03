@@ -9,7 +9,7 @@ classIpv4::classIpv4() {
     integer = 0;
 }
 
-void classIpv4::readConfig(Json::Value &config) {
+void classIpv4::readCustomConfig(Json::Value &config) {
     device = jsonGetString(config["device"], "eth0");
     strncpy(ifr.ifr_name, device.c_str(), IFNAMSIZ - 1);
 }

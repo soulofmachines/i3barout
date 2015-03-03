@@ -12,7 +12,7 @@ private:
     std::string     device;
 public:
     classIpv4();
-    void readConfig(Json::Value &config);
+    void readCustomConfig(Json::Value &config);
     void update();
 };
 

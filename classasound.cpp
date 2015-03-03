@@ -4,7 +4,7 @@
 classAsound::classAsound() {
 }
 
-void classAsound::readConfig(Json::Value &config) {
+void classAsound::readCustomConfig(Json::Value &config) {
     device = jsonGetString(config["device"], "default");
     mixer = jsonGetString(config["mixer"], "Master");
 }

@@ -12,7 +12,7 @@ private:
     std::string format;
 public:
     classTime();
-    void readConfig(Json::Value &config);
+    void readCustomConfig(Json::Value &config);
     void update();
 };
 

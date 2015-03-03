@@ -8,7 +8,7 @@
 classNvidia::classNvidia() {
 }
 
-void classNvidia::readConfig(Json::Value &config) {
+void classNvidia::readCustomConfig(Json::Value &config) {
     exec = jsonGetString(config["exec"], "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader");
     module = jsonGetString(config["module"], "nvidia");
 }

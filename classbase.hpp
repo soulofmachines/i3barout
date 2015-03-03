@@ -19,7 +19,8 @@ public:
     colorWarning,
     label,
     name;
-    virtual void    readConfig(Json::Value &config) = 0;
+    void            readConfig(Json::Value &config);
+    virtual void    readCustomConfig(Json::Value &config) = 0;
     virtual void    update() = 0;
     void            setColor();
     void setOutput(std::string input);

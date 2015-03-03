@@ -19,7 +19,7 @@ private:
                                         mixer;
 public:
     classAsound();
-    void readConfig(Json::Value &config);
+    void readCustomConfig(Json::Value &config);
     void update();
 };
 
