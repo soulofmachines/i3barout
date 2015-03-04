@@ -15,22 +15,50 @@ void classBase::setColor() {
 }
 
 void classBase::setOutput(std::string input) {
-    if (!json) {
-        if (colored) {
-        output = "\033[" + color + "m" + input + "\033[" + "m";
-        }
-    }
+    output = label + input;
 }
 
 std::string classBase::show() {
     update();
-    if (!output.empty()) {
-        setColor();
-        setOutput(output);
-    }
     if (!error.empty()) {
         color = colorUrgent;
         setOutput(error);
+    } else {
+        if (!output.empty()) {
+            setColor();
+            setOutput(output);
+        }
     }
-    return output;
+    if (json) {
+        return showJson();
+    }
+    if (tmux) {
+        return showTmux();
+    } else {
+        return showTerm();
+    }
+}
+
+std::string classBase::showJson() {
+    jsonOutput.clear();
+    if (colored) {
+        jsonOutput["color"] = color;
+        if (!icon.empty()) {
+            jsonOutput["icon_color"] = color;
+        }
+    }
+    jsonOutput["text"] = output;
+    return writer.write(jsonOutput);
+}
+
+std::string classBase::showTerm() {
+    if (colored) {
+        return separator + "\033[" + color + "m" + output + "\033[" + "m";
+    } else {
+        return separator + output;
+    }
+}
+
+std::string classBase::showTmux() {
+    return separator + output;
 }

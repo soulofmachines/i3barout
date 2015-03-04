@@ -6,9 +6,13 @@
 
 class classBase {
 protected:
+    Json::Value jsonOutput;
+    Json::FastWriter writer;
     int         integer;
     std::string color,
     error,
+    icon,
+    label,
     output;
 public:
     bool        colored,
@@ -17,7 +21,7 @@ public:
     std::string                 colorNormal,
     colorUrgent,
     colorWarning,
-    label,
+    separator,
     name;
     void            readConfig(Json::Value &config);
     virtual void    readCustomConfig(Json::Value &config) = 0;
@@ -25,6 +29,9 @@ public:
     void            setColor();
     void setOutput(std::string input);
     std::string     show();
+    std::string     showJson();
+    std::string     showTerm();
+    std::string     showTmux();
 };
 
 #endif //CLASSBASE_HPP

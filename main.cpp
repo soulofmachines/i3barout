@@ -48,16 +48,20 @@ int main() {
     std::cout << configFile.getMemberNames().size() << std::endl;
     for (unsigned int x = 0; x < elements.size(); ++x) {
         elements.at(x)->json = false;
+        elements.at(x)->tmux = false;
         elements.at(x)->colored = true;
         elements.at(x)->colorNormal = "37";
         elements.at(x)->colorUrgent = "31";
         elements.at(x)->colorWarning = "36";
     elements.at(x)->readConfig(configFile);
     }
+    for (unsigned int x = 1; x < elements.size(); ++x) {
+        elements.at(x)->separator = " | ";
+    }
     while (true) {
 //    for (int loop = 0; loop < 17280; ++loop) {
     for (unsigned int x = 0; x < elements.size(); ++x) {
-        std::cout << elements.at(x)->show() << " | ";
+        std::cout << elements.at(x)->show();
     }
     std::cout << std::endl;
     //fileGetInt("testnum", test, error);
