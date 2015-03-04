@@ -8,10 +8,15 @@ class classBase {
 protected:
     Json::Value jsonOutput;
     Json::FastWriter writer;
-    int         integer;
+    int         integer,
+    iconNum,
+    urgent;
+    bool        urgentAbove;
     std::string color,
     error,
     icon,
+    iconName,
+    iconExt,
     label,
     output;
 public:
@@ -28,6 +33,7 @@ public:
     virtual void    update() = 0;
     void            setColor();
     void setOutput(std::string input);
+    void setIcon();
     std::string     show();
     std::string     showJson();
     std::string     showTerm();
