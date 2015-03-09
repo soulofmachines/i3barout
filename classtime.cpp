@@ -3,6 +3,7 @@
 
 classTime::classTime() {
     integer = 0;
+    urgent = 0;
 }
 
 void classTime::readCustomConfig(Json::Value &config) {
