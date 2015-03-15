@@ -6,11 +6,11 @@ classTime::classTime() {
     urgent = 0;
 }
 
-void classTime::readCustomConfig(Json::Value &config) {
-    size = jsonGetInt(config["size"], 32);
+void classTime::readCustomConfig(yajl_val &config) {
+    size = jsonGetInt(config, "size", 32);
     if (size < 1)
         size = 1;
-    format = jsonGetString(config["format"], "%d/%m/%y %H:%M:%S");
+    format = jsonGetString(config, "format", "%d/%m/%y %H:%M:%S");
 }
 
 void classTime::update() {

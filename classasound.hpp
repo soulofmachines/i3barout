@@ -19,7 +19,7 @@ private:
                                         mixer;
 public:
     classAsound();
-    void readCustomConfig(Json::Value &config);
+    void readCustomConfig(yajl_val &config);
     void update();
 };
 

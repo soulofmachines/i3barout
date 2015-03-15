@@ -10,8 +10,8 @@ classIpv4::classIpv4() {
     urgent = 0;
 }
 
-void classIpv4::readCustomConfig(Json::Value &config) {
-    device = jsonGetString(config["device"], "eth0");
+void classIpv4::readCustomConfig(yajl_val &config) {
+    device = jsonGetString(config, "device", "eth0");
     strncpy(ifr.ifr_name, device.c_str(), IFNAMSIZ - 1);
 }
 

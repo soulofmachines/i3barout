@@ -10,7 +10,7 @@ private:
     ok;
 public:
     classHwmon();
-    void readCustomConfig(Json::Value &config);
+    void readCustomConfig(yajl_val &config);
     void update();
 };
 

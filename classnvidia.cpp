@@ -8,9 +8,9 @@
 classNvidia::classNvidia() {
 }
 
-void classNvidia::readCustomConfig(Json::Value &config) {
-    exec = jsonGetString(config["exec"], "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader");
-    module = jsonGetString(config["module"], "nvidia");
+void classNvidia::readCustomConfig(yajl_val &config) {
+    exec = jsonGetString(config, "exec", "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader");
+    module = jsonGetString(config, "module", "nvidia");
 }
 
 void classNvidia::update() {

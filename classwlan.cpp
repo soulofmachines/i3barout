@@ -8,8 +8,8 @@
 classWlan::classWlan () {
 }
 
-void classWlan::readCustomConfig(Json::Value &config) {
-    device = jsonGetString(config["device"], "wlan0");
+void classWlan::readCustomConfig(yajl_val &config) {
+    device = jsonGetString(config, "device", "wlan0");
     memset(&iwr, 0, sizeof(iwreq));
     memset(&iwstat, 0, sizeof(iw_statistics));
     memset(&iwrange, 0, sizeof(iw_range));

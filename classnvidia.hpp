@@ -15,7 +15,7 @@ private:
     char buffer[32];
 public:
     classNvidia();
-    void readCustomConfig(Json::Value &config);
+    void readCustomConfig(yajl_val &config);
     void update();
 };
 

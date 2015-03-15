@@ -5,8 +5,8 @@
 classBatt::classBatt() {
 }
 
-void classBatt::readCustomConfig(Json::Value &config) {
-    device = jsonGetString(config["device"], "/sys/class/power_supply/BAT0");
+void classBatt::readCustomConfig(yajl_val &config) {
+    device = jsonGetString(config, "device", "/sys/class/power_supply/BAT0");
     time.resize(5);
 }
 

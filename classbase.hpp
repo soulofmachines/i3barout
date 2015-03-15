@@ -2,12 +2,13 @@
 #define CLASSBASE_HPP
 
 #include <string>
-#include <jsoncpp/json/json.h>
+#include <yajl/yajl_tree.h>
 
 class classBase {
 protected:
-    Json::Value jsonOutput;
-    Json::FastWriter writer;
+//    Json::Value jsonOutput;
+//    Json::FastWriter writer;
+    yajl_val jsonOutput;
     int         integer,
     iconNum,
     urgent;
@@ -28,8 +29,8 @@ public:
     colorWarning,
     separator,
     name;
-    void            readConfig(Json::Value &config);
-    virtual void    readCustomConfig(Json::Value &config) = 0;
+    void            readConfig(yajl_val &config);
+    virtual void    readCustomConfig(yajl_val &config) = 0;
     virtual void    update() = 0;
     void            setColor();
     void setOutput(std::string input);

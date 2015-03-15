@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <jsoncpp/json/json.h>
 #include <fstream>
 #include "classasound.hpp"
 #include "classbatt.hpp"
@@ -11,6 +10,7 @@
 #include "classwlan.hpp"
 #include "jsonget.hpp"
 #include "stringto.hpp"
+#include <sstream>
 
 std::vector<classBase*> elementV;
 std::vector<classAsound> asoundV;
@@ -21,7 +21,7 @@ std::vector<classNvidia> nvidiaV;
 std::vector<classTime> timeV;
 std::vector<classWlan> wlanV;
 
-Json::Value configFile;
+yajl_val configFile;
 bool colored, json, tmux, loop;
 std::string colorNormal, colorUrgent, colorWarning;
 
@@ -30,52 +30,58 @@ void help(char* arg) {
 }
 
 bool readConfig(std::string file) {
-    Json::Reader configReader;
     std::ifstream configStream;
+    std::stringstream ss;
+    char errbuf[1024];
     configStream.open(file);
     if (!configStream.is_open()) {
         std::cerr << file << ": cant't open" << std::endl;
         return false;
     }
-    if (!configReader.parse(configStream, configFile, false)) {
-        std::cerr << file << ": " << configReader.getFormattedErrorMessages() << std::endl;
+    ss << configStream.rdbuf();
+    configFile = yajl_tree_parse(ss.str().c_str(), errbuf, sizeof(errbuf));
+    if (configFile == NULL) {
+        if (strlen(errbuf)) {
+            std::cerr << file << ": " << errbuf << std::endl;
+        } else {
+            std::cerr << file << ": " << "unknown error" << std::endl;
+        }
         return false;
     }
-    configStream.close();
+    if ((!YAJL_IS_OBJECT(configFile) || (YAJL_GET_OBJECT(configFile)->len == 0))) {
+        std::cerr << file << ": " << "format error" << std::endl;
+        return false;
+    }
     return true;
 }
 
 bool parseConfig() {
-    std::string name;
-    Json::Value element;
-    colored = jsonGetBool(configFile["colored"], true);
-    json = jsonGetBool(configFile["json"], false);
-    tmux = jsonGetBool(configFile["tmux"], false);
-    loop = jsonGetBool(configFile["loop"], false);
+    yajl_val element;
+    colored = jsonGetBool(configFile, "colored", true);
+    json = jsonGetBool(configFile, "json", false);
+    tmux = jsonGetBool(configFile, "tmux", false);
+    loop = jsonGetBool(configFile, "loop", false);
     if (colored) {
         if (json) {
-            colorNormal = jsonGetString(configFile["colorNormal"], "#ffffff");
-            colorUrgent = jsonGetString(configFile["colorUrgent"], "#ff0000");
-            colorWarning = jsonGetString(configFile["colorWarning"], "#00ffff");
+            colorNormal = jsonGetString(configFile, "colorNormal", "#ffffff");
+            colorUrgent = jsonGetString(configFile, "colorUrgent", "#ff0000");
+            colorWarning = jsonGetString(configFile, "colorWarning", "#00ffff");
         } else {
             if (tmux) {
-                colorNormal = jsonGetString(configFile["colorNormal"], "white");
-                colorUrgent = jsonGetString(configFile["colorUrgent"], "red");
-                colorWarning = jsonGetString(configFile["colorWarning"], "cyan");
+                colorNormal = jsonGetString(configFile, "colorNormal", "white");
+                colorUrgent = jsonGetString(configFile, "colorUrgent", "red");
+                colorWarning = jsonGetString(configFile, "colorWarning", "cyan");
             } else {
-                colorNormal = jsonGetString(configFile["colorNormal"], "37");
-                colorUrgent = jsonGetString(configFile["colorUrgent"], "31");
-                colorWarning = jsonGetString(configFile["colorWarning"], "36");
+                colorNormal = jsonGetString(configFile, "colorNormal", "37");
+                colorUrgent = jsonGetString(configFile, "colorUrgent", "31");
+                colorWarning = jsonGetString(configFile, "colorWarning", "36");
             }
         }
     }
-    for (unsigned int x = 0; x < configFile.getMemberNames().size(); ++x) {
-        name = configFile.getMemberNames().at(x);
-        element = configFile[name];
-        if (element.isObject() && !element.isNull()) {
-            if (!element["mode"].isString())
-                continue;
-            switch (stringToMode(element["mode"].asString())) {
+    for (unsigned int x = 0; x < YAJL_GET_OBJECT(configFile)->len; ++x) {
+        element = YAJL_GET_OBJECT(configFile)->values[x];
+        if (YAJL_IS_OBJECT(element)) {
+            switch (stringToMode(jsonGetString(element, "mode", ""))) {
             case m_asound:
                 asoundV.push_back(classAsound());
                 elementV.push_back(&asoundV.back());
@@ -100,6 +106,9 @@ bool parseConfig() {
                 timeV.push_back(classTime());
                 elementV.push_back(&timeV.back());
                 break;
+            case m_wlan:
+                wlanV.push_back(classWlan());
+                elementV.push_back(&wlanV.back());
             default:
                 continue;
             }
@@ -112,9 +121,11 @@ bool parseConfig() {
                 elementV.back()->colorWarning = colorWarning;
             }
             elementV.back()->readConfig(element);
+            element = NULL;
             std::cout << elementV.back()->show() << std::endl;
         }
     }
+    yajl_tree_free(configFile);
     return true;
 }
 
