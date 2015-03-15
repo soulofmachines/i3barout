@@ -8,7 +8,7 @@
 #include "classnvidia.hpp"
 #include "classtime.hpp"
 #include "classwlan.hpp"
-#include "jsonget.hpp"
+#include "json.hpp"
 #include "stringto.hpp"
 #include <sstream>
 

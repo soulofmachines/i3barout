@@ -1,4 +1,4 @@
-#include "jsonget.hpp"
+#include "json.hpp"
 
 bool jsonGetBool(yajl_val &config, std::string name, bool def) {
     yajl_val value;
@@ -28,4 +28,9 @@ std::string jsonGetString(yajl_val &config, std::string name, std::string def) {
     if (YAJL_IS_STRING(value))
         return YAJL_GET_STRING(value);
     return def;
+}
+
+void jsonMapAddString(yajl_gen &json, std::string name, std::string value) {
+    yajl_gen_string(json, (const unsigned char*) name.c_str(), name.length());
+    yajl_gen_string(json, (const unsigned char*) value.c_str(), value.length());
 }

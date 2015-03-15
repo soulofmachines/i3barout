@@ -1,6 +1,7 @@
 #include "classbase.hpp"
-#include "jsonget.hpp"
+#include "json.hpp"
 #include "stringto.hpp"
+#include <cstring>
 
 void classBase::readConfig(yajl_val &config) {
     colorNormal = jsonGetString(config, "colorNormal", colorNormal);
@@ -80,23 +81,23 @@ std::string classBase::show() {
     }
 }
 
-//std::string classBase::showJson() {
-//    jsonOutput.clear();
-//    if (!icon.empty()) {
-//        jsonOutput["icon"] = icon;
-//    }
-//    if (colored) {
-//        jsonOutput["color"] = color;
-//        if (!icon.empty()) {
-//            jsonOutput["icon_color"] = color;
-//        }
-//    }
-//    jsonOutput["text"] = output;
-//    return writer.write(jsonOutput);
-//}
-
 std::string classBase::showJson() {
-    return "";
+    jsonOutput = yajl_gen_alloc(NULL);
+    yajl_gen_clear(jsonOutput);
+    yajl_gen_map_open(jsonOutput);
+    if (!icon.empty()) {
+        jsonMapAddString(jsonOutput, "icon", icon);
+    }
+    if (colored) {
+        jsonMapAddString(jsonOutput, "color", color);
+        if (!icon.empty()) {
+            jsonMapAddString(jsonOutput, "icon_color", color);
+        }
+    }
+    jsonMapAddString(jsonOutput, "full_text", output);
+    yajl_gen_map_close(jsonOutput);
+    yajl_gen_get_buf(jsonOutput, &jsonBuf, &jsonLen);
+    return (const char *) jsonBuf;
 }
 
 std::string classBase::showTerm() {

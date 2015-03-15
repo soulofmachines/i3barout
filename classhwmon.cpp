@@ -1,7 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include "classhwmon.hpp"
-#include "jsonget.hpp"
+#include "json.hpp"
 #include "fileto.hpp"
 
 classHwmon::classHwmon() {

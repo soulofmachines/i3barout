@@ -3,12 +3,13 @@
 
 #include <string>
 #include <yajl/yajl_tree.h>
+#include <yajl/yajl_gen.h>
 
 class classBase {
 protected:
-//    Json::Value jsonOutput;
-//    Json::FastWriter writer;
-    yajl_val jsonOutput;
+    yajl_gen jsonOutput;
+    size_t jsonLen;
+    const unsigned char* jsonBuf;
     int         integer,
     iconNum,
     urgent;

@@ -1,7 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include "classnvidia.hpp"
-#include "jsonget.hpp"
+#include "json.hpp"
 #include "pidget.hpp"
 #include "stringto.hpp"
 

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "classwlan.hpp"
-#include "jsonget.hpp"
+#include "json.hpp"
 
 classWlan::classWlan () {
 }
