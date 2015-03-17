@@ -10,6 +10,16 @@ bool stringToInt(std::string input, int &output) {
     return true;
 }
 
+bool stringToFloat(std::string input, float &output) {
+    try {
+        output = stof(input);
+    }
+    catch (...) {
+        return false;
+    }
+    return true;
+}
+
 modes stringToMode(std::string input) {
     if (input == "asound") return m_asound;
     if (input == "battery") return m_batt;

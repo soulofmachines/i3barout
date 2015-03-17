@@ -14,23 +14,28 @@ void classBatt::readCustomConfig(yajl_val &config) {
 void classBatt::update() {
     integer = 0;
     output.clear();
-    if (!battCapacity()) {
+    if (!fileExist(device + "/uevent")) {
         if (pluggable) {
             output = "Plugged out";
         } else {
-            error = "Capacity: " + fileToIntError(ok);
+            error = "Plugged out";
         }
         return;
+    } else {
+        if (!battCapacity()) {
+            error = "Capacity: " + fileToIntError(ok);
+            return;
+        }
+        if (!battStatus()) {
+            error = "Status: " + fileToStringError(ok);
+            return;
+        }
+        if (!battTime()) {
+            error = "Time: " + fileToIntError(ok);
+            return;
+        }
+        output = std::to_string(capacity) + "% " + time;
     }
-    if (!battStatus()) {
-        error = "Status: " + fileToStringError(ok);
-        return;
-    }
-    if (!battTime()) {
-        error = "Time: " + fileToIntError(ok);
-        return;
-    }
-    output = time + " " + std::to_string(capacity) + "%";
 }
 
 bool classBatt::battCapacity() {
@@ -53,23 +58,46 @@ bool classBatt::battStatus() {
 }
 
 bool classBatt::battTime() {
-    if (!fileToInt(device + "/power_now", powerNow, ok)) {
-        return false;
-    }
-    if (powerNow != 0) {
-        if (!fileToInt(device + "/energy_now", energyNow, ok)) {
+    if (fileExist(device + "/energy_now")) {
+        if (!fileToFloat(device + "/energy_now", energyNow, ok)) {
             return false;
         }
-        if (integer != -1)
-            seconds = long(energyNow) * 3600 / long(powerNow);
-        else {
-            if (!fileToInt(device + "/energy_full", energyFull, ok)) {
-                return false;
-            }
-            seconds = long(energyFull - energyNow) * 3600 / long(powerNow);
+        if (!fileToFloat(device + "/power_now", powerNow, ok)) {
+            return false;
         }
-    } else
-        seconds = 0;
+        if (integer == -1) {
+            if (!fileToFloat(device + "/energy_full", energyFull, ok)) {
+                if (!fileToFloat(device + "/energy_full_design", energyFull, ok)) {
+                    return false;
+                }
+            }
+        }
+    } else {
+        if (!fileToFloat(device + "/voltage_now", voltageNow, ok)) {
+            return false;
+        }
+        if (!fileToFloat(device + "/charge_now", energyNow, ok)) {
+            return false;
+        }
+        energyNow = energyNow * voltageNow;
+        if (!fileToFloat(device + "/current_now", powerNow, ok)) {
+            return false;
+        }
+        powerNow = powerNow * voltageNow;
+        if (integer == -1) {
+            if (!fileToFloat(device + "/charge_full", energyFull, ok)) {
+                if (!fileToFloat(device + "/charge_full_design", energyFull, ok)) {
+                    return false;
+                }
+            }
+            energyFull = energyFull * voltageNow;
+        }
+    }
+    if (integer == -1) {
+        seconds = long((energyFull - energyNow) * 3600 / powerNow);
+    } else {
+        seconds = long(energyNow * 3600 / powerNow);
+    }
     timeinfo = std::gmtime(&seconds);
     std::strftime(&time.at(0), 6, "%H:%M", timeinfo);
     return true;

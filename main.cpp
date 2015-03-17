@@ -191,7 +191,9 @@ int main(int argc, char* argv[]) {
     }
     do {
         show();
-        sleep(5);
+        if (loop) {
+            sleep(5);
+        }
     } while (loop);
     if (json) {
         yajl_gen_array_close(jsonOutput);

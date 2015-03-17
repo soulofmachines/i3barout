@@ -10,14 +10,15 @@ private:
     time,
     status;
     int         ok,
-    capacity,
-    powerNow,
+    capacity;
+    float    powerNow,
     energyNow,
-    energyFull;
+    energyFull,
+    voltageNow;
     bool pluggable;
     long seconds;
     tm* timeinfo;
-    public:
+public:
     classBatt();
     void readCustomConfig(yajl_val &config);
     void update();

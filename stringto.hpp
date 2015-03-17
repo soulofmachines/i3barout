@@ -15,6 +15,7 @@ enum modes {
 };
 
 bool stringToInt(std::string input, int &output);
+bool stringToFloat(std::string input, float &output);
 modes stringToMode(std::string input);
 
 #endif //STRINGTO_HPP
