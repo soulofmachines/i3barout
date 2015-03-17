@@ -7,6 +7,7 @@ classBatt::classBatt() {
 
 void classBatt::readCustomConfig(yajl_val &config) {
     device = jsonGetString(config, "device", "/sys/class/power_supply/BAT0");
+    pluggable = jsonGetBool(config, "pluggable", true);
     time.resize(5);
 }
 
@@ -14,7 +15,11 @@ void classBatt::update() {
     integer = 0;
     output.clear();
     if (!battCapacity()) {
-        error = "Capacity: " + fileToIntError(ok);
+        if (pluggable) {
+            output = "Plugged out";
+        } else {
+            error = "Capacity: " + fileToIntError(ok);
+        }
         return;
     }
     if (!battStatus()) {
@@ -30,7 +35,7 @@ void classBatt::update() {
 
 bool classBatt::battCapacity() {
     if (!fileToInt(device + "/capacity", capacity, ok)) {
-            return false;
+        return false;
     }
     return true;
 }

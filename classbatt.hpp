@@ -14,6 +14,7 @@ private:
     powerNow,
     energyNow,
     energyFull;
+    bool pluggable;
     long seconds;
     tm* timeinfo;
     public:
