@@ -26,7 +26,7 @@ void classWlan::update() {
         return;
     if (!wlanStrength())
         return;
-    output = wname + " " + std::to_string(integer) + "%";
+    output = std::to_string(integer) + "% " + wname;
 }
 
 bool classWlan::wlanName() {
