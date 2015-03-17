@@ -2,6 +2,7 @@
 #include "json.hpp"
 #include "stringto.hpp"
 #include <cstring>
+#include <cmath>
 
 void classBase::readConfig(yajl_val &config) {
     colorNormal = jsonGetString(config, "colorNormal", colorNormal);
@@ -10,9 +11,9 @@ void classBase::readConfig(yajl_val &config) {
     label = jsonGetString(config, "label", "");
     icon = jsonGetString(config, "icon", "");
     if (icon.find("%") != std::string::npos) {
-        if (stringToInt(icon.substr(icon.find("%") + 1, 3), iconNum)) {
+        if (stringToInt(icon.substr(icon.find("%") + 1, 3), iconMax)) {
             iconName = icon.substr(0, icon.find("%"));
-            iconExt = icon.substr(icon.find("."));
+            iconExt = icon.substr(icon.find_last_of("."));
         }
     }
     readCustomConfig(config);
@@ -54,7 +55,14 @@ void classBase::setIcon() {
         if (integer < 0) {
             icon = iconName + std::to_string(0) + iconExt;
         } else {
-            icon = iconName + std::to_string((integer * iconNum) / 100) + iconExt;
+            iconNum = (int)ceil(((float)integer * (float)iconMax) / (float)100);
+            if (iconNum > iconMax) {
+                iconNum = iconMax;
+            }
+            if (iconNum < 0) {
+                iconNum = 0;
+            }
+            icon = iconName + std::to_string(iconNum) + iconExt;
         }
     }
 }
@@ -72,7 +80,7 @@ std::string classBase::show() {
         }
     }
     if (json) {
-        return showJson();
+        return "";
     }
     if (tmux) {
         return showTmux();
@@ -81,9 +89,8 @@ std::string classBase::show() {
     }
 }
 
-std::string classBase::showJson() {
-    jsonOutput = yajl_gen_alloc(NULL);
-    yajl_gen_clear(jsonOutput);
+void classBase::jsonAdd(yajl_gen &jsonOutput) {
+    show();
     yajl_gen_map_open(jsonOutput);
     if (!icon.empty()) {
         jsonMapAddString(jsonOutput, "icon", icon);
@@ -96,18 +103,16 @@ std::string classBase::showJson() {
     }
     jsonMapAddString(jsonOutput, "full_text", output);
     yajl_gen_map_close(jsonOutput);
-    yajl_gen_get_buf(jsonOutput, &jsonBuf, &jsonLen);
-    return (const char *) jsonBuf;
 }
 
 std::string classBase::showTerm() {
     if (colored) {
-        return separator + "\033[" + color + "m" + output + "\033[" + "m";
+        return "\033[" + color + "m" + output + "\033[" + "m";
     } else {
-        return separator + output;
+        return output;
     }
 }
 
 std::string classBase::showTmux() {
-    return separator + output;
+    return output;
 }

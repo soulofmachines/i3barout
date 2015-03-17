@@ -7,10 +7,8 @@
 
 class classBase {
 protected:
-    yajl_gen jsonOutput;
-    size_t jsonLen;
-    const unsigned char* jsonBuf;
     int         integer,
+    iconMax,
     iconNum,
     urgent;
     bool        urgentAbove;
@@ -28,7 +26,6 @@ public:
     std::string                 colorNormal,
     colorUrgent,
     colorWarning,
-    separator,
     name;
     void            readConfig(yajl_val &config);
     virtual void    readCustomConfig(yajl_val &config) = 0;
@@ -37,7 +34,7 @@ public:
     void setOutput(std::string input);
     void setIcon();
     std::string     show();
-    std::string     showJson();
+    void jsonAdd(yajl_gen &jsonOutput);
     std::string     showTerm();
     std::string     showTmux();
 };

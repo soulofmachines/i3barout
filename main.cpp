@@ -11,6 +11,7 @@
 #include "json.hpp"
 #include "stringto.hpp"
 #include <sstream>
+#include <csignal>
 
 std::vector<classBase*> elementV;
 std::vector<classAsound> asoundV;
@@ -22,6 +23,10 @@ std::vector<classTime> timeV;
 std::vector<classWlan> wlanV;
 
 yajl_val configFile;
+yajl_gen jsonOutput;
+const unsigned char* jsonBuf;
+size_t jsonLen;
+std::string output;
 bool colored, json, tmux, loop;
 std::string colorNormal, colorUrgent, colorWarning;
 
@@ -109,6 +114,7 @@ bool parseConfig() {
             case m_wlan:
                 wlanV.push_back(classWlan());
                 elementV.push_back(&wlanV.back());
+                break;
             default:
                 continue;
             }
@@ -122,11 +128,47 @@ bool parseConfig() {
             }
             elementV.back()->readConfig(element);
             element = NULL;
-            std::cout << elementV.back()->show() << std::endl;
         }
     }
     yajl_tree_free(configFile);
+    if (elementV.size() == 0) {
+        std::cerr << "config empty" << std::endl;
+        return false;
+    }
+    if (json) {
+        jsonOutput = yajl_gen_alloc(NULL);
+    }
     return true;
+}
+
+void show() {
+    if (json) {
+        yajl_gen_clear(jsonOutput);
+        yajl_gen_array_open(jsonOutput);
+    } else {
+        output.clear();
+    }
+    for (unsigned int x = 0; x < elementV.size(); ++x) {
+        if (json) {
+            elementV.at(x)->jsonAdd(jsonOutput);
+        } else {
+            output += elementV.at(x)->show();
+            if (x != elementV.size() - 1) {
+                output += " | ";
+            }
+        }
+    }
+    if (json) {
+        yajl_gen_array_close(jsonOutput);
+        yajl_gen_get_buf(jsonOutput, &jsonBuf, &jsonLen);
+        std::cout << jsonBuf << std::endl;
+    } else {
+        std::cout << output << std::endl;
+    }
+}
+
+void stop(int signum) {
+    loop = false;
 }
 
 int main(int argc, char* argv[]) {
@@ -139,6 +181,20 @@ int main(int argc, char* argv[]) {
     }
     if (!parseConfig()) {
         return 3;
+    }
+    signal(SIGINT, stop);
+    signal(SIGTERM, stop);
+    if (json) {
+        yajl_gen_array_open(jsonOutput);
+        yajl_gen_clear(jsonOutput);
+        std::cout << "{\"version\":1}\n[" << std::endl;
+    }
+    do {
+        show();
+        sleep(5);
+    } while (loop);
+    if (json) {
+        yajl_gen_array_close(jsonOutput);
     }
     return 0;
 }
