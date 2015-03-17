@@ -1,13 +1,17 @@
 #include "classbatt.hpp"
 #include "json.hpp"
-#include "fileto.hpp"
+#include "file.hpp"
 
 classBatt::classBatt() {
 }
 
 void classBatt::readCustomConfig(yajl_val &config) {
+    urgentLow = true;
+    urgent = jsonGetInt(config, "urgent", 20);
     device = jsonGetString(config, "device", "/sys/class/power_supply/BAT0");
     pluggable = jsonGetBool(config, "pluggable", true);
+    padded = jsonGetBool(config, "padded", true);
+    padding = jsonGetInt(config, "padding", 3);
     time.resize(5);
 }
 
@@ -34,7 +38,13 @@ void classBatt::update() {
             error = "Time: " + fileToIntError(ok);
             return;
         }
-        output = std::to_string(capacity) + "% " + time;
+        output = std::to_string(capacity);
+        if (padded) {
+            if (output.size() < padding) {
+                output = std::string(padding-output.size(),'0') + output;
+            }
+        }
+        output += "% " + time;
     }
 }
 
@@ -93,10 +103,14 @@ bool classBatt::battTime() {
             energyFull = energyFull * voltageNow;
         }
     }
-    if (integer == -1) {
-        seconds = long((energyFull - energyNow) * 3600 / powerNow);
+    if (powerNow != 0) {
+        if (integer == -1) {
+            seconds = long((energyFull - energyNow) * 3600 / powerNow);
+        } else {
+            seconds = long(energyNow * 3600 / powerNow);
+        }
     } else {
-        seconds = long(energyNow * 3600 / powerNow);
+        seconds = 0;
     }
     timeinfo = std::gmtime(&seconds);
     std::strftime(&time.at(0), 6, "%H:%M", timeinfo);

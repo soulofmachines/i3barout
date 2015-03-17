@@ -8,6 +8,8 @@ private:
     std::string monitor;
     int         divider,
     ok;
+    bool padded;
+    unsigned int padding;
 public:
     classHwmon();
     void readCustomConfig(yajl_val &config);

@@ -13,7 +13,9 @@ private:
     int pid,
     ok;
     char buffer[32];
-    bool optimus;
+    bool optimus,
+    padded;
+    unsigned int padding;
 public:
     classNvidia();
     void readCustomConfig(yajl_val &config);

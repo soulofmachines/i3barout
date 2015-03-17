@@ -3,7 +3,6 @@
 
 classTime::classTime() {
     integer = 0;
-    urgent = 0;
 }
 
 void classTime::readCustomConfig(yajl_val &config) {

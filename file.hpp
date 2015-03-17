@@ -1,5 +1,5 @@
-#ifndef FILETO_HPP
-#define FILETO_HPP
+#ifndef FILE_HPP
+#define FILE_HPP
 
 #include <string>
 
@@ -10,4 +10,4 @@ std::string fileToIntError(int ok);
 std::string fileToStringError(int ok);
 bool fileExist(std::string path);
 
-#endif //FILETO_HPP
+#endif //FILE_HPP

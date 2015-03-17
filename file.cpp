@@ -1,6 +1,6 @@
 #include <fstream>
 #include <sstream>
-#include "fileto.hpp"
+#include "file.hpp"
 #include "stringto.hpp"
 
 bool fileToInt(std::string path, int &output, int &ok) {

@@ -9,7 +9,10 @@ classWlan::classWlan () {
 }
 
 void classWlan::readCustomConfig(yajl_val &config) {
+    urgentLow = true;
+    urgent = jsonGetInt(config, "urgent", 20);
     device = jsonGetString(config, "device", "wlan0");
+    padded = jsonGetBool(config, "padded", true);
     memset(&iwr, 0, sizeof(iwreq));
     memset(&iwstat, 0, sizeof(iw_statistics));
     memset(&iwrange, 0, sizeof(iw_range));
@@ -26,7 +29,13 @@ void classWlan::update() {
         return;
     if (!wlanStrength())
         return;
-    output = std::to_string(integer) + "% " + wname;
+    output = std::to_string(integer);
+    if (padded) {
+        if (output.size() < 3) {
+            output = std::string(3-output.size(),'0') + output;
+        }
+    }
+    output += "% " + wname;
 }
 
 bool classWlan::wlanName() {

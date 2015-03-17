@@ -11,7 +11,7 @@ protected:
     iconMax,
     iconNum,
     urgent;
-    bool        urgentAbove;
+    bool        urgentLow;
     std::string color,
     error,
     icon,

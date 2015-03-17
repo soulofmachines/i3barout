@@ -17,6 +17,8 @@ private:
     const snd_mixer_selem_channel_id_t  selem_channel_id = SND_MIXER_SCHN_FRONT_LEFT;
     std::string                         device,
                                         mixer;
+    bool padded;
+    unsigned int padding;
 public:
     classAsound();
     void readCustomConfig(yajl_val &config);

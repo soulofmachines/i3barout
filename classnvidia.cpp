@@ -12,6 +12,8 @@ void classNvidia::readCustomConfig(yajl_val &config) {
     exec = jsonGetString(config, "exec", "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader");
     module = jsonGetString(config, "module", "nvidia");
     optimus = jsonGetBool(config, "optimus", false);
+    padded = jsonGetBool(config, "padded", false);
+    padding = jsonGetInt(config, "padding", 2);
 }
 
 void classNvidia::update() {
@@ -73,7 +75,13 @@ void classNvidia::update() {
             error = "Exec: output";
             return;
         }
-        output = std::to_string(integer) + "°C";
+        output = std::to_string(integer);
+        if (padded) {
+            if (output.size() < padding) {
+                output = std::string(padding-output.size(),'0') + output;
+            }
+        }
+        output += "°C";
     } else {
         error = "Exec: execute";
         return;

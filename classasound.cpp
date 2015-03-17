@@ -7,6 +7,8 @@ classAsound::classAsound() {
 void classAsound::readCustomConfig(yajl_val &config) {
     device = jsonGetString(config, "device", "default");
     mixer = jsonGetString(config, "mixer", "Master");
+    padded = jsonGetBool(config, "padded", true);
+    padding = jsonGetInt(config, "padding", 3);
 }
 
 void classAsound::update() {
@@ -42,11 +44,17 @@ void classAsound::update() {
         snd_mixer_selem_get_playback_volume(elem, selem_channel_id, &volumeCurrent);
         snd_mixer_selem_get_playback_volume_range(elem, &volumeMin, &volumeMax);
         integer = int (volumeCurrent * 100 / (volumeMax - volumeMin));
-        output = std::to_string(integer) + "%";
+        output = std::to_string(integer);
     } else {
         integer = -1;
-        output = "0%";
+        output = "0";
     }
+    if (padded) {
+        if (output.size() < padding) {
+            output = std::string(padding-output.size(),'0') + output;
+        }
+    }
+    output += "%";
 end:
     snd_mixer_close(handle);
 }

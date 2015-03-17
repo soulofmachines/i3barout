@@ -5,9 +5,13 @@
 #include <cmath>
 
 void classBase::readConfig(yajl_val &config) {
-    colorNormal = jsonGetString(config, "colorNormal", colorNormal);
-    colorUrgent = jsonGetString(config, "colorUrgent", colorUrgent);
-    colorWarning = jsonGetString(config, "colorWarning", colorWarning);
+    if (colored) {
+        colorNormal = jsonGetString(config, "colorNormal", colorNormal);
+        colorUrgent = jsonGetString(config, "colorUrgent", colorUrgent);
+        colorWarning = jsonGetString(config, "colorWarning", colorWarning);
+    }
+    urgentLow = false;
+    urgent = jsonGetInt(config, "urgent", 80);
     label = jsonGetString(config, "label", "");
     icon = jsonGetString(config, "icon", "");
     if (icon.find("%") != std::string::npos) {
@@ -26,7 +30,7 @@ void classBase::setColor() {
             color = colorWarning;
         } else {
             if (urgent > 0) {
-                if (urgentAbove) {
+                if (!urgentLow) {
                     if (integer > urgent) {
                         color = colorUrgent;
                     } else {

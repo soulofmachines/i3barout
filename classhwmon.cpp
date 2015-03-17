@@ -2,7 +2,7 @@
 #include <sstream>
 #include "classhwmon.hpp"
 #include "json.hpp"
-#include "fileto.hpp"
+#include "file.hpp"
 
 classHwmon::classHwmon() {
 }
@@ -12,6 +12,8 @@ void classHwmon::readCustomConfig(yajl_val &config) {
     divider = jsonGetInt(config, "divider", 1000);
     if (divider < 1)
         divider = 1;
+    padded = jsonGetBool(config, "padded", false);
+    padding = jsonGetInt(config, "padding", 3);
 }
 
 void classHwmon::update() {
@@ -23,5 +25,11 @@ void classHwmon::update() {
         return;
     }
     integer = integer / divider;
-    output = std::to_string(integer) + "°C";
+    output = std::to_string(integer);
+    if (padded) {
+        if (output.size() < padding) {
+            output = std::string(padding-output.size(),'0') + output;
+        }
+    }
+    output += "°C";
 }

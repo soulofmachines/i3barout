@@ -7,7 +7,6 @@
 
 classIpv4::classIpv4() {
     integer = 0;
-    urgent = 0;
 }
 
 void classIpv4::readCustomConfig(yajl_val &config) {
