@@ -13,6 +13,7 @@ private:
     int pid,
     ok;
     char buffer[32];
+    bool optimus;
 public:
     classNvidia();
     void readCustomConfig(yajl_val &config);

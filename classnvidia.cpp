@@ -11,6 +11,7 @@ classNvidia::classNvidia() {
 void classNvidia::readCustomConfig(yajl_val &config) {
     exec = jsonGetString(config, "exec", "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader");
     module = jsonGetString(config, "module", "nvidia");
+    optimus = jsonGetBool(config, "optimus", false);
 }
 
 void classNvidia::update() {
@@ -28,8 +29,13 @@ void classNvidia::update() {
     ss << file.rdbuf();
     file.close();
     if ((ss.str().find(module + " ") == std::string::npos)) {
-        error = "Module: find";
-        return;
+        if (optimus) {
+            output = "Disabled";
+            return;
+        } else {
+            error = "Module: find";
+            return;
+        }
     }
     if (exec.empty()) {
         error = "Exec: empty";
