@@ -143,7 +143,6 @@ bool parseConfig() {
 
 void show() {
     if (json) {
-        yajl_gen_clear(jsonOutput);
         yajl_gen_array_open(jsonOutput);
     } else {
         output.clear();
@@ -162,6 +161,7 @@ void show() {
         yajl_gen_array_close(jsonOutput);
         yajl_gen_get_buf(jsonOutput, &jsonBuf, &jsonLen);
         std::cout << jsonBuf << std::endl;
+        yajl_gen_clear(jsonOutput);
     } else {
         std::cout << output << std::endl;
     }
@@ -186,8 +186,7 @@ int main(int argc, char* argv[]) {
     signal(SIGTERM, stop);
     if (json) {
         yajl_gen_array_open(jsonOutput);
-        yajl_gen_clear(jsonOutput);
-        std::cout << "{\"version\":1}\n[" << std::endl;
+        std::cout << "{\"version\":1}" << std::endl;
     }
     do {
         show();
@@ -197,6 +196,8 @@ int main(int argc, char* argv[]) {
     } while (loop);
     if (json) {
         yajl_gen_array_close(jsonOutput);
+        yajl_gen_get_buf(jsonOutput, &jsonBuf, &jsonLen);
+        std::cout << jsonBuf << std::endl;
     }
     return 0;
 }
