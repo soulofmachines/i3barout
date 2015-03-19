@@ -7,9 +7,15 @@
 
 class classIpv4 : public classBase {
 private:
-    int             fd;
+    int             fd,
+    paddedInt;
     struct ifreq    ifr;
-    std::string     device;
+    std::string     device,
+    paddedTemp,
+    paddedOutput;
+    bool padded;
+    unsigned int padding,
+    paddedLen;
 public:
     classIpv4();
     void readCustomConfig(yajl_val &config);
