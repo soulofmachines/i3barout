@@ -171,6 +171,9 @@ void stop(int signum) {
     loop = false;
 }
 
+void unpause(int signum) {
+}
+
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         help(argv[0]);
@@ -184,6 +187,7 @@ int main(int argc, char* argv[]) {
     }
     signal(SIGINT, stop);
     signal(SIGTERM, stop);
+    signal(SIGUSR1, unpause);
     if (json) {
         yajl_gen_array_open(jsonOutput);
         std::cout << "{\"version\":1}" << std::endl;
