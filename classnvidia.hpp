@@ -13,8 +13,7 @@ private:
     int pid,
     ok;
     char buffer[32];
-    bool optimus,
-    padded;
+    bool optimus;
     unsigned int padding;
 public:
     classNvidia();

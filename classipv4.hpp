@@ -13,7 +13,6 @@ private:
     std::string     device,
     paddedTemp,
     paddedOutput;
-    bool padded;
     unsigned int padding,
     paddedLen;
 public:

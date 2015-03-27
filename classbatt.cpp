@@ -1,6 +1,7 @@
 #include "classbatt.hpp"
 #include "json.hpp"
 #include "file.hpp"
+#include "string.hpp"
 
 classBatt::classBatt() {
 }
@@ -10,7 +11,6 @@ void classBatt::readCustomConfig(yajl_val &config) {
     urgent = jsonGetInt(config, "urgent", 20);
     device = jsonGetString(config, "device", "/sys/class/power_supply/BAT0");
     pluggable = jsonGetBool(config, "pluggable", true);
-    padded = jsonGetBool(config, "padded", true);
     padding = jsonGetInt(config, "padding", 3);
     time.resize(5);
 }
@@ -39,11 +39,7 @@ void classBatt::update() {
             return;
         }
         output = std::to_string(capacity);
-        if (padded) {
-            if (output.size() < padding) {
-                output = std::string(padding-output.size(),'0') + output;
-            }
-        }
+        stringPadZero(output, padding);
         output += "% " + time;
     }
 }

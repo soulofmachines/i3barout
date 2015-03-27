@@ -1,4 +1,4 @@
-#include "stringto.hpp"
+#include "string.hpp"
 
 bool stringToInt(std::string input, int &output) {
     try {
@@ -29,4 +29,10 @@ modes stringToMode(std::string input) {
     if (input == "time") return m_time;
     if (input == "wlan") return m_wlan;
     return m_null;
+}
+
+void stringPadZero(std::string &input, unsigned int size) {
+    if (input.size() < size) {
+        input = std::string(size-input.size(), '0') + input;
+    }
 }

@@ -4,7 +4,7 @@
 #include <sys/ioctl.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include "stringto.hpp"
+#include "string.hpp"
 
 classIpv4::classIpv4() {
     integer = 0;
@@ -12,8 +12,7 @@ classIpv4::classIpv4() {
 
 void classIpv4::readCustomConfig(yajl_val &config) {
     device = jsonGetString(config, "device", "eth0");
-    padded = jsonGetBool(config, "padded", false);
-    padding = jsonGetInt(config, "padding", 3);
+    padding = jsonGetInt(config, "padding", 0);
     strncpy(ifr.ifr_name, device.c_str(), IFNAMSIZ - 1);
 }
 
@@ -33,7 +32,7 @@ void classIpv4::update() {
         goto end;
     }
     output = inet_ntoa(((struct sockaddr_in*)(&ifr.ifr_addr))->sin_addr);
-    if (padded) {
+    if (padding > 1) {
         paddedOutput = "";
         paddedTemp = "";
         paddedLen = 0;
@@ -51,9 +50,7 @@ void classIpv4::update() {
             }
             paddedTemp = std::to_string(paddedInt);
             paddedLen += paddedTemp.size() + 1;
-            if (paddedTemp.size() < padding) {
-                paddedTemp = std::string(padding-paddedTemp.size(), '0') + paddedTemp;
-            }
+            stringPadZero(paddedTemp, padding);
             paddedOutput += paddedTemp;
         }
         output = paddedOutput;

@@ -1,7 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include "file.hpp"
-#include "stringto.hpp"
+#include "string.hpp"
 
 bool fileToInt(std::string path, int &output, int &ok) {
     ok = 1;

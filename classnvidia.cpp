@@ -3,7 +3,7 @@
 #include "classnvidia.hpp"
 #include "json.hpp"
 #include "pidget.hpp"
-#include "stringto.hpp"
+#include "string.hpp"
 
 classNvidia::classNvidia() {
 }
@@ -12,8 +12,7 @@ void classNvidia::readCustomConfig(yajl_val &config) {
     exec = jsonGetString(config, "exec", "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader");
     module = jsonGetString(config, "module", "nvidia");
     optimus = jsonGetBool(config, "optimus", false);
-    padded = jsonGetBool(config, "padded", false);
-    padding = jsonGetInt(config, "padding", 2);
+    padding = jsonGetInt(config, "padding", 0);
 }
 
 void classNvidia::update() {
@@ -76,11 +75,7 @@ void classNvidia::update() {
             return;
         }
         output = std::to_string(integer);
-        if (padded) {
-            if (output.size() < padding) {
-                output = std::string(padding-output.size(),'0') + output;
-            }
-        }
+        stringPadZero(output, padding);
         output += "°C";
     } else {
         error = "Exec: execute";

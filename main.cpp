@@ -9,7 +9,7 @@
 #include "classtime.hpp"
 #include "classwlan.hpp"
 #include "json.hpp"
-#include "stringto.hpp"
+#include "string.hpp"
 #include <sstream>
 #include <csignal>
 

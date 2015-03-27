@@ -15,8 +15,7 @@ private:
     energyNow,
     energyFull,
     voltageNow;
-    bool pluggable,
-    padded;
+    bool pluggable;
     unsigned int padding;
     long seconds;
     tm* timeinfo;

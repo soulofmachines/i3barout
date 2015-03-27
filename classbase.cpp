@@ -1,6 +1,6 @@
 #include "classbase.hpp"
 #include "json.hpp"
-#include "stringto.hpp"
+#include "string.hpp"
 #include <cstring>
 #include <cmath>
 

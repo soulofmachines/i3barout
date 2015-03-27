@@ -1,5 +1,5 @@
-#ifndef STRINGTO_HPP
-#define STRINGTO_HPP
+#ifndef STRING_HPP
+#define STRING_HPP
 
 #include <string>
 
@@ -17,5 +17,6 @@ enum modes {
 bool stringToInt(std::string input, int &output);
 bool stringToFloat(std::string input, float &output);
 modes stringToMode(std::string input);
+void stringPadZero(std::string &input, unsigned int size);
 
-#endif //STRINGTO_HPP
+#endif //STRING_HPP

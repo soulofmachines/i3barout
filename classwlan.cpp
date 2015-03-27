@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "classwlan.hpp"
 #include "json.hpp"
+#include "string.hpp"
 
 classWlan::classWlan () {
 }
@@ -12,7 +13,7 @@ void classWlan::readCustomConfig(yajl_val &config) {
     urgentLow = true;
     urgent = jsonGetInt(config, "urgent", 20);
     device = jsonGetString(config, "device", "wlan0");
-    padded = jsonGetBool(config, "padded", true);
+    padding = jsonGetBool(config, "padding", 3);
     memset(&iwr, 0, sizeof(iwreq));
     memset(&iwstat, 0, sizeof(iw_statistics));
     memset(&iwrange, 0, sizeof(iw_range));
@@ -30,11 +31,7 @@ void classWlan::update() {
     if (!wlanStrength())
         return;
     output = std::to_string(integer);
-    if (padded) {
-        if (output.size() < 3) {
-            output = std::string(3-output.size(),'0') + output;
-        }
-    }
+    stringPadZero(output, padding);
     output += "% " + wname;
 }
 

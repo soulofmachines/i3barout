@@ -1,5 +1,5 @@
 #include "pidget.hpp"
-#include "stringto.hpp"
+#include "string.hpp"
 #include <dirent.h>
 #include <fstream>
 #include <sstream>

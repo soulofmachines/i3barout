@@ -1,5 +1,6 @@
 #include "classasound.hpp"
 #include "json.hpp"
+#include "string.hpp"
 
 classAsound::classAsound() {
 }
@@ -7,7 +8,6 @@ classAsound::classAsound() {
 void classAsound::readCustomConfig(yajl_val &config) {
     device = jsonGetString(config, "device", "default");
     mixer = jsonGetString(config, "mixer", "Master");
-    padded = jsonGetBool(config, "padded", true);
     padding = jsonGetInt(config, "padding", 3);
 }
 
@@ -49,11 +49,7 @@ void classAsound::update() {
         integer = -1;
         output = "0";
     }
-    if (padded) {
-        if (output.size() < padding) {
-            output = std::string(padding-output.size(),'0') + output;
-        }
-    }
+    stringPadZero(output, padding);
     output += "%";
 end:
     snd_mixer_close(handle);
