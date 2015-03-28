@@ -13,6 +13,10 @@
 #include <sstream>
 #include <csignal>
 
+constexpr unsigned int stringToHash_const(const char* input, int x = 0) {
+    return !input[x] ? 5381 : (stringToHash_const(input, x+1)*33) ^ input[x];
+}
+
 std::vector<classBase*> elementV;
 std::vector<classAsound> asoundV;
 std::vector<classBatt> battV;
@@ -86,32 +90,32 @@ bool parseConfig() {
     for (unsigned int x = 0; x < YAJL_GET_OBJECT(configFile)->len; ++x) {
         element = YAJL_GET_OBJECT(configFile)->values[x];
         if (YAJL_IS_OBJECT(element)) {
-            switch (stringToMode(jsonGetString(element, "mode", ""))) {
-            case m_asound:
+            switch (stringToHash(jsonGetString(element, "mode", "").c_str())) {
+            case stringToHash_const("asound"):
                 asoundV.push_back(classAsound());
                 elementV.push_back(&asoundV.back());
                 break;
-            case m_batt:
+            case stringToHash_const("battery"):
                 battV.push_back(classBatt());
                 elementV.push_back(&battV.back());
                 break;
-            case m_hwmon:
+            case stringToHash_const("hwmon"):
                 hwmonV.push_back(classHwmon());
                 elementV.push_back(&hwmonV.back());
                 break;
-            case m_ipv4:
+            case stringToHash_const("ipv4"):
                 ipv4V.push_back(classIpv4());
                 elementV.push_back(&ipv4V.back());
                 break;
-            case m_nvidia:
+            case stringToHash_const("nvidia"):
                 nvidiaV.push_back(classNvidia());
                 elementV.push_back(&nvidiaV.back());
                 break;
-            case m_time:
+            case stringToHash_const("time"):
                 timeV.push_back(classTime());
                 elementV.push_back(&timeV.back());
                 break;
-            case m_wlan:
+            case stringToHash_const("wlan"):
                 wlanV.push_back(classWlan());
                 elementV.push_back(&wlanV.back());
                 break;
