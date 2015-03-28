@@ -2,7 +2,7 @@
 #include <sstream>
 #include "classnvidia.hpp"
 #include "json.hpp"
-#include "pidget.hpp"
+#include "pid.hpp"
 #include "string.hpp"
 
 classNvidia::classNvidia() {
