@@ -2,90 +2,54 @@
 #include <sstream>
 #include "file.hpp"
 #include "string.hpp"
+#include "exception.hpp"
 
-bool fileToInt(std::string path, int &output, int &ok) {
-    ok = 1;
+int fileToInt(std::string path) {
     std::ifstream fileStream;
     std::stringstream ss;
     fileStream.open(path.c_str());
     if (!fileStream.is_open()) {
-        ok = 2;
-        return false;
+        throw errorExc("open");
     }
     ss << fileStream.rdbuf();
     fileStream.close();
-    if (!stringToInt(ss.str(), output)) {
-        ok = 3;
-        return false;
+    try {
+        return stringToInt(ss.str());
     }
-    ok = 0;
-    return true;
+    catch(...) {
+        throw errorExc("convert");
+        return 0;
+    }
 }
 
-bool fileToFloat(std::string path, float &output, int &ok) {
-    ok = 1;
+float fileToFloat(std::string path) {
     std::ifstream fileStream;
     std::stringstream ss;
     fileStream.open(path.c_str());
     if (!fileStream.is_open()) {
-        ok = 2;
-        return false;
+        throw errorExc("open");
     }
     ss << fileStream.rdbuf();
     fileStream.close();
-    if (!stringToFloat(ss.str(), output)) {
-        ok = 3;
-        return false;
+    try {
+        return stringToFloat(ss.str());
     }
-    ok = 0;
-    return true;
+    catch(...) {
+        throw errorExc("convert");
+        return 0;
+    }
 }
 
-bool fileToString(std::string path, std::string &output, int &ok) {
-    ok = 1;
+std::string fileToString(std::string path) {
     std::ifstream fileStream;
     std::stringstream ss;
     fileStream.open(path.c_str());
     if (!fileStream.is_open()) {
-        ok = 2;
-        return false;
+        throw errorExc("open");
     }
     ss << fileStream.rdbuf();
     fileStream.close();
-    output = ss.str();
-    ok = 0;
-    return true;
-}
-
-std::string fileToIntError(int ok) {
-    switch (ok) {
-    case 1:
-        return "undefind";
-        break;
-    case 2:
-        return "open";
-        break;
-    case 3:
-        return "convert";
-        break;
-    default:
-        break;
-    }
-    return "";
-}
-
-std::string fileToStringError(int ok) {
-    switch (ok) {
-    case 1:
-        return "undefind";
-        break;
-    case 2:
-        return "open";
-        break;
-    default:
-        break;
-    }
-    return "";
+    return ss.str();
 }
 
 bool fileExist(std::string path) {

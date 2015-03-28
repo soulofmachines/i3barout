@@ -3,11 +3,9 @@
 
 #include <string>
 
-bool fileToInt(std::string path, int &output, int &ok);
-bool fileToFloat(std::string path, float &output, int &ok);
-bool fileToString(std::string path, std::string &output, int &ok);
-std::string fileToIntError(int ok);
-std::string fileToStringError(int ok);
+int fileToInt(std::string path);
+float fileToFloat(std::string path);
+std::string fileToString(std::string path);
 bool fileExist(std::string path);
 
 #endif //FILE_HPP

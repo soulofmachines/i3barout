@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include "file.hpp"
 #include "string.hpp"
+#include "exception.hpp"
 
 classHwmon::classHwmon() {
 }
@@ -20,9 +21,12 @@ void classHwmon::update() {
     integer = 0;
     output.clear();
     error.clear();
-    if (!fileToInt(monitor, integer, ok)) {
-        error = "Monitor: " + fileToIntError(ok);
-        return;
+    try {
+        integer = fileToInt(monitor);
+    }
+    catch(errorExc &exc) {
+        error = "Monitor: ";
+        error += exc.what();
     }
     integer = integer / divider;
     output = std::to_string(integer);

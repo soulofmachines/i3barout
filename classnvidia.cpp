@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include "pid.hpp"
 #include "string.hpp"
+#include "exception.hpp"
 
 classNvidia::classNvidia() {
 }
@@ -44,18 +45,19 @@ void classNvidia::update() {
     }
     pid = pidGetPid(exec.substr(0, exec.find(" ")));
     if (pid > 0) {
-        status = pidGetStatus(pid, ok);
+        try {
+            status = pidGetStatus(pid);
+        }
+        catch(errorExc &exc) {
+            error = "Status: ";
+            error += exc.what();
+        }
         if ((status == "S") || (status == "R")) {
             error = "Status: SR";
             return;
         } else {
-            if (status.empty()) {
-                error = "Status: " + pidGetStatusError(ok);
-                return;
-            } else {
-                error = "Status: undefined";
-                return;
-            }
+            error = "Status: undefined";
+            return;
         }
     }
     if (pid < 0) {
@@ -70,9 +72,12 @@ void classNvidia::update() {
             }
         }
         pclose(fd);
-        if (!stringToInt(reader, integer)) {
-            error = "Exec: output";
-            return;
+        try {
+            integer = stringToInt(reader);
+        }
+        catch(errorExc &exc) {
+            error = "Exec: ";
+            error += exc.what();
         }
         output = std::to_string(integer);
         stringPadZero(output, padding);

@@ -14,8 +14,8 @@ enum modes {
     m_wlan
 };
 
-bool stringToInt(std::string input, int &output);
-bool stringToFloat(std::string input, float &output);
+int stringToInt(std::string input);
+float stringToFloat(std::string input);
 modes stringToMode(std::string input);
 void stringPadZero(std::string &input, unsigned int size);
 

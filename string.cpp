@@ -1,23 +1,24 @@
 #include "string.hpp"
+#include "exception.hpp"
 
-bool stringToInt(std::string input, int &output) {
+int stringToInt(std::string input) {
     try {
-        output = stoi(input);
+        return stoi(input);
     }
     catch (...) {
-        return false;
+        throw errorExc("error");
+        return 0;
     }
-    return true;
 }
 
-bool stringToFloat(std::string input, float &output) {
+float stringToFloat(std::string input) {
     try {
-        output = stof(input);
+        return stof(input);
     }
     catch (...) {
-        return false;
+        throw errorExc("error");
+        return 0;
     }
-    return true;
 }
 
 modes stringToMode(std::string input) {

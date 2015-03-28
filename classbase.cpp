@@ -3,6 +3,7 @@
 #include "string.hpp"
 #include <cstring>
 #include <cmath>
+#include "exception.hpp"
 
 void classBase::readConfig(yajl_val &config) {
     if (colored) {
@@ -15,9 +16,15 @@ void classBase::readConfig(yajl_val &config) {
     label = jsonGetString(config, "label", "");
     icon = jsonGetString(config, "icon", "");
     if (icon.find("%") != std::string::npos) {
-        if (stringToInt(icon.substr(icon.find("%") + 1, 3), iconMax)) {
+        try {
+            iconMax = stringToInt(icon.substr(icon.find("%") + 1, 3));
             iconName = icon.substr(0, icon.find("%"));
             iconExt = icon.substr(icon.find_last_of("."));
+        }
+        catch(errorExc &exc) {
+            iconMax = 0;
+            iconName = "error";
+            iconExt = "";
         }
     }
     readCustomConfig(config);

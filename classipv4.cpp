@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include "string.hpp"
+#include "exception.hpp"
 
 classIpv4::classIpv4() {
     integer = 0;
@@ -41,11 +42,14 @@ void classIpv4::update() {
                 paddedOutput += ".";
             }
             if (paddedLen > output.size()) {
-                output = "Lan: lenght";
+                error = "Lan: lenght";
                 goto end;
             }
-            if (!stringToInt(output.substr(paddedLen), paddedInt)) {
-                output = "Lan: padding";
+            try {
+                paddedInt = stringToInt(output.substr(paddedLen));
+            }
+            catch(errorExc &exc) {
+                error = "Lan: padding";
                 goto end;
             }
             paddedTemp = std::to_string(paddedInt);

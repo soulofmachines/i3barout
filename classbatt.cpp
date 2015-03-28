@@ -2,6 +2,7 @@
 #include "json.hpp"
 #include "file.hpp"
 #include "string.hpp"
+#include "exception.hpp"
 
 classBatt::classBatt() {
 }
@@ -27,15 +28,12 @@ void classBatt::update() {
         return;
     } else {
         if (!battCapacity()) {
-            error = "Capacity: " + fileToIntError(ok);
             return;
         }
         if (!battStatus()) {
-            error = "Status: " + fileToStringError(ok);
             return;
         }
         if (!battTime()) {
-            error = "Time: " + fileToIntError(ok);
             return;
         }
         output = std::to_string(capacity);
@@ -45,14 +43,24 @@ void classBatt::update() {
 }
 
 bool classBatt::battCapacity() {
-    if (!fileToInt(device + "/capacity", capacity, ok)) {
+    try {
+        capacity = fileToInt(device + "/capacity");
+    }
+    catch(errorExc &exc) {
+        error = "Capacity: ";
+        error += exc.what();
         return false;
     }
     return true;
 }
 
 bool classBatt::battStatus() {
-    if (!fileToString(device + "/status", status, ok)) {
+    try {
+        status = fileToString(device + "/status");
+    }
+    catch(errorExc &exc) {
+        error = "Status: ";
+        error += exc.what();
         return false;
     }
     if (status.substr(0, status.length() - 1) != "Discharging") {
@@ -65,38 +73,44 @@ bool classBatt::battStatus() {
 
 bool classBatt::battTime() {
     if (fileExist(device + "/energy_now")) {
-        if (!fileToFloat(device + "/energy_now", energyNow, ok)) {
-            return false;
-        }
-        if (!fileToFloat(device + "/power_now", powerNow, ok)) {
-            return false;
-        }
-        if (integer == -1) {
-            if (!fileToFloat(device + "/energy_full", energyFull, ok)) {
-                if (!fileToFloat(device + "/energy_full_design", energyFull, ok)) {
-                    return false;
+        try {
+            energyNow = fileToFloat(device + "/energy_now");
+            powerNow = fileToFloat(device + "/power_now");
+            if (integer == -1) {
+                try {
+                    energyFull = fileToFloat(device + "/energy_full");
+                }
+                catch(...) {
+                    energyFull = fileToFloat(device + "/energy_full_design");
                 }
             }
+        }
+        catch(errorExc &exc) {
+            error = "Time: ";
+            error += exc.what();
+            return false;
         }
     } else {
-        if (!fileToFloat(device + "/voltage_now", voltageNow, ok)) {
-            return false;
-        }
-        if (!fileToFloat(device + "/charge_now", energyNow, ok)) {
-            return false;
-        }
-        energyNow = energyNow * voltageNow;
-        if (!fileToFloat(device + "/current_now", powerNow, ok)) {
-            return false;
-        }
-        powerNow = powerNow * voltageNow;
-        if (integer == -1) {
-            if (!fileToFloat(device + "/charge_full", energyFull, ok)) {
-                if (!fileToFloat(device + "/charge_full_design", energyFull, ok)) {
-                    return false;
+        try {
+            voltageNow = fileToFloat(device + "/voltage_now");
+            energyNow = fileToFloat(device + "/charge_now");
+            powerNow = fileToFloat(device + "/current_now");
+            energyNow = energyNow * voltageNow;
+            powerNow = powerNow * voltageNow;
+            if (integer == -1) {
+                try {
+                    energyFull = fileToFloat(device + "/charge_full");
                 }
+                catch(...) {
+                    energyFull = fileToFloat(device + "/charge_full_design");
+                }
+                energyFull = energyFull * voltageNow;
             }
-            energyFull = energyFull * voltageNow;
+        }
+        catch(errorExc &exc) {
+            error = "Time: ";
+            error += exc.what();
+            return false;
         }
     }
     if (powerNow != 0) {

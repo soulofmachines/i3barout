@@ -3,7 +3,7 @@
 #include <dirent.h>
 #include <fstream>
 #include <sstream>
-
+#include "exception.hpp"
 #include <iostream>
 
 int pidGetPid(std::string name) {
@@ -17,7 +17,12 @@ int pidGetPid(std::string name) {
     if (dp != NULL) {
         while (pid < 1 && (dirp = readdir(dp))) {
             id = 0;
-            if (stringToInt(dirp->d_name, id)) {
+            try {
+                id = stringToInt(dirp->d_name);
+            }
+            catch(errorExc &exc) {
+                id = 0;
+            }
                 if (id > 0) {
                     cmdFile.open(std::string("/proc/") + std::to_string(id) + std::string("/comm"));
                     if (cmdFile.is_open()) {
@@ -27,7 +32,7 @@ int pidGetPid(std::string name) {
                             pid = id;
                         ss.str("");
                     }
-                }
+
             }
         }
         closedir(dp);
@@ -36,8 +41,7 @@ int pidGetPid(std::string name) {
     return pid;
 }
 
-std::string pidGetStatus(int pid, int &ok) {
-    ok = 1;
+std::string pidGetStatus(int pid) {
     std::ifstream cmdFile;
     std::stringstream ss;
     unsigned int start;
@@ -47,36 +51,16 @@ std::string pidGetStatus(int pid, int &ok) {
         cmdFile.close();
         start = ss.str().find(")");
         if (start == std::string::npos) {
-            ok = 3;
+            throw errorExc("format");
+            return "";
         }
         if (ss.str().length() > start + 3) {
-            ok = 0;
             return ss.str().substr(start + 2, 1);
         } else {
-            ok = 4;
+            throw errorExc("too fast");
         }
     } else {
-        ok = 2;
-    }
-    return "";
-}
-
-std::string pidGetStatusError(int ok) {
-    switch (ok) {
-    case 1:
-        return "undefined";
-        break;
-    case 2:
-        return "open";
-        break;
-    case 3:
-        return "format";
-        break;
-    case 4:
-        return "too fast";
-        break;
-    default:
-        break;
+        throw errorExc("open");
     }
     return "";
 }
