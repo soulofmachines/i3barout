@@ -12,6 +12,8 @@
 #include "string.hpp"
 #include <sstream>
 #include <csignal>
+#include "input.hpp"
+#include <future>
 
 constexpr unsigned int stringToHash_const(const char* input, int x = 0) {
     return !input[x] ? 5381 : (stringToHash_const(input, x+1)*33) ^ input[x];
@@ -25,13 +27,14 @@ std::vector<classIpv4> ipv4V;
 std::vector<classNvidia> nvidiaV;
 std::vector<classTime> timeV;
 std::vector<classWlan> wlanV;
+std::vector<classInput> inputV;
 
 yajl_val configFile;
 yajl_gen jsonOutput;
 const unsigned char* jsonBuf;
 size_t jsonLen;
 std::string output;
-bool colored, json, tmux, loop;
+bool colored, json, tmux, loop, input;
 std::string colorNormal, colorUrgent, colorWarning;
 
 void help(char* arg) {
@@ -70,6 +73,7 @@ bool parseConfig() {
     json = jsonGetBool(configFile, "json", false);
     tmux = jsonGetBool(configFile, "tmux", false);
     loop = jsonGetBool(configFile, "loop", false);
+    input = jsonGetBool(configFile, "input", false);
     if (colored) {
         if (json) {
             colorNormal = jsonGetString(configFile, "colorNormal", "#ffffff");
@@ -122,6 +126,7 @@ bool parseConfig() {
             default:
                 continue;
             }
+            elementV.back()->name = "element" + std::to_string(x);
             elementV.back()->colored = colored;
             elementV.back()->json = json;
             elementV.back()->tmux = tmux;
@@ -131,6 +136,16 @@ bool parseConfig() {
                 elementV.back()->colorWarning = colorWarning;
             }
             elementV.back()->readConfig(element);
+            if (loop && json && input) {
+                inputV.push_back(classInput());
+                inputV.back().name = elementV.back()->name;
+                inputV.back().exec1 = jsonGetString(element, "exec1", "");
+                inputV.back().exec2 = jsonGetString(element, "exec2", "");
+                inputV.back().exec3 = jsonGetString(element, "exec3", "");
+                if (inputV.back().exec1.empty() xor inputV.back().exec2.empty() xor inputV.back().exec3.empty()) {
+                    inputV.pop_back();
+                }
+            }
             element = NULL;
         }
     }
@@ -173,6 +188,7 @@ void show() {
 
 void stop(int signum) {
     loop = false;
+    inputStop();
 }
 
 void unpause(int signum) {
@@ -192,9 +208,14 @@ int main(int argc, char* argv[]) {
     signal(SIGINT, stop);
     signal(SIGTERM, stop);
     signal(SIGUSR1, unpause);
+    std::future<void> async_temp = async (std::launch::async, inputProtocol, inputV);
     if (json) {
         yajl_gen_array_open(jsonOutput);
-        std::cout << "{\"version\":1}" << std::endl;
+        if (input) {
+            std::cout << "{\"version\":1,\"click_events\":true}" << std::endl;
+        } else {
+            std::cout << "{\"version\":1}" << std::endl;
+        }
     }
     do {
         show();
@@ -203,6 +224,7 @@ int main(int argc, char* argv[]) {
         }
     } while (loop);
     if (json) {
+        std::cout << ",[{\"color\":\"#ff0000\",\"full_text\":\"Closed\"}]" << std::endl;
         yajl_gen_array_close(jsonOutput);
         yajl_gen_get_buf(jsonOutput, &jsonBuf, &jsonLen);
         std::cout << jsonBuf << std::endl;

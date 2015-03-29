@@ -103,6 +103,8 @@ std::string classBase::show() {
 void classBase::jsonAdd(yajl_gen &jsonOutput) {
     show();
     yajl_gen_map_open(jsonOutput);
+    jsonMapAddString(jsonOutput, "full_text", output);
+    jsonMapAddString(jsonOutput, "name", name);
     if (!icon.empty()) {
         jsonMapAddString(jsonOutput, "icon", icon);
     }
@@ -112,7 +114,6 @@ void classBase::jsonAdd(yajl_gen &jsonOutput) {
             jsonMapAddString(jsonOutput, "icon_color", color);
         }
     }
-    jsonMapAddString(jsonOutput, "full_text", output);
     yajl_gen_map_close(jsonOutput);
 }
 
