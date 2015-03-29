@@ -61,7 +61,3 @@ void inputProtocol(std::vector<classInput> inputV) {
         }
     }
 }
-
-void inputStop() {
-    inputLoop = false;
-}

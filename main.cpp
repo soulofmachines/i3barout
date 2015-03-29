@@ -13,7 +13,7 @@
 #include <sstream>
 #include <csignal>
 #include "input.hpp"
-#include <future>
+#include <thread>
 
 constexpr unsigned int stringToHash_const(const char* input, int x = 0) {
     return !input[x] ? 5381 : (stringToHash_const(input, x+1)*33) ^ input[x];
@@ -142,7 +142,7 @@ bool parseConfig() {
                 inputV.back().exec1 = jsonGetString(element, "exec1", "");
                 inputV.back().exec2 = jsonGetString(element, "exec2", "");
                 inputV.back().exec3 = jsonGetString(element, "exec3", "");
-                if (inputV.back().exec1.empty() xor inputV.back().exec2.empty() xor inputV.back().exec3.empty()) {
+                if (!(!inputV.back().exec1.empty() || !inputV.back().exec2.empty() || !inputV.back().exec3.empty())) {
                     inputV.pop_back();
                 }
             }
@@ -188,7 +188,6 @@ void show() {
 
 void stop(int signum) {
     loop = false;
-    inputStop();
 }
 
 void unpause(int signum) {
@@ -208,10 +207,11 @@ int main(int argc, char* argv[]) {
     signal(SIGINT, stop);
     signal(SIGTERM, stop);
     signal(SIGUSR1, unpause);
-    std::future<void> async_temp = async (std::launch::async, inputProtocol, inputV);
     if (json) {
         yajl_gen_array_open(jsonOutput);
         if (input) {
+            std::thread inputThread(inputProtocol, inputV);
+            inputThread.detach();
             std::cout << "{\"version\":1,\"click_events\":true}" << std::endl;
         } else {
             std::cout << "{\"version\":1}" << std::endl;
@@ -224,7 +224,6 @@ int main(int argc, char* argv[]) {
         }
     } while (loop);
     if (json) {
-        std::cout << ",[{\"color\":\"#ff0000\",\"full_text\":\"Closed\"}]" << std::endl;
         yajl_gen_array_close(jsonOutput);
         yajl_gen_get_buf(jsonOutput, &jsonBuf, &jsonLen);
         std::cout << jsonBuf << std::endl;

@@ -13,6 +13,5 @@ public:
 };
 
 void inputProtocol(std::vector<classInput> inputV);
-void inputStop();
 
 #endif //PID_HPP
