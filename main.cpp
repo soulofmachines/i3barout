@@ -35,6 +35,7 @@ const unsigned char* jsonBuf;
 size_t jsonLen;
 std::string output;
 bool colored, json, tmux, loop, input;
+unsigned int timeout;
 std::string colorNormal, colorUrgent, colorWarning;
 
 void help(char* arg) {
@@ -153,6 +154,7 @@ bool parseConfig() {
     tmux = jsonGetBool(configFile, "tmux", false);
     loop = jsonGetBool(configFile, "loop", false);
     input = jsonGetBool(configFile, "input", false);
+    timeout = jsonGetInt(configFile, "timeout", 5);
     if (colored) {
         if (json) {
             colorNormal = jsonGetString(configFile, "colorNormal", "#ffffff");
@@ -317,7 +319,7 @@ int main(int argc, char* argv[]) {
     do {
         show();
         if (loop) {
-            sleep(5);
+            sleep(timeout);
         }
     } while (loop);
     if (json) {
