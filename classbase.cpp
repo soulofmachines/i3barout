@@ -126,5 +126,9 @@ std::string classBase::showTerm() {
 }
 
 std::string classBase::showTmux() {
-    return output;
+    if (colored) {
+        return  "#[fg=" + color + "]" + output + "#[fg=default]";
+    } else {
+        return output;
+    }
 }
