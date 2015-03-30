@@ -41,6 +41,84 @@ void help(char* arg) {
     std::cout << arg << " config.json" << std::endl;
 }
 
+yajl_gen_status yajl_gen_val(yajl_gen g, yajl_val v)
+{
+    size_t i;
+    const char* key;
+    yajl_gen_status status;
+    if (YAJL_IS_NULL(v))
+        return yajl_gen_null(g);
+    else if (YAJL_IS_TRUE(v))
+        return yajl_gen_bool(g, 1);
+    else if (YAJL_IS_FALSE(v))
+        return yajl_gen_bool(g, 0);
+    else if (YAJL_IS_NUMBER(v))
+        return yajl_gen_number(g, v->u.number.r, strlen(v->u.number.r));
+    else if (YAJL_IS_STRING(v))
+        return yajl_gen_string(g, (const unsigned char*)v->u.string, strlen(v->u.string));
+    else if (YAJL_IS_ARRAY(v)) {
+        status = yajl_gen_array_open(g);
+        if (status != yajl_gen_status_ok) return status;
+        for (i = 0; i < YAJL_GET_ARRAY(v)->len; i++) {
+            yajl_gen_val(g, YAJL_GET_ARRAY(v)->values[i]);
+            if (status != yajl_gen_status_ok) return status;
+        }
+        return yajl_gen_array_close(g);
+    }
+    else if (YAJL_IS_OBJECT(v)) {
+        status = yajl_gen_map_open(g);
+        if (status != yajl_gen_status_ok) return status;
+        for (i = 0; i < YAJL_GET_OBJECT(v)->len; i++) {
+            key = YAJL_GET_OBJECT(v)->keys[i];
+            status = yajl_gen_string(g, (const unsigned char*)key, strlen(key));
+            if (status != yajl_gen_status_ok) return status;
+            status = yajl_gen_val(g, YAJL_GET_OBJECT(v)->values[i]);
+            if (status != yajl_gen_status_ok) return status;
+        }
+        return yajl_gen_map_close(g);
+    }
+    return yajl_gen_in_error_state;
+}
+
+bool formatConfig(std::string input, std::string output = "") {
+    std::ifstream inputStream;
+    std::ofstream outputStream;
+    std::stringstream ss;
+    char errbuf[1024];
+    inputStream.open(input);
+    if (!inputStream.is_open()) {
+        std::cerr << input << ": cant't open" << std::endl;
+        return false;
+    }
+    ss << inputStream.rdbuf();
+    inputStream.close();
+    configFile = yajl_tree_parse(ss.str().c_str(), errbuf, sizeof(errbuf));
+    if (configFile == NULL) {
+        if (strlen(errbuf)) {
+            std::cerr << input << ": " << errbuf << std::endl;
+        } else {
+            std::cerr << input << ": " << "unknown error" << std::endl;
+        }
+        return false;
+    }
+    jsonOutput = yajl_gen_alloc(NULL);
+    yajl_gen_config(jsonOutput, yajl_gen_beautify, 1);
+    yajl_gen_val(jsonOutput, configFile);
+    yajl_gen_get_buf(jsonOutput, &jsonBuf, &jsonLen);
+    if (output.empty()) {
+        std::cout << jsonBuf;
+    } else {
+        outputStream.open(output, std::ofstream::out);
+        if (!outputStream.is_open()) {
+            std::cerr << output << ": can't open" << std::endl;
+            return false;
+        }
+        outputStream << jsonBuf;
+        outputStream.close();
+    }
+    return true;
+}
+
 bool readConfig(std::string file) {
     std::ifstream configStream;
     std::stringstream ss;
@@ -51,6 +129,7 @@ bool readConfig(std::string file) {
         return false;
     }
     ss << configStream.rdbuf();
+    configStream.close();
     configFile = yajl_tree_parse(ss.str().c_str(), errbuf, sizeof(errbuf));
     if (configFile == NULL) {
         if (strlen(errbuf)) {
@@ -197,6 +276,24 @@ int main(int argc, char* argv[]) {
     if (argc < 2) {
         help(argv[0]);
         return 1;
+    }
+    if (strcmp(argv[1], "-h") == 0) {
+        help(argv[0]);
+        return 0;
+    }
+    if (strcmp(argv[1], "-s") == 0) {
+        if (argc < 3) {
+            help(argv[0]);
+            return 1;
+        }
+        if (argc == 3) {
+            if (!formatConfig(argv[2]))
+                return 1;
+        } else {
+            if(!formatConfig(argv[2], argv[3]))
+                return 1;
+        }
+        return 0;
     }
     if (!readConfig(argv[1])) {
         return 2;
