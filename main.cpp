@@ -1,7 +1,10 @@
+#include "config.hpp"
 #include <iostream>
 #include <vector>
 #include <fstream>
+#ifdef USE_ALSA
 #include "classasound.hpp"
+#endif //USE_ALSA
 #include "classbatt.hpp"
 #include "classhwmon.hpp"
 #include "classipv4.hpp"
@@ -14,13 +17,17 @@
 #include <csignal>
 #include "input.hpp"
 #include <thread>
+#include <cstring>
+#include <unistd.h>
 
 constexpr unsigned int stringToHash_const(const char* input, int x = 0) {
     return !input[x] ? 5381 : (stringToHash_const(input, x+1)*33) ^ input[x];
 }
 
 std::vector<classBase*> elementV;
+#ifdef USE_ALSA
 std::vector<classAsound> asoundV;
+#endif //USE_ALSA
 std::vector<classBatt> battV;
 std::vector<classHwmon> hwmonV;
 std::vector<classIpv4> ipv4V;
@@ -176,10 +183,12 @@ bool parseConfig() {
         element = YAJL_GET_OBJECT(configFile)->values[x];
         if (YAJL_IS_OBJECT(element)) {
             switch (stringToHash(jsonGetString(element, "mode", "").c_str())) {
+#ifdef USE_ALSA
             case stringToHash_const("asound"):
                 asoundV.push_back(classAsound());
                 elementV.push_back(&asoundV.back());
                 break;
+#endif //USE_ALSA
             case stringToHash_const("battery"):
                 battV.push_back(classBatt());
                 elementV.push_back(&battV.back());
