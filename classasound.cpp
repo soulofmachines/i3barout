@@ -12,9 +12,6 @@ void classAsound::readCustomConfig(yajl_val &config) {
 }
 
 void classAsound::update() {
-    integer = 0;
-    output.clear();
-    error.clear();
     if (snd_mixer_open(&handle, 0) < 0) {
         error = "Asound: open";
         goto end;

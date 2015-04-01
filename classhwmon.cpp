@@ -18,9 +18,6 @@ void classHwmon::readCustomConfig(yajl_val &config) {
 }
 
 void classHwmon::update() {
-    integer = 0;
-    output.clear();
-    error.clear();
     try {
         integer = fileToInt(monitor);
     }

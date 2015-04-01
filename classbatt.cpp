@@ -17,10 +17,11 @@ void classBatt::readCustomConfig(yajl_val &config) {
 }
 
 void classBatt::update() {
-    integer = 0;
-    output.clear();
     if (!fileExist(device + "/uevent")) {
         if (pluggable) {
+            if (colored) {
+                color = colorNormal;
+            }
             output = "Plugged out";
         } else {
             error = "Plugged out";

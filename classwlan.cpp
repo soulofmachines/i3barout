@@ -23,9 +23,6 @@ void classWlan::readCustomConfig(yajl_val &config) {
 }
 
 void classWlan::update() {
-    integer = 0;
-    output.clear();
-    error.clear();
     if (!wlanName())
         return;
     if (!wlanStrength())

@@ -31,8 +31,7 @@ void classBase::readConfig(yajl_val &config) {
 }
 
 void classBase::setColor() {
-    if (colored) {
-        color.clear();
+    if (colored && color.empty()) {
         if (integer < 0) {
             color = colorWarning;
         } else {
@@ -79,6 +78,12 @@ void classBase::setIcon() {
 }
 
 std::string classBase::show() {
+    if(colored) {
+        color.clear();
+    }
+    output.clear();
+    error.clear();
+    integer = 0;
     update();
     setIcon();
     if (!error.empty()) {

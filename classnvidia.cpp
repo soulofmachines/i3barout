@@ -1,10 +1,10 @@
-#include <fstream>
-#include <sstream>
 #include "classnvidia.hpp"
 #include "json.hpp"
 #include "pid.hpp"
 #include "string.hpp"
 #include "exception.hpp"
+#include <fstream>
+#include <sstream>
 
 classNvidia::classNvidia() {
 }
@@ -17,12 +17,9 @@ void classNvidia::readCustomConfig(yajl_val &config) {
 }
 
 void classNvidia::update() {
-    integer = 0;
-    output.clear();
-    error.clear();
-    reader.clear();
-    std::ifstream file;
+    std::fstream file;
     std::stringstream ss;
+    reader.clear();
     file.open("/proc/modules");
     if (!file.is_open()) {
         error = "Module: open";
@@ -32,6 +29,9 @@ void classNvidia::update() {
     file.close();
     if ((ss.str().find(module + " ") == std::string::npos)) {
         if (optimus) {
+            if (colored) {
+                color = colorNormal;
+            }
             output = "Disabled";
             return;
         } else {

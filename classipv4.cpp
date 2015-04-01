@@ -8,7 +8,6 @@
 #include "exception.hpp"
 
 classIpv4::classIpv4() {
-    integer = 0;
 }
 
 void classIpv4::readCustomConfig(yajl_val &config) {
@@ -18,8 +17,6 @@ void classIpv4::readCustomConfig(yajl_val &config) {
 }
 
 void classIpv4::update() {
-    output.clear();
-    error.clear();
     if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
         error = "Lan: open";
         return;

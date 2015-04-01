@@ -2,7 +2,6 @@
 #include "json.hpp"
 
 classTime::classTime() {
-    integer = 0;
 }
 
 void classTime::readCustomConfig(yajl_val &config) {
@@ -13,7 +12,6 @@ void classTime::readCustomConfig(yajl_val &config) {
 }
 
 void classTime::update() {
-    output.clear();
     output.resize(size);
     time(&rawtime);
     timeinfo = localtime(&rawtime);
