@@ -6,11 +6,9 @@
 #include "exception.hpp"
 
 void classBase::readConfig(yajl_val &config) {
-    if (colored) {
-        colorNormal = jsonGetString(config, "colorNormal", colorNormal);
-        colorUrgent = jsonGetString(config, "colorUrgent", colorUrgent);
-        colorWarning = jsonGetString(config, "colorWarning", colorWarning);
-    }
+    colorNormal = jsonGetString(config, "colorNormal", colorNormal);
+    colorUrgent = jsonGetString(config, "colorUrgent", colorUrgent);
+    colorWarning = jsonGetString(config, "colorWarning", colorWarning);
     urgentLow = false;
     urgent = jsonGetInt(config, "urgent", 80);
     label = jsonGetString(config, "label", "");
@@ -78,9 +76,7 @@ void classBase::setIcon() {
 }
 
 std::string classBase::show() {
-    if(colored) {
-        color.clear();
-    }
+    color.clear();
     output.clear();
     error.clear();
     integer = 0;

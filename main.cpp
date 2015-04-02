@@ -162,21 +162,19 @@ bool parseConfig() {
     loop = jsonGetBool(configFile, "loop", false);
     input = jsonGetBool(configFile, "input", false);
     timeout = jsonGetInt(configFile, "timeout", 5);
-    if (colored) {
-        if (json) {
-            colorNormal = jsonGetString(configFile, "colorNormal", "#ffffff");
-            colorUrgent = jsonGetString(configFile, "colorUrgent", "#ff0000");
-            colorWarning = jsonGetString(configFile, "colorWarning", "#00ffff");
+    if (json) {
+        colorNormal = jsonGetString(configFile, "colorNormal", "#ffffff");
+        colorUrgent = jsonGetString(configFile, "colorUrgent", "#ff0000");
+        colorWarning = jsonGetString(configFile, "colorWarning", "#00ffff");
+    } else {
+        if (tmux) {
+            colorNormal = jsonGetString(configFile, "colorNormal", "white");
+            colorUrgent = jsonGetString(configFile, "colorUrgent", "red");
+            colorWarning = jsonGetString(configFile, "colorWarning", "cyan");
         } else {
-            if (tmux) {
-                colorNormal = jsonGetString(configFile, "colorNormal", "white");
-                colorUrgent = jsonGetString(configFile, "colorUrgent", "red");
-                colorWarning = jsonGetString(configFile, "colorWarning", "cyan");
-            } else {
-                colorNormal = jsonGetString(configFile, "colorNormal", "37");
-                colorUrgent = jsonGetString(configFile, "colorUrgent", "31");
-                colorWarning = jsonGetString(configFile, "colorWarning", "36");
-            }
+            colorNormal = jsonGetString(configFile, "colorNormal", "37");
+            colorUrgent = jsonGetString(configFile, "colorUrgent", "31");
+            colorWarning = jsonGetString(configFile, "colorWarning", "36");
         }
     }
     for (unsigned int x = 0; x < YAJL_GET_OBJECT(configFile)->len; ++x) {
@@ -220,11 +218,9 @@ bool parseConfig() {
             elementV.back()->colored = colored;
             elementV.back()->json = json;
             elementV.back()->tmux = tmux;
-            if (colored) {
-                elementV.back()->colorNormal = colorNormal;
-                elementV.back()->colorUrgent = colorUrgent;
-                elementV.back()->colorWarning = colorWarning;
-            }
+            elementV.back()->colorNormal = colorNormal;
+            elementV.back()->colorUrgent = colorUrgent;
+            elementV.back()->colorWarning = colorWarning;
             elementV.back()->readConfig(element);
             if (loop && json && input) {
                 inputV.push_back(classInput());

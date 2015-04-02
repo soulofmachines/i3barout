@@ -17,7 +17,7 @@ void classNvidia::readCustomConfig(yajl_val &config) {
 }
 
 void classNvidia::update() {
-    std::fstream file;
+    std::ifstream file;
     std::stringstream ss;
     reader.clear();
     file.open("/proc/modules");
@@ -29,9 +29,7 @@ void classNvidia::update() {
     file.close();
     if ((ss.str().find(module + " ") == std::string::npos)) {
         if (optimus) {
-            if (colored) {
-                color = colorNormal;
-            }
+            color = colorNormal;
             output = "Disabled";
             return;
         } else {
