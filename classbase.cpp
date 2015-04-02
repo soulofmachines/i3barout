@@ -10,6 +10,12 @@ void classBase::readConfig(yajl_val &config) {
     colorUrgent = jsonGetString(config, "colorUrgent", colorUrgent);
     colorWarning = jsonGetString(config, "colorWarning", colorWarning);
     urgentLow = false;
+    integerMax = jsonGetInt(config, "integerMax", 100);
+    integerMin = jsonGetInt(config, "integerMin", 0);
+    if (integerMax <= integerMin) {
+        integerMax = 100;
+        integerMin = 0;
+    }
     urgent = jsonGetInt(config, "urgent", 80);
     label = jsonGetString(config, "label", "");
     icon = jsonGetString(config, "icon", "");
@@ -63,7 +69,7 @@ void classBase::setIcon() {
         if (integer < 0) {
             icon = iconName + std::to_string(0) + iconExt;
         } else {
-            iconNum = (int)ceil(((float)integer * (float)iconMax) / (float)100);
+            iconNum = (int)ceil((float)(integer * iconMax) / (float)(integerMax - integerMin));
             if (iconNum > iconMax) {
                 iconNum = iconMax;
             }
