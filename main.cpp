@@ -26,14 +26,14 @@ constexpr unsigned int stringToHash_const(const char* input, int x = 0) {
 
 std::vector<classBase*> elementV;
 #ifdef USE_ALSA
-std::vector<classAsound> asoundV;
+std::vector<classAsound*> asoundV;
 #endif //USE_ALSA
-std::vector<classBatt> battV;
-std::vector<classHwmon> hwmonV;
-std::vector<classIpv4> ipv4V;
-std::vector<classNvidia> nvidiaV;
-std::vector<classTime> timeV;
-std::vector<classWlan> wlanV;
+std::vector<classBatt*> battV;
+std::vector<classHwmon*> hwmonV;
+std::vector<classIpv4*> ipv4V;
+std::vector<classNvidia*> nvidiaV;
+std::vector<classTime*> timeV;
+std::vector<classWlan*> wlanV;
 std::vector<classInput> inputV;
 
 yajl_val configFile;
@@ -183,33 +183,33 @@ bool parseConfig() {
             switch (stringToHash(jsonGetString(element, "mode", "").c_str())) {
 #ifdef USE_ALSA
             case stringToHash_const("asound"):
-                asoundV.push_back(classAsound());
-                elementV.push_back(&asoundV.back());
+                asoundV.push_back(new classAsound());
+                elementV.push_back(asoundV.back());
                 break;
 #endif //USE_ALSA
             case stringToHash_const("battery"):
-                battV.push_back(classBatt());
-                elementV.push_back(&battV.back());
+                battV.push_back(new classBatt());
+                elementV.push_back(battV.back());
                 break;
             case stringToHash_const("hwmon"):
-                hwmonV.push_back(classHwmon());
-                elementV.push_back(&hwmonV.back());
+                hwmonV.push_back(new classHwmon());
+                elementV.push_back(hwmonV.back());
                 break;
             case stringToHash_const("ipv4"):
-                ipv4V.push_back(classIpv4());
-                elementV.push_back(&ipv4V.back());
+                ipv4V.push_back(new classIpv4());
+                elementV.push_back(ipv4V.back());
                 break;
             case stringToHash_const("nvidia"):
-                nvidiaV.push_back(classNvidia());
-                elementV.push_back(&nvidiaV.back());
+                nvidiaV.push_back(new classNvidia());
+                elementV.push_back(nvidiaV.back());
                 break;
             case stringToHash_const("time"):
-                timeV.push_back(classTime());
-                elementV.push_back(&timeV.back());
+                timeV.push_back(new classTime());
+                elementV.push_back(timeV.back());
                 break;
             case stringToHash_const("wlan"):
-                wlanV.push_back(classWlan());
-                elementV.push_back(&wlanV.back());
+                wlanV.push_back(new classWlan());
+                elementV.push_back(wlanV.back());
                 break;
             default:
                 continue;
