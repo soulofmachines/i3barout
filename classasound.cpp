@@ -9,6 +9,7 @@ void classAsound::readCustomConfig(yajl_val &config) {
     device = jsonGetString(config, "device", "default");
     mixer = jsonGetString(config, "mixer", "Master");
     padding = jsonGetInt(config, "padding", 3);
+    mic = jsonGetBool(config, "mic", false);
 }
 
 void classAsound::update() {
@@ -36,10 +37,19 @@ void classAsound::update() {
         error = "Asound: mixer";
         goto end;
     }
-    snd_mixer_selem_get_playback_switch(elem, selem_channel_id, &volumeUnmute);
+    if (mic) {
+        snd_mixer_selem_get_capture_switch(elem, selem_channel_id, &volumeUnmute);
+    } else {
+        snd_mixer_selem_get_playback_switch(elem, selem_channel_id, &volumeUnmute);
+    }
     if (volumeUnmute) {
-        snd_mixer_selem_get_playback_volume(elem, selem_channel_id, &volumeCurrent);
-        snd_mixer_selem_get_playback_volume_range(elem, &volumeMin, &volumeMax);
+        if (mic) {
+            snd_mixer_selem_get_capture_volume(elem, selem_channel_id, &volumeCurrent);
+            snd_mixer_selem_get_capture_volume_range(elem, &volumeMin, &volumeMax);
+        } else {
+            snd_mixer_selem_get_playback_volume(elem, selem_channel_id, &volumeCurrent);
+            snd_mixer_selem_get_playback_volume_range(elem, &volumeMin, &volumeMax);
+        }
         integer = int (volumeCurrent * 100 / (volumeMax - volumeMin));
         output = std::to_string(integer);
     } else {

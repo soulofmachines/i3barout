@@ -18,6 +18,7 @@ private:
     std::string                         device,
     mixer;
     unsigned int padding;
+    bool mic;
 public:
     classAsound();
     void readCustomConfig(yajl_val &config);
