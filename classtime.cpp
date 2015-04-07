@@ -9,6 +9,7 @@ void classTime::readCustomConfig(yajl_val &config) {
     if (size < 1)
         size = 1;
     format = jsonGetString(config, "format", "%d/%m/%y %H:%M:%S");
+    urgent = 1;
 }
 
 void classTime::update() {

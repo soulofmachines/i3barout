@@ -6,9 +6,7 @@
 class classHwmon : public classBase {
 private:
     std::string monitor;
-    int         divider,
-    ok;
-    unsigned int padding;
+    int         divider;
 public:
     classHwmon();
     void readCustomConfig(yajl_val &config);

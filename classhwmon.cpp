@@ -12,9 +12,9 @@ classHwmon::classHwmon() {
 void classHwmon::readCustomConfig(yajl_val &config) {
     monitor = jsonGetString(config, "monitor", "/sys/devices/virtual/hwmon/hwmon0/temp1_input");
     divider = jsonGetInt(config, "divider", 1000);
-    if (divider < 1)
+    if (divider < 1) {
         divider = 1;
-    padding = jsonGetInt(config, "padding", 0);
+    }
 }
 
 void classHwmon::update() {

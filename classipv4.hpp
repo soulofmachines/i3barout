@@ -13,8 +13,7 @@ private:
     std::string     device,
     paddedTemp,
     paddedOutput;
-    unsigned int padding,
-    paddedLen;
+    unsigned int paddedLen;
 public:
     classIpv4();
     void readCustomConfig(yajl_val &config);

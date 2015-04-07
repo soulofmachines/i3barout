@@ -13,7 +13,6 @@ private:
     struct iw_range         iwrange;
     std::string             device;
     std::string             wname;
-    unsigned int padding;
 public:
     classWlan();
     void readCustomConfig(yajl_val &config);

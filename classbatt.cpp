@@ -12,7 +12,9 @@ void classBatt::readCustomConfig(yajl_val &config) {
     urgent = jsonGetInt(config, "urgent", 20);
     device = jsonGetString(config, "device", "/sys/class/power_supply/BAT0");
     pluggable = jsonGetBool(config, "pluggable", true);
-    padding = jsonGetInt(config, "padding", 3);
+    if (padding == 0) {
+        padding = 3;
+    }
     time.resize(5);
 }
 

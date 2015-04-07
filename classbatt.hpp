@@ -9,14 +9,12 @@ private:
     std::string device,
     time,
     status;
-    int         ok,
-    capacity;
+    int         capacity;
     float    powerNow,
     energyNow,
     energyFull,
     voltageNow;
     bool pluggable;
-    unsigned int padding;
     long seconds;
     tm* timeinfo;
 public:

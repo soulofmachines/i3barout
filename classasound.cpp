@@ -7,7 +7,9 @@ classAsound::classAsound() {
 
 void classAsound::readCustomConfig(yajl_val &config) {
     device = jsonGetString(config, "device", "default");
-    padding = jsonGetInt(config, "padding", 3);
+    if (padding == 0) {
+        padding = 3;
+    }
     mic = jsonGetBool(config, "mic", false);
     if (mic) {
         mixer = jsonGetString(config, "mixer", "Capture");

@@ -13,7 +13,6 @@ void classNvidia::readCustomConfig(yajl_val &config) {
     exec = jsonGetString(config, "exec", "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader");
     module = jsonGetString(config, "module", "nvidia");
     optimus = jsonGetBool(config, "optimus", false);
-    padding = jsonGetInt(config, "padding", 0);
 }
 
 void classNvidia::update() {

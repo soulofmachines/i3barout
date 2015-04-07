@@ -12,7 +12,7 @@ classIpv4::classIpv4() {
 
 void classIpv4::readCustomConfig(yajl_val &config) {
     device = jsonGetString(config, "device", "eth0");
-    padding = jsonGetInt(config, "padding", 0);
+    urgent = 1;
     strncpy(ifr.ifr_name, device.c_str(), IFNAMSIZ - 1);
 }
 

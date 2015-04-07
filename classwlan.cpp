@@ -13,7 +13,9 @@ void classWlan::readCustomConfig(yajl_val &config) {
     urgentLow = true;
     urgent = jsonGetInt(config, "urgent", 20);
     device = jsonGetString(config, "device", "wlan0");
-    padding = jsonGetInt(config, "padding", 3);
+    if (padding == 0) {
+        padding = 3;
+    }
     memset(&iwr, 0, sizeof(iwreq));
     memset(&iwstat, 0, sizeof(iw_statistics));
     memset(&iwrange, 0, sizeof(iw_range));

@@ -8,6 +8,7 @@
 class classBase {
 protected:
     int         integer,
+    padding,
     integerMax,
     integerMin,
     iconMax,

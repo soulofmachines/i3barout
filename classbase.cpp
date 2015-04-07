@@ -17,6 +17,10 @@ void classBase::readConfig(yajl_val &config) {
         integerMin = 0;
     }
     urgent = jsonGetInt(config, "urgent", 80);
+    padding = jsonGetInt(config, "padding", 0);
+    if (padding < 0) {
+        padding = 0;
+    }
     label = jsonGetString(config, "label", "");
     icon = jsonGetString(config, "icon", "");
     if (icon.find("%") != std::string::npos) {
