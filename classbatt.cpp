@@ -64,7 +64,7 @@ bool classBatt::battStatus() {
         error += exc.what();
         return false;
     }
-    if (status.substr(0, status.length() - 1) != "Discharging") {
+    if (status != "Discharging") {
         integer = -1;
     } else {
         integer = capacity;
