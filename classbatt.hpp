@@ -26,4 +26,4 @@ public:
     bool battTime();
 };
 
-#endif //CLASSHWMON_HPP
+#endif //CLASSBATT_HPP

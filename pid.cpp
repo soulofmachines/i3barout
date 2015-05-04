@@ -15,7 +15,7 @@ int pidGetPid(std::string name) {
     dirent* dirp;
     dp = opendir("/proc");
     if (dp != NULL) {
-        while (pid < 1 && (dirp = readdir(dp))) {
+        while (pid < 1 && (dirp = readdir(dp)) != NULL) {
             id = 0;
             try {
                 id = stringToInt(dirp->d_name);

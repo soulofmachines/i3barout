@@ -49,7 +49,7 @@ std::string fileToString(std::string path) {
     }
     ss << fileStream.rdbuf();
     fileStream.close();
-    return ss.str();
+    return ss.str().substr(0, ss.str().find_first_of("\n"));
 }
 
 bool fileExist(std::string path) {

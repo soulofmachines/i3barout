@@ -9,6 +9,7 @@
 #include "classhwmon.hpp"
 #include "classipv4.hpp"
 #include "classnvidia.hpp"
+#include "classrfkill.hpp"
 #include "classtime.hpp"
 #include "classwlan.hpp"
 #include "json.hpp"
@@ -32,6 +33,7 @@ std::vector<classBatt*> battV;
 std::vector<classHwmon*> hwmonV;
 std::vector<classIpv4*> ipv4V;
 std::vector<classNvidia*> nvidiaV;
+std::vector<classRfkill*> rfkillV;
 std::vector<classTime*> timeV;
 std::vector<classWlan*> wlanV;
 std::vector<classInput> inputV;
@@ -202,6 +204,10 @@ bool parseConfig() {
             case stringToHash_const("nvidia"):
                 nvidiaV.push_back(new classNvidia());
                 elementV.push_back(nvidiaV.back());
+                break;
+            case stringToHash_const("rfkill"):
+                rfkillV.push_back(new classRfkill());
+                elementV.push_back(rfkillV.back());
                 break;
             case stringToHash_const("time"):
                 timeV.push_back(new classTime());
