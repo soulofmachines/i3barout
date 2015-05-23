@@ -27,6 +27,11 @@ void classWlan::readCustomConfig(yajl_val &config) {
 void classWlan::update() {
     if (!wlanName())
         return;
+    if (wname.empty()) {
+        integer = -1;
+        output = "Off";
+        return;
+    }
     if (!wlanStrength())
         return;
     output = std::to_string(integer);

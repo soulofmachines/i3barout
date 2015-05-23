@@ -29,7 +29,7 @@ void classNvidia::update() {
     if ((ss.str().find(module + " ") == std::string::npos)) {
         if (optimus) {
             color = colorNormal;
-            output = "Disabled";
+            output = "Off";
             return;
         } else {
             error = "Module: find";

@@ -22,7 +22,7 @@ void classBatt::update() {
     if (!fileExist(device + "/capacity")) {
         if (pluggable) {
             color = colorNormal;
-            output = "Plugged out";
+            output = "Off";
         } else {
             error = "Plugged out";
         }
