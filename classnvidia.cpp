@@ -28,7 +28,7 @@ void classNvidia::update() {
     file.close();
     if ((ss.str().find(module + " ") == std::string::npos)) {
         if (optimus) {
-            color = colorNormal;
+            integer = -1;
             output = "Off";
             return;
         } else {

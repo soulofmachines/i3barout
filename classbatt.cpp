@@ -21,7 +21,7 @@ void classBatt::readCustomConfig(yajl_val &config) {
 void classBatt::update() {
     if (!fileExist(device + "/capacity")) {
         if (pluggable) {
-            color = colorNormal;
+            integer = -1;
             output = "Off";
         } else {
             error = "Plugged out";
